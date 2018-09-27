@@ -16,8 +16,13 @@ library(ggplot2)
 shinyServer(function(input, output) {
   
   
+  
+  
+  
+  
   v <- reactiveValues(doPlot = FALSE)
   options(scipen=6)
+
   observeEvent(input$go, {
     # 0 will be coerced to FALSE
     # 1+ will be coerced to TRUE
@@ -31,16 +36,12 @@ shinyServer(function(input, output) {
     setwd("C:/hepc/web")
     sourceCpp('p1.cpp')
     
-  output$distPlot <- renderPlot({
-    if (v$doPlot == FALSE) return()
 
-  
-    isolate({
     parms <- list(
       K= 66785001,
       P0=61623140, #popstat(YEAR=1999)
       r =0.16,
-      S0=input$S0 ,#0.0305853,
+      S0=0.0305853,
       standard_start = 2004,
       new_start = 2015,
       
@@ -49,7 +50,7 @@ shinyServer(function(input, output) {
       total_HCC=0,
       total_HCV=631000,
       
-      FI= input$FI, #10^-8,
+      FI= 10^-8,
       
       f0f1=0.117,
       f1f2=0.085,
@@ -147,13 +148,60 @@ shinyServer(function(input, output) {
 #    })
     
     out_df <- as.data.frame(out)
+    colnames(out_df)[23:28] <- c("prev","incHCC","pop","infect","total_HCV","total_HCC")
 
+    output$distPlot <- renderPlot({
+      if (v$doPlot == FALSE) return()
+      
+      
+      isolate({
+      x <- out_df[,c(1,23)]
 
-      x <- out_df[colnames(out_df) %in% c("time",input$checkGroup)]
+      
       x_melt <-melt(x, id="time")
+      ggplot(data = x_melt) + 
+        labs( x = "time", y = "Prevalence")+
+        geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)
+      
+      })
+    })
+    
+    
+    output$distPlot2 <- renderPlot({
+      if (v$doPlot == FALSE) return()
+
+        x <- out_df[,c(1,21,22)]
+        
+        if(input$showgenotype){
+          x <- out_df[,c(1,7:10,22)]
+        }
+        
+        #time year >= 2005 , year <= 2010
+        x_time <- out_df["time"] >= 2005 & out_df["time"] <= 2010
+        
+        x <- x[x_time,]
+        x_melt <-melt(x, id="time")
+
+        ggplot(data = x_melt) + 
+          
+          geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)
+
+    })
+    
+    output$distPlot3 <- renderPlot({
+      if (v$doPlot == FALSE) return()
+      
+      x <- out_df[,c(1,27,28)]
+      
+      if(input$showgenotype2){
+        x <- out_df[,c(1,7:14,22)]
+      }
+
+      x_melt <-melt(x, id="time")
+      
       ggplot(data = x_melt) + 
         geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)
       
     })
-  })
+
 })

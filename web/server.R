@@ -12,6 +12,7 @@ library(Rcpp)
 library(deSolve)
 library(reshape2)
 library(ggplot2)
+library(tidyverse)
 # Define server logic required to draw a histogram
 shinyServer(function(input, output) {
   
@@ -173,7 +174,8 @@ shinyServer(function(input, output) {
         x <- out_df[,c(1,21,22)]
         
         if(input$showgenotype){
-          x <- out_df[,c(1,7:10,22)]
+
+          x <- x %>% mutate(total_death = deathHCC+deathC14)
         }
         
         #time year >= 2005 , year <= 2010
@@ -189,12 +191,13 @@ shinyServer(function(input, output) {
     })
     
     output$distPlot3 <- renderPlot({
+      
       if (v$doPlot == FALSE) return()
       
       x <- out_df[,c(1,27,28)]
       
       if(input$showgenotype2){
-        x <- out_df[,c(1,7:14,22)]
+        x <- out_df[,c(1,7:14)]
       }
 
       x_melt <-melt(x, id="time")

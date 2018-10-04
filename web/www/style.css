@@ -36,10 +36,23 @@
 .italic{
     font-style: italic;
     font-size: 10px;
+
 }
 hr{
     border: 0;
     height: 2px;
     background: #333;
     background-image: linear-gradient(to right, #ccc, #333, #ccc);
+}
+a.italic{
+    font-style: italic;
+    font-size: 16px;
+    color: #333;
+
+}
+#TreatmentOutput{
+ margin: 15px 0px 20px 20px; 
+ background:  #fff;
+ border-radius: 5px;
+ border: 2px solid #73AD21;
 }

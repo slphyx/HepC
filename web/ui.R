@@ -284,6 +284,26 @@ shinyUI(fluidPage(
                         ),
                         tags$div(class = "col-sm-11",id ="TreatmentOutput",
                         textOutput("text1")
+                        ),
+                        tags$h3("treatment efficacy"),
+                        tags$hr(),
+                        tags$div(class = "col-sm-6",
+                                 sliderInput("Te1",
+                                             "treatment Cost ($)",
+                                             min = 0.05,
+                                             max = 0.1,
+                                             step = 0.001,
+                                             value = 0.066
+                                 )
+                        ),
+                        tags$div(class = "col-sm-6",
+                                 sliderInput("Te2",
+                                             "treatment Cost ($)",
+                                             min = 0.05,
+                                             max = 0.1,
+                                             step = 0.001,
+                                             value = 0.066
+                                 )
                         )
                   
                )
@@ -302,14 +322,13 @@ shinyUI(fluidPage(
       #tab5
       tabPanel("Model prediction",
 
-                  actionButton("go", "Run model",class = "button btn btn-primary"),
-
+                  actionButton("button", "Run model",class = "button btn btn-primary"),
+               downloadButton("downloadData", "Download Table"),
+               downloadButton("downloadData2", "Download Parameter"),
                  tabsetPanel(
                     #output 1
                     tabPanel("Prevalence Of CHC",
                              checkboxInput("bygenotype", "By Genotype", FALSE),
-                             downloadButton("downloadData", "Download"),
-                             downloadButton("downloadData2", "Download2"),
                              plotOutput("distPlot")
                              ),
                     #output 2

@@ -109,10 +109,10 @@ shinyUI(fluidPage(
                         tags$div(class = "col-sm-8",
                                  sliderInput("Fi",
                                              "Influx rate of the population to become susceptible per year",
-                                             min = 0.001,
-                                             max = 1,
-                                             step = 0.001,
-                                             value = 0.001
+                                             min = 0.0001,
+                                             max = 0.1,
+                                             step = 0.0001,
+                                             value = 0.0001
                                  )
                         ),
 
@@ -285,7 +285,7 @@ shinyUI(fluidPage(
                         tags$div(class = "col-sm-11",id ="TreatmentOutput",
                         textOutput("text1")
                         ),
-                        tags$h3("treatment efficacy"),
+                        tags$h3("treatment Cost"),
                         tags$hr(),
                         tags$div(class = "col-sm-6",
                                  sliderInput("Te1",

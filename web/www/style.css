@@ -4,8 +4,10 @@
     box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.25), 0 6px 20px 0 rgba(0, 0, 0, 0.2);
     margin-bottom: 20px 
 }
-#downloadData,#downloadData2{
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.25), 0 6px 20px 0 rgba(0, 0, 0, 0.2);
+#downloadData,#downloadDataG1,#downloadDataG2
+,#downloadDataG3,#downloadDataG4,#downloadDataG5,
+#downloadDataG6,#downloadparameter{
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.25), 0 3px 6px 0 rgba(0, 0, 0, 0.2);
     margin: 20px 20px 40px 20px 
 }
 

@@ -14,6 +14,8 @@ library(reshape2)
 library(ggplot2)
 library(tidyverse)
 library(xlsx)
+library(shinyjs)
+
 # Define server logic required to draw a histogram
 shinyServer(function(input, output,session) {
 
@@ -22,6 +24,13 @@ shinyServer(function(input, output,session) {
   setwd("C:/hepc/web")
   sourceCpp('p1.cpp')
   
+  observe({
+    toggle(id = "A_G", condition = input$Anin_genotype)
+  })
+  
+  observe({
+    toggle(id = "A_nonG", condition = !input$Anin_genotype)
+  })
   
   observeEvent(input$Treatment, {
     v$doPlot <- FALSE
@@ -252,14 +261,14 @@ shinyServer(function(input, output,session) {
         std_cureC1 =0.7,
         std_cureC2=0.7,
         #Novel treatment response based on genotype (weighted average)
-        new_cureF0=0.7,
-        new_cureF1=0.7,
-        new_cureF2 =0.7,
-        new_cureF3 =0.7,
-        new_cureC1 =0.7,
-        new_cureC2 =0.7,
-        new_cureC3 =0.7,
-        new_cureC4 =0.7,
+        new_cureF0=0,
+        new_cureF1=0,
+        new_cureF2 =0,
+        new_cureF3 =0,
+        new_cureC1 =0,
+        new_cureC2 =0,
+        new_cureC3 =0,
+        new_cureC4 =0,
         
         std_dist = c(0.05,0.05,0.3,0.3,0.3)
       )
@@ -268,7 +277,7 @@ shinyServer(function(input, output,session) {
     
     out_df <- as.data.frame(out)
     colnames(out_df)[23:29] <- c("prev_G1","incHCC_G1","pop_G1","infect_G1","total_HCV_G1","total_HCC_G1","New death_G1")
-    colnames(out_df)[16:19] <- c("C1new_cured_G1","C2new_cured_G1","C3new_cured_G1","C4new_cured_G1")
+    colnames(out_df)[15:19] <- c("C1std_cured_G1","C1new_cured_G1","C2new_cured_G1","C3new_cured_G1","C4new_cured_G1")
     out_df
     
   })
@@ -364,7 +373,7 @@ shinyServer(function(input, output,session) {
     
     out_df <- as.data.frame(out)
     colnames(out_df)[23:29] <- c("prev_G2","incHCC_G2","pop_G2","infect_G2","total_HCV_G2","total_HCC_G2","New death_G2")
-    colnames(out_df)[16:19] <- c("C1new_cured_G2","C2new_cured_G2","C3new_cured_G2","C4new_cured_G2")
+    colnames(out_df)[15:19] <- c("C1std_cured_G2","C1new_cured_G2","C2new_cured_G2","C3new_cured_G2","C4new_cured_G2")
     out_df
     
   })
@@ -460,7 +469,7 @@ shinyServer(function(input, output,session) {
     
     out_df <- as.data.frame(out)
     colnames(out_df)[23:29] <- c("prev_G3","incHCC_G3","pop_G3","infect_G3","total_HCV_G3","total_HCC_G3","New death_G3")
-    colnames(out_df)[16:19] <- c("C1new_cured_G3","C2new_cured_G3","C3new_cured_G3","C4new_cured_G3")
+    colnames(out_df)[15:19] <- c("C1std_cured_G3","C1new_cured_G3","C2new_cured_G3","C3new_cured_G3","C4new_cured_G3")
     out_df
     
   })
@@ -556,7 +565,7 @@ shinyServer(function(input, output,session) {
     
     out_df <- as.data.frame(out)
     colnames(out_df)[23:29] <- c("prev_G4","incHCC_G4","pop_G4","infect_G4","total_HCV_G4","total_HCC_G4","New death_G4")
-    colnames(out_df)[16:19] <- c("C1new_cured_G4","C2new_cured_G4","C3new_cured_G4","C4new_cured_G4")
+    colnames(out_df)[15:19] <- c("C1std_cured_G4","C1new_cured_G4","C2new_cured_G4","C3new_cured_G4","C4new_cured_G4")
     out_df
     
   })
@@ -652,7 +661,7 @@ shinyServer(function(input, output,session) {
     
     out_df <- as.data.frame(out)
     colnames(out_df)[23:29] <- c("prev_G5","incHCC_G5","pop_G5","infect_G5","total_HCV_G5","total_HCC_G5","New death_G5")
-    colnames(out_df)[16:19] <- c("C1new_cured_G5","C2new_cured_G5","C3new_cured_G5","C4new_cured_G5")
+    colnames(out_df)[15:19] <- c("C1std_cured_G5","C1new_cured_G5","C2new_cured_G5","C3new_cured_G5","C4new_cured_G5")
     out_df
     
   })
@@ -748,7 +757,7 @@ shinyServer(function(input, output,session) {
     
     out_df <- as.data.frame(out)
     colnames(out_df)[23:29] <- c("prev_G6","incHCC_G6","pop_G6","infect_G6","total_HCV_G6","total_HCC_G6","New death_G6")
-    colnames(out_df)[16:19] <- c("C1new_cured_G6","C2new_cured_G6","C3new_cured_G6","C4new_cured_G6")
+    colnames(out_df)[15:19] <- c("C1std_cured_G6","C1new_cured_G6","C2new_cured_G6","C3new_cured_G6","C4new_cured_G6")
     out_df
     
   })
@@ -761,7 +770,7 @@ shinyServer(function(input, output,session) {
       x <- out_df()[,c(1,23)]
       if(input$bygenotype){
         #x <- out_df[,c(1,7:14)]
-        x <- cbind(out_df_g1()[,c(1,23)],out_df_g2()[,c(1,23)])
+        x <- cbind(out_df()[,c(1,23)],out_df_g1()[23],out_df_g2()[23],out_df_g3()[23],out_df_g4()[23],out_df_g5()[23],out_df_g6()[23])
       }
       isolate({
 
@@ -772,7 +781,8 @@ shinyServer(function(input, output,session) {
       x_melt <-melt(x, id="time")
       ggplot(data = x_melt) + 
         labs( x = "time", y = "Prevalence")+
-        geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)
+        geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)+
+        scale_x_continuous(breaks=seq(input$year[1], input$year[2], 1))
         
       })
     })
@@ -802,29 +812,120 @@ shinyServer(function(input, output,session) {
     })
     
     #output 3
-    output$distPlot3 <- renderPlot({
-      
+    output$Anin_Plot <- renderPlot({
       if (v$doPlot == FALSE) return()
-      x <- out_df()[,c(1,16)]
+      x <- out_df()[,c(1,15:19)]
       
-      if(input$showgenotype2){
-        #x <- out_df[,c(1,7:14)]
-        x <- cbind(out_df()[,c(1,16)],out_df_g1()[16],out_df_g2()[16],out_df_g3()[16],out_df_g4()[16],out_df_g5()[16],out_df_g6()[16])
-
-      }
       isolate({
         
         
         #time year >= input$year[1] , year <= input$year[2]
-        x_time <- out_df()["time"] >= input$year[1] & out_df()["time"] <= input$year[2]
+       x_time <- out_df()["time"] >= input$year[1] & out_df()["time"] <= input$year[2]
         
         x <- x[x_time,]
 
       x_melt <-melt(x, id="time")
       
-      ggplot(data = x_melt) + 
-        geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)
+
+          
+       
+          ggplot(data = x_melt) + 
+            geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)+
+            scale_x_continuous(breaks=seq(input$year[1], input$year[2], 1))
+        
       })
+    })
+    
+    #output 3 with genotype C1
+    output$Anin_G_C1_Plot <- renderPlot({
+      if (v$doPlot == FALSE) return()
+      x <- cbind(out_df()[,c(1,15,16)],out_df_g1()[15:16],out_df_g2()[15:16],out_df_g3()[15:16],out_df_g4()[15:16],out_df_g5()[15:16],out_df_g6()[15:16])
+      
+      isolate({
+        ggplot(data = x,aes(time)) + 
+          #C1new
+          geom_line(aes(y = C1new_cured,color="C1"),size = 1.5)+
+          geom_line(aes(y = C1new_cured_G1,color="C1_G1"),size = 1.5)+
+          geom_line(aes(y = C1new_cured_G2,color="C1_G2"),size = 1.5)+
+          geom_line(aes(y = C1new_cured_G3,color="C1_G3"),size = 1.5)+
+          geom_line(aes(y = C1new_cured_G4,color="C1_G4"),size = 1.5)+
+          geom_line(aes(y = C1new_cured_G5,color="C1_G5"),size = 1.5)+
+          geom_line(aes(y = C1new_cured_G6,color="C1_G6"),size = 1.5)+
+          #C1std
+          geom_line(aes(y = C1std_cured,color="C1"),linetype=2,size = 1.5)+
+          geom_line(aes(y = C1std_cured_G1 ,color="C1_G1"),linetype=2,size = 1.5)+
+          geom_line(aes(y = C1std_cured_G2 ,color="C1_G2"),linetype=2,size = 1.5)+
+          geom_line(aes(y = C1std_cured_G3 ,color="C1_G3"),linetype=2,size = 1.5)+
+          geom_line(aes(y = C1std_cured_G4 ,color="C1_G4"),linetype=2,size = 1.5)+
+          geom_line(aes(y = C1std_cured_G5 ,color="C1_G5"),linetype=2,size = 1.5)+
+          geom_line(aes(y = C1std_cured_G6 ,color="C1_G6"),linetype=2,size = 1.5)+
+          ylab("value")+
+          scale_x_continuous(breaks=seq(input$year[1], input$year[2], 1),limits = c(input$year[1],input$year[2]))
+      })
+      
+    })
+    
+    #output 3 with genotype C2
+    output$Anin_G_C2_Plot <- renderPlot({
+      if (v$doPlot == FALSE) return()
+      x <- cbind(out_df()[,c(1,17)],out_df_g1()[17],out_df_g2()[17],out_df_g3()[17],out_df_g4()[17],out_df_g5()[17],out_df_g6()[17])
+      
+      isolate({
+        ggplot(data = x,aes(time)) + 
+          #C1new
+          geom_line(aes(y = C2new_cured,color="C2"),size = 1.5)+
+          geom_line(aes(y = C2new_cured_G1,color="C2_G1"),size = 1.5)+
+          geom_line(aes(y = C2new_cured_G2,color="C2_G2"),size = 1.5)+
+          geom_line(aes(y = C2new_cured_G3,color="C2_G3"),size = 1.5)+
+          geom_line(aes(y = C2new_cured_G4,color="C2_G4"),size = 1.5)+
+          geom_line(aes(y = C2new_cured_G5,color="C2_G5"),size = 1.5)+
+          geom_line(aes(y = C2new_cured_G6,color="C2_G6"),size = 1.5)+
+          ylab("value")+
+          scale_x_continuous(breaks=seq(input$year[1], input$year[2], 1),limits = c(input$year[1],input$year[2]))
+      })
+      
+    })
+    
+    #output 3 with genotype C3
+    output$Anin_G_C3_Plot <- renderPlot({
+      if (v$doPlot == FALSE) return()
+      x <- cbind(out_df()[,c(1,18)],out_df_g1()[18],out_df_g2()[18],out_df_g3()[18],out_df_g4()[18],out_df_g5()[18],out_df_g6()[18])
+      
+      isolate({
+        ggplot(data = x,aes(time)) + 
+          #C1new
+          geom_line(aes(y = C3new_cured,color="C3"),size = 1.5)+
+          geom_line(aes(y = C3new_cured_G1,color="C3_G1"),size = 1.5)+
+          geom_line(aes(y = C3new_cured_G2,color="C3_G2"),size = 1.5)+
+          geom_line(aes(y = C3new_cured_G3,color="C3_G3"),size = 1.5)+
+          geom_line(aes(y = C3new_cured_G4,color="C3_G4"),size = 1.5)+
+          geom_line(aes(y = C3new_cured_G5,color="C3_G5"),size = 1.5)+
+          geom_line(aes(y = C3new_cured_G6,color="C3_G6"),size = 1.5)+
+          ylab("value")+
+          scale_x_continuous(breaks=seq(input$year[1], input$year[2], 1),limits = c(input$year[1],input$year[2]))
+      })
+      
+    })
+    
+    #output 3 with genotype C4
+    output$Anin_G_C4_Plot <- renderPlot({
+      if (v$doPlot == FALSE) return()
+      x <- cbind(out_df()[,c(1,19)],out_df_g1()[19],out_df_g2()[19],out_df_g3()[19],out_df_g4()[19],out_df_g5()[19],out_df_g6()[19])
+      
+      isolate({
+        ggplot(data = x,aes(time)) + 
+          #C1new
+          geom_line(aes(y = C4new_cured,color="C4"),size = 1.5)+
+          geom_line(aes(y = C4new_cured_G1,color="C4_G1"),size = 1.5)+
+          geom_line(aes(y = C4new_cured_G2,color="C4_G2"),size = 1.5)+
+          geom_line(aes(y = C4new_cured_G3,color="C4_G3"),size = 1.5)+
+          geom_line(aes(y = C4new_cured_G4,color="C4_G4"),size = 1.5)+
+          geom_line(aes(y = C4new_cured_G5,color="C4_G5"),size = 1.5)+
+          geom_line(aes(y = C4new_cured_G6,color="C4_G6"),size = 1.5)+
+          ylab("value")+
+          scale_x_continuous(breaks=seq(input$year[1], input$year[2], 1),limits = c(input$year[1],input$year[2]))
+      })
+      
     })
     
     #output 4
@@ -843,26 +944,22 @@ shinyServer(function(input, output,session) {
       x_melt <-melt(x, id="time")
       
       ggplot(data = x_melt) + 
-        geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)
+        geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)+
+        scale_x_continuous(breaks=seq(input$year[1], input$year[2], 1))
       })
     })
     #textoutput
     output$text1 <- renderText({
       if(input$Treatment == 1){
-        "Treatment efficacy : 0.7 \n
-         Treatment cost : 10 $ per week"
+        "Treatment efficacy : 0.7"
       } else if (input$Treatment == 2){
-        "Treatment efficacy : 0.9 \n
-         Treatment cost : 100 $ per week"
+        "Treatment efficacy : 0.9"
       } else if (input$Treatment == 3){
-        "Treatment efficacy : 0.8 \n
-         Treatment cost : 50 $ per week"
+        "Treatment efficacy : 0.8"
       } else if (input$Treatment == 4){
-        "Treatment efficacy : 0.9 \n
-         Treatment cost : 50 $ per week"
+        "Treatment efficacy : 0.9"
       } else if (input$Treatment == 5){
-        "Treatment efficacy : 0.9 \n
-         Treatment cost : 50 $ per week"
+        "Treatment efficacy : 0.9 "
       }
     })
     
@@ -873,13 +970,90 @@ shinyServer(function(input, output,session) {
         filename = "result.xlsx",
         content = function(file) {
 
-          write.xlsx(out_df(), file,sheetName="Sheet1" ,row.names = FALSE)
+          write.xlsx(out_df(), file,sheetName="Result" ,row.names = FALSE)
+          
+        },
+        contentType = "text/xlsx"
+      )
+    #G1
+    output$downloadDataG1 <- 
+      
+      downloadHandler(
         
+        filename = "result_g1.xlsx",
+        content = function(file) {
+          
+          write.xlsx(out_df_g1(), file, sheetName="Result_G1", append=TRUE, row.names=FALSE)
+          
+        },
+        contentType = "text/xlsx"
+      )
+    #G2
+    output$downloadDataG2 <- 
+      
+      downloadHandler(
+        
+        filename = "result_g2.xlsx",
+        content = function(file) {
+          
+          write.xlsx(out_df_g2(), file, sheetName="Result_G2", append=TRUE, row.names=FALSE)
+          
+        },
+        contentType = "text/xlsx"
+      )
+    
+    #G3
+    output$downloadDataG3 <- 
+      
+      downloadHandler(
+        
+        filename = "result_g3.xlsx",
+        content = function(file) {
+          
+          write.xlsx(out_df_g3(), file, sheetName="Result_G3", append=TRUE, row.names=FALSE)
+          
+        },
+        contentType = "text/xlsx"
+      )
+    output$downloadDataG4 <- 
+      
+      downloadHandler(
+        
+        filename = "result_g4.xlsx",
+        content = function(file) {
+          
+          write.xlsx(out_df_g4(), file, sheetName="Result_G4", append=TRUE, row.names=FALSE)
+          
+        },
+        contentType = "text/xlsx"
+      )
+    
+    output$downloadDataG5 <- 
+      
+      downloadHandler(
+        
+        filename = "result_g5.xlsx",
+        content = function(file) {
+          
+          write.xlsx(out_df_g5(), file, sheetName="Result_G5", append=TRUE, row.names=FALSE)
+          
+        },
+        contentType = "text/xlsx"
+      )
+    output$downloadDataG6 <- 
+      
+      downloadHandler(
+        
+        filename = "result_g6.xlsx",
+        content = function(file) {
+          
+          write.xlsx(out_df_g6(), file, sheetName="Result_G6", append=TRUE, row.names=FALSE)
+          
         },
         contentType = "text/xlsx"
       )
 
-    output$downloadData2 <-
+    output$downloadparameter <-
 
       downloadHandler(
         filename = "parameter.xlsx",
@@ -890,5 +1064,6 @@ shinyServer(function(input, output,session) {
         },
         contentType = "text/xlsx"
       )
+    
 
 })

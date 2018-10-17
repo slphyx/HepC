@@ -8,7 +8,8 @@
 #
 
 library(shiny)
-library(bootstrap)
+library(shinyBS)
+library(shinyjs)
 
 # Define UI for application that draws a histogram
 shinyUI(fluidPage(  
@@ -324,7 +325,13 @@ shinyUI(fluidPage(
 
                   actionButton("button", "Run model",class = "button btn btn-primary"),
                downloadButton("downloadData", "Download Table"),
-               downloadButton("downloadData2", "Download Parameter"),
+               downloadButton("downloadDataG1", "Download Table G1"),
+               downloadButton("downloadDataG2", "Download Table G2"),
+               downloadButton("downloadDataG3", "Download Table G3"),
+               downloadButton("downloadDataG4", "Download Table G4"),
+               downloadButton("downloadDataG5", "Download Table G5"),
+               downloadButton("downloadDataG6", "Download Table G6"),
+               downloadButton("downloadparameter", "Download Parameter"),
                  tabsetPanel(
                     #output 1
                     tabPanel("Prevalence Of CHC",
@@ -340,8 +347,26 @@ shinyUI(fluidPage(
                              ),
                     #output 3
                     tabPanel("Annual Incidence",
-                             checkboxInput("showgenotype2", "By Genotype", FALSE),
-                             plotOutput("distPlot3")
+                             useShinyjs(),
+                             checkboxInput("Anin_genotype", "By Genotype", FALSE),
+                             div(id="A_nonG",
+                               plotOutput("Anin_Plot")
+                               ),
+                             
+                             div(id="A_G",
+                                tags$h3("C1 Patient Cured"),
+                                hr(),
+                                plotOutput("Anin_G_C1_Plot"),
+                                tags$h3("C2 Patient Cured"),
+                                hr(),
+                                plotOutput("Anin_G_C2_Plot"),
+                                tags$h3("C3 Patient Cured"),
+                                hr(),
+                                plotOutput("Anin_G_C3_Plot"),
+                                tags$h3("C4 Patient Cured"),
+                                hr(),
+                                plotOutput("Anin_G_C4_Plot")
+                                )
                             ),
                     #output 4
                     tabPanel("Estimated cost",

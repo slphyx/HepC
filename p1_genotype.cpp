@@ -81,33 +81,34 @@ List PanHepC(double time, List state, List parms){
   
   //get the state values  
   //These are all vectors with genotype 1 to 6
-  NumericVector S = state["S"];
-  NumericVector C1 = state["C1"]; 
-  NumericVector C2 = state["C2"];
-  NumericVector C3 = state["C3"];
-  NumericVector C4 = state["C4"];
-  NumericVector F0 = state["F0"];
-  NumericVector F1 = state["F1"];
-  NumericVector F2 = state["F2"];
-  NumericVector F3 = state["F3"];
+  NumericVector S = NumericVector::create(state["S_g1"],state["S_g2"],state["S_g3"],state["S_g4"],state["S_g5"],state["S_g6"]);
   
-  NumericVector HCC_A = state["HCC_A"];
-  NumericVector HCC_B = state["HCC_B"];
-  NumericVector HCC_C = state["HCC_C"];
-  NumericVector HCC_D = state["HCC_D"];
+  NumericVector C1 = NumericVector::create(state["C1_g1"],state["C1_g2"],state["C1_g3"],state["C1_g4"],state["C1_g5"],state["C1_g6"]); 
+  NumericVector C2 = NumericVector::create(state["C2_g1"],state["C2_g2"],state["C2_g3"],state["C2_g4"],state["C2_g5"],state["C2_g6"]);
+  NumericVector C3 = NumericVector::create(state["C3_g1"],state["C3_g2"],state["C3_g3"],state["C3_g4"],state["C3_g5"],state["C3_g6"]);
+  NumericVector C4 = NumericVector::create(state["C4_g1"],state["C4_g2"],state["C4_g3"],state["C4_g4"],state["C4_g5"],state["C4_g6"]);
+  NumericVector F0 = NumericVector::create(state["F0_g1"],state["F0_g2"],state["F0_g3"],state["F0_g4"],state["F0_g5"],state["F0_g6"]);
+  NumericVector F1 = NumericVector::create(state["F1_g1"],state["F1_g2"],state["F1_g3"],state["F1_g4"],state["F1_g5"],state["F1_g6"]);
+  NumericVector F2 = NumericVector::create(state["F2_g1"],state["F2_g2"],state["F2_g3"],state["F2_g4"],state["F2_g5"],state["F2_g6"]);
+  NumericVector F3 = NumericVector::create(state["F3_g1"],state["F3_g2"],state["F3_g3"],state["F3_g4"],state["F3_g5"],state["F3_g6"]);;
   
-  NumericVector C1std_cured = state["C1std_cured"];
-  NumericVector C1new_cured = state["C1new_cured"];
-  NumericVector C2new_cured = state["C2new_cured"];
-  NumericVector C3new_cured = state["C3new_cured"];
-  NumericVector C4new_cured = state["C4new_cured"];
+  NumericVector HCC_A = NumericVector::create(state["HCC_A_g1"],state["HCC_A_g2"],state["HCC_A_g3"],state["HCC_A_g4"],state["HCC_A_g5"],state["HCC_A_g6"]);
+  NumericVector HCC_B = NumericVector::create(state["HCC_B_g1"],state["HCC_B_g2"],state["HCC_B_g3"],state["HCC_B_g4"],state["HCC_B_g5"],state["HCC_B_g6"]);
+  NumericVector HCC_C = NumericVector::create(state["HCC_C_g1"],state["HCC_C_g2"],state["HCC_C_g3"],state["HCC_C_g4"],state["HCC_C_g5"],state["HCC_C_g6"]);
+  NumericVector HCC_D = NumericVector::create(state["HCC_D_g1"],state["HCC_D_g2"],state["HCC_D_g3"],state["HCC_D_g4"],state["HCC_D_g5"],state["HCC_D_g6"]);
   
-  NumericVector death = state["death"];
-  NumericVector deathHCC = state["deathHCC"];
-  NumericVector deathC14 = state["deathC14"];
+  NumericVector C1std_cured = NumericVector::create(state["C1std_cured_g1"],state["C1std_cured_g2"],state["C1std_cured_g3"],state["C1std_cured_g4"],state["C1std_cured_g5"],state["C1std_cured_g6"]);
+  NumericVector C1new_cured = NumericVector::create(state["C1new_cured_g1"],state["C1new_cured_g2"],state["C1new_cured_g3"],state["C1new_cured_g4"],state["C1new_cured_g5"],state["C1new_cured_g6"]);
+  NumericVector C2new_cured = NumericVector::create(state["C2new_cured_g1"],state["C2new_cured_g2"],state["C2new_cured_g3"],state["C2new_cured_g4"],state["C2new_cured_g5"],state["C2new_cured_g6"]);
+  NumericVector C3new_cured = NumericVector::create(state["C3new_cured_g1"],state["C3new_cured_g2"],state["C3new_cured_g3"],state["C3new_cured_g4"],state["C3new_cured_g5"],state["C3new_cured_g6"]);
+  NumericVector C4new_cured = NumericVector::create(state["C4new_cured_g1"],state["C4new_cured_g2"],state["C4new_cured_g3"],state["C4new_cured_g4"],state["C4new_cured_g5"],state["C4new_cured_g6"]);
+  
+  NumericVector death = NumericVector::create(state["death_g1"],state["death_g2"],state["death_g3"],state["death_g4"],state["death_g5"],state["death_g6"]);
+  NumericVector deathHCC = NumericVector::create(state["deathHCC_g1"],state["deathHCC_g2"],state["deathHCC_g3"],state["deathHCC_g4"],state["deathHCC_g5"],state["deathHCC_g6"]);
+  NumericVector deathC14 = NumericVector::create(state["deathC14_g1"],state["deathC14_g2"],state["deathC14_g3"],state["deathC14_g4"],state["deathC14_g5"],state["deathC14_g6"]);
   
   //These are all vectors with genotype 1 to 6   
-  NumericVector pop;
+  double pop;
   pop = popfn(time, K, P0, r);
     
   double treated1;
@@ -315,8 +316,8 @@ List PanHepC(double time, List state, List parms){
   NumericVector total_HCC = HCC_A+HCC_B+HCC_C+HCC_D;
   NumericVector total_HCV = F0+F1+F2+F3+C1+C2+C3+C4;
     
-  //change NumericVector to List
-  List compartments(21);
+
+  NumericVector compartments(126);
   // compartments["S"] = dS;
   // compartments["F0"] = dF0;
   // compartments["F1"] = dF1;
@@ -338,27 +339,152 @@ List PanHepC(double time, List state, List parms){
   // compartments["C2new_cured"] = dC2new_cured;
   // compartments["C3new_cured"] = dC3new_cured;
   // compartments["C4new_cured"] = dC4new_cured;
-  compartments[0] = dS;
-  compartments[1] = dF0;
-  compartments[2] = dF1;
-  compartments[3] = dF2;
-  compartments[4] = dF3;
-  compartments[5] = dC1;
-  compartments[6] = dC2;
-  compartments[7] = dC3;
-  compartments[8] = dC4;
-  compartments[9] = dHCC_A;
-  compartments[10] = dHCC_B;
-  compartments[11] = dHCC_C;
-  compartments[12] = dHCC_D;
-  compartments[13] = ddeath;
-  compartments[14] = ddeathHCC;
-  compartments[15] = ddeathC14;
-  compartments[16] = dC1std_cured;
-  compartments[17] = dC1new_cured;
-  compartments[18] = dC2new_cured;
-  compartments[19] = dC3new_cured;
-  compartments[20] = dC4new_cured;
+  compartments[0] = dS[0];
+  compartments[1] = dS[1];
+  compartments[2] = dS[2];
+  compartments[3] = dS[3];
+  compartments[4] = dS[4];
+  compartments[5] = dS[5];
+  
+  compartments[6] = dF0[0];
+  compartments[7] = dF0[1];
+  compartments[8] = dF0[2];
+  compartments[9] = dF0[3];
+  compartments[10] = dF0[4];
+  compartments[11] = dF0[5];
+  
+  compartments[12] = dF1[0];
+  compartments[13] = dF1[1];
+  compartments[14] = dF1[2];
+  compartments[15] = dF1[3];
+  compartments[16] = dF1[4];
+  compartments[17] = dF1[5];
+  
+  compartments[18] = dF2[0];
+  compartments[19] = dF2[1];
+  compartments[20] = dF2[2];
+  compartments[21] = dF2[3];
+  compartments[22] = dF2[4];
+  compartments[23] = dF2[5];
+  
+  compartments[24] = dF3[0];
+  compartments[25] = dF3[1];
+  compartments[26] = dF3[2];
+  compartments[27] = dF3[3];
+  compartments[28] = dF3[4];
+  compartments[29] = dF3[5];
+  
+  compartments[30] = dC1[0];
+  compartments[31] = dC1[1];
+  compartments[32] = dC1[2];
+  compartments[33] = dC1[3];
+  compartments[34] = dC1[4];
+  compartments[35] = dC1[5];
+  
+  compartments[36] = dC2[0];
+  compartments[37] = dC2[1];
+  compartments[38] = dC2[2];
+  compartments[39] = dC2[3];
+  compartments[40] = dC2[4];
+  compartments[41] = dC2[5];
+  
+  compartments[42] = dC3[0];
+  compartments[43] = dC3[1];
+  compartments[44] = dC3[2];
+  compartments[45] = dC3[3];
+  compartments[46] = dC3[4];
+  compartments[47] = dC3[5];
+  
+  compartments[48] = dC4[0];
+  compartments[49] = dC4[1];
+  compartments[50] = dC4[2];
+  compartments[51] = dC4[3];
+  compartments[52] = dC4[4];
+  compartments[53] = dC4[5];
+  
+  compartments[54] = dHCC_A[0];
+  compartments[55] = dHCC_A[1];
+  compartments[56] = dHCC_A[2];
+  compartments[57] = dHCC_A[3];
+  compartments[58] = dHCC_A[4];
+  compartments[59] = dHCC_A[5];
+  
+  compartments[60] = dHCC_B[0];
+  compartments[61] = dHCC_B[1];
+  compartments[62] = dHCC_B[2];
+  compartments[63] = dHCC_B[3];
+  compartments[64] = dHCC_B[4];
+  compartments[65] = dHCC_B[5];
+  
+  compartments[66] = dHCC_C[0];
+  compartments[67] = dHCC_C[1];
+  compartments[68] = dHCC_C[2];
+  compartments[69] = dHCC_C[3];
+  compartments[70] = dHCC_C[4];
+  compartments[71] = dHCC_C[5];
+  
+  compartments[72] = dHCC_D[0];
+  compartments[73] = dHCC_D[1];
+  compartments[74] = dHCC_D[2];
+  compartments[75] = dHCC_D[3];
+  compartments[76] = dHCC_D[4];
+  compartments[77] = dHCC_D[5];
+  
+  compartments[78] = ddeath[0];
+  compartments[79] = ddeath[1];
+  compartments[80] = ddeath[2];
+  compartments[81] = ddeath[3];
+  compartments[82] = ddeath[4];
+  compartments[83] = ddeath[5];
+  
+  compartments[84] = ddeathHCC[0];
+  compartments[85] = ddeathHCC[1];
+  compartments[86] = ddeathHCC[2];
+  compartments[87] = ddeathHCC[3];
+  compartments[88] = ddeathHCC[4];
+  compartments[89] = ddeathHCC[5];
+  
+  compartments[90] = ddeathC14[0];
+  compartments[91] = ddeathC14[1];
+  compartments[92] = ddeathC14[2];
+  compartments[93] = ddeathC14[3];
+  compartments[94] = ddeathC14[4];
+  compartments[95] = ddeathC14[5];
+  
+  compartments[96] = dC1std_cured[0];
+  compartments[97] = dC1std_cured[1];
+  compartments[98] = dC1std_cured[2];
+  compartments[99] = dC1std_cured[3];
+  compartments[100] = dC1std_cured[4];
+  compartments[101] = dC1std_cured[5];
+  
+  compartments[102] = dC1new_cured[0];
+  compartments[103] = dC1new_cured[1];
+  compartments[104] = dC1new_cured[2];
+  compartments[105] = dC1new_cured[3];
+  compartments[106] = dC1new_cured[4];
+  compartments[107] = dC1new_cured[5];
+  
+  compartments[108] = dC2new_cured[0];
+  compartments[109] = dC2new_cured[1];
+  compartments[110] = dC2new_cured[2];
+  compartments[111] = dC2new_cured[3];
+  compartments[112] = dC2new_cured[4];
+  compartments[113] = dC2new_cured[5];
+  
+  compartments[114] = dC3new_cured[0];
+  compartments[115] = dC3new_cured[1];
+  compartments[116] = dC3new_cured[2];
+  compartments[117] = dC3new_cured[3];
+  compartments[118] = dC3new_cured[4];
+  compartments[119] = dC3new_cured[5];
+  
+  compartments[120] = dC4new_cured[0];
+  compartments[121] = dC4new_cured[1];
+  compartments[122] = dC4new_cured[2];
+  compartments[123] = dC4new_cured[3];
+  compartments[124] = dC4new_cured[4];
+  compartments[125] = dC4new_cured[5];
   
   List outlist(5);
   outlist[0] = compartments;
@@ -372,13 +498,8 @@ List PanHepC(double time, List state, List parms){
   
 }
 
-// [[Rcpp::export]]
-NumericVector f(NumericVector F0,NumericVector F1){
-  return F0 + F1;
-}
+
 
 /*** R
-a= c(1,2,3)
-b = c (2,3,4)
-f(a,b)
+
 */

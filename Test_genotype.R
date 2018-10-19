@@ -3,6 +3,7 @@ library(deSolve)
 library(ggplot2)
 library(tidyverse)
 library(reshape2)
+library(scales)
 
 require(deSolve)
 
@@ -256,9 +257,26 @@ x_pie <- outputs_df[colnames(outputs_df) %in% c("time",c("propF0_genotype_g1","p
 x_time <- outputs_df["time"] == 2000
 x_pie <- x_pie[x_time,]
 x_pie <- x_pie[colnames(x_pie)  %in% c("propF0_genotype_g1","propF0_genotype_g2","propF0_genotype_g3","propF0_genotype_g4","propF0_genotype_g5","propF0_genotype_g6")]
-
 pie(unlist(x_pie))
 
+x<- unlist(x_pie)
+piepercent<- round(100*x/sum(x), 1)
+pie(unlist(x_pie),labels = piepercent)
+
+#ggplot2 pie
+x_pie <- outputs_df[colnames(outputs_df) %in% c("time",c("propF0_genotype_g1","propF0_genotype_g2","propF0_genotype_g3","propF0_genotype_g4","propF0_genotype_g5","propF0_genotype_g6"))]
+x_melt_pie <-melt(x_pie, id="time")
+x_time <- outputs_df["time"] == 2000
+x_melt_pie <- x_melt_pie[x_time,]
+
+gl2_pie <- ggplot(x_melt_pie, aes(x="", y=value, fill=variable))+
+              geom_bar(width = 1, stat = "identity") + 
+              coord_polar("y", start=0)+  scale_fill_brewer(palette="Blues") + theme_minimal() +  
+              theme(axis.text.x=element_blank()) +
+              geom_text(aes(y = value/3 + c(0, cumsum(value)[-length(value)]), 
+              label = percent(value)), size=3)
+              
+gl2_pie
 
 #end pie chart
 

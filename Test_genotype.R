@@ -1,14 +1,19 @@
 library(Rcpp)
 library(deSolve)
-
-setwd("C:/hepc")
-sourceCpp('p1_genotype.cpp')
+library(ggplot2)
+library(tidyverse)
+library(reshape2)
 
 require(deSolve)
 
 # encounter error
 library.dynam.unload("deSolve", libpath=paste(.libPaths()[1], "//deSolve", sep=""))
 library.dynam("deSolve", package="deSolve", lib.loc=.libPaths()[1])
+
+setwd("C:/hepc")
+sourceCpp('p1_genotype.cpp')
+
+
 
 parms <- list(
   K=66785001,
@@ -234,7 +239,6 @@ inits <- c(
   
 )
 
-inits <- as.data.frame(inits)
 year <- c(1999,2016)
 
 times <- seq(year[1], year[2], by = 0.01)
@@ -245,6 +249,20 @@ outputs <- ode( y = inits,times =  times, func = PanHepC, parms = parms, method 
 outputs
 
 plot(outputs)
+
+#pie chart
+#propF0_genotype
+x_pie <- outputs_df[colnames(outputs_df) %in% c("time",c("propF0_genotype_g1","propF0_genotype_g2","propF0_genotype_g3","propF0_genotype_g4","propF0_genotype_g5","propF0_genotype_g6"))]
+x_time <- outputs_df["time"] == 2000
+x_pie <- x_pie[x_time,]
+x_pie <- x_pie[colnames(x_pie)  %in% c("propF0_genotype_g1","propF0_genotype_g2","propF0_genotype_g3","propF0_genotype_g4","propF0_genotype_g5","propF0_genotype_g6")]
+
+pie(unlist(x_pie))
+
+
+#end pie chart
+
+outputs_df <- as.data.frame(outputs)
 
 ggplot(data = outputs_df) + 
   geom_line(mapping = aes(x = 0, y =0)) 
@@ -271,7 +289,7 @@ test_data_long <- melt(outputs_df, id="time")
 outputs <- ode( y = inits,times =  times, func = PanHepC, parms = parms, method = "rk4")
 outputs_df <- as.data.frame(outputs)
 x <- outputs_df[colnames(outputs_df) %in% c("time","S")]
-x <- outputs_df[colnames(outputs_df) %in% c("time",c("F0","F1","F2","F3"))]
+x <- outputs_df[colnames(outputs_df) %in% c("time",c("prev_g1","prev_g2","prev_g3","prev_g4","prev_g5","prev_g6"))]
 x <- outputs_df[colnames(outputs_df) %in% c("time",c("C1","C2","C3","C4"))]
 x <- outputs_df[colnames(outputs_df) %in% c("time",c("HHC_A","HHC_B","HHC_C","HHC_D"))]
 x <- outputs_df[colnames(outputs_df) %in% c("time",c("C1std_cured","C1new_cured"

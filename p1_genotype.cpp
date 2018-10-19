@@ -299,7 +299,21 @@ List PanHepC(double time, List state, List parms){
   
   NumericVector incHCC = c1bA*(C1+C1std_cured+C1new_cured)+c2bA*(C2+C2new_cured)+c1bB*(C1+C1std_cured+C1new_cured)+c2bB*(C2+C2new_cured)+c1bC*(C1+C1std_cured+C1new_cured)+c2bC*(C2+C2new_cured)+c1bD*(C1+C1std_cured+C1new_cured)+c2bD*(C2+C2new_cured)+c3bD*(C3+C3new_cured)+c4bD*(C4+C4new_cured);
   
+  NumericVector HCV = F0+F1+F2+F3+C1+C2+C3+C4;
   
+  NumericVector prev = 100*(infect/pop);
+  
+  //###total of new_death,HCC,incHCC,HCV
+  double total_new_death = deathc1*sum(C1)+deathc2*sum(C2)+deathc3*sum(C3)+deathc4*sum(C4)+deathbA*sum(HCC_A)+deathbB*sum(HCC_B)+deathbC*sum(HCC_C)+deathbD*sum(HCC_D);
+  
+  double total_HCC = sum(HCC_A)+sum(HCC_B)+sum(HCC_C)+sum(HCC_D);
+  
+  double total_incHCC = c1bA*(sum(C1)+sum(C1std_cured)+sum(C1new_cured))+c2bA*(sum(C2)+sum(C2new_cured))+c1bB*(sum(C1)+sum(C1std_cured)+sum(C1new_cured))+c2bB*(sum(C2)+sum(C2new_cured))+c1bC*(sum(C1)+sum(C1std_cured)+sum(C1new_cured))+c2bC*(sum(C2)+sum(C2new_cured))+c1bD*(sum(C1)+sum(C1std_cured)+sum(C1new_cured))+c2bD*(sum(C2)+sum(C2new_cured))+c3bD*(sum(C3)+sum(C3new_cured))+c4bD*(sum(C4)+sum(C4new_cured));
+  
+  double total_HCV = sum(F0)+sum(F1)+sum(F2)+sum(F3)+sum(C1)+sum(C2)+sum(C3)+sum(C4);
+  
+  double total_prev = 100*(sum(infect)/pop);
+    
 //###still calculate for each genotype, must sum again to get the total
   
   //use sum() to F0,F1,F2,F3
@@ -309,12 +323,21 @@ List PanHepC(double time, List state, List parms){
   propF[2] = sum(F2)/(sum(F0)+sum(F1)+sum(F2)+sum(F3));
   propF[3] = sum(F3)/(sum(F0)+sum(F1)+sum(F2)+sum(F3));
 
-//###still calculate for each genotype, must sum again to get the total
-      
-  NumericVector prev = 100*(infect/pop);
-  
-  NumericVector total_HCC = HCC_A+HCC_B+HCC_C+HCC_D;
-  NumericVector total_HCV = F0+F1+F2+F3+C1+C2+C3+C4;
+  //add more prop genotype f0 to hcc_d pie
+  NumericVector propF0_genotype = F0/sum(F0);
+  NumericVector propF1_genotype = F1/sum(F1);
+  NumericVector propF2_genotype = F2/sum(F2);
+  NumericVector propF3_genotype = F3/sum(F3);
+    
+  NumericVector propC1_genotype = C1/sum(C1);
+  NumericVector propC2_genotype = C2/sum(C2);
+  NumericVector propC3_genotype = C3/sum(C3);
+  NumericVector propC4_genotype = C4/sum(C4);
+    
+  NumericVector propHCC_A_genotype = HCC_A/sum(HCC_A);
+  NumericVector propHCC_B_genotype = HCC_B/sum(HCC_B);
+  NumericVector propHCC_C_genotype = HCC_C/sum(HCC_C);
+  NumericVector propHCC_D_genotype = HCC_D/sum(HCC_D);
     
 
   NumericVector compartments(126);
@@ -486,12 +509,24 @@ List PanHepC(double time, List state, List parms){
   compartments[124] = dC4new_cured[4];
   compartments[125] = dC4new_cured[5];
   
-  List outlist(5);
+  List outlist(17);
   outlist[0] = compartments;
-  outlist[1] = prev;
-  outlist[2] = incHCC;
-  outlist[3] = pop;
-  outlist[4] = infect;
+  outlist[1] = List::create(Named("prev_g1") = prev[0] , _["prev_g2"] = prev[1], _["prev_g3"] = prev[2], _["prev_g4"] = prev[3], _["prev_g5"] = prev[4], _["prev_g6"] = prev[5],_["total_prev"] = total_prev);
+  outlist[2] = List::create(Named("incHCC_g1") = incHCC[0] , _["incHCC_g2"] = incHCC[1], _["incHCC_g3"] = incHCC[2], _["incHCC_g4"] = incHCC[3], _["incHCC_g5"] = incHCC[4], _["incHCC_g6"] = incHCC[5]);
+  outlist[3] = List::create(Named("Population") = pop);
+  outlist[4] = List::create(Named("infect_g1") = infect[0] , _["infect_g2"] = infect[1], _["infect_g3"] = infect[2], _["infect_g4"] = infect[3], _["infect_g5"] = infect[4], _["infect_g6"] = infect[5]);
+  outlist[5] = List::create(Named("propF0_genotype_g1") = propF0_genotype[0] , _["propF0_genotype_g2"] = propF0_genotype[1], _["propF0_genotype_g3"] = propF0_genotype[2], _["propF0_genotype_g4"] = propF0_genotype[3], _["propF0_genotype_g5"] = propF0_genotype[4], _["propF0_genotype_g6"] = propF0_genotype[5]);
+  outlist[6] = List::create(Named("propF1_genotype_g1") = propF1_genotype[0] , _["propF1_genotype_g2"] = propF1_genotype[1], _["propF1_genotype_g3"] = propF1_genotype[2], _["propF1_genotype_g4"] = propF1_genotype[3], _["propF1_genotype_g5"] = propF1_genotype[4], _["propF1_genotype_g6"] = propF1_genotype[5]);
+  outlist[7] = List::create(Named("propF2_genotype_g1") = propF2_genotype[0] , _["propF2_genotype_g2"] = propF2_genotype[1], _["propF2_genotype_g3"] = propF2_genotype[2], _["propF2_genotype_g4"] = propF2_genotype[3], _["propF2_genotype_g5"] = propF2_genotype[4], _["propF2_genotype_g6"] = propF2_genotype[5]);
+  outlist[8] = List::create(Named("propF3_genotype_g1") = propF3_genotype[0] , _["propF3_genotype_g2"] = propF3_genotype[1], _["propF3_genotype_g3"] = propF3_genotype[2], _["propF3_genotype_g4"] = propF3_genotype[3], _["propF3_genotype_g5"] = propF3_genotype[4], _["propF3_genotype_g6"] = propF3_genotype[5]);
+  outlist[9] = List::create(Named("propC1_genotype_g1") = propC1_genotype[0] , _["propC1_genotype_g2"] = propC1_genotype[1], _["propC1_genotype_g3"] = propC1_genotype[2], _["propC1_genotype_g4"] = propC1_genotype[3], _["propC1_genotype_g5"] = propC1_genotype[4], _["propC1_genotype_g6"] = propC1_genotype[5]);
+  outlist[10] = List::create(Named("propC2_genotype_g1") = propC2_genotype[0] , _["propC2_genotype_g2"] = propC2_genotype[1], _["propC2_genotype_g3"] = propC2_genotype[2], _["propC2_genotype_g4"] = propC2_genotype[3], _["propC2_genotype_g5"] = propC2_genotype[4], _["propC2_genotype_g6"] = propC2_genotype[5]);
+  outlist[11] = List::create(Named("propC3_genotype_g1") = propC3_genotype[0] , _["propC3_genotype_g2"] = propC3_genotype[1], _["propC3_genotype_g3"] = propC3_genotype[2], _["propC3_genotype_g4"] = propC3_genotype[3], _["propC3_genotype_g5"] = propC3_genotype[4], _["propC3_genotype_g6"] = propC3_genotype[5]);
+  outlist[12] = List::create(Named("propC4_genotype_g1") = propC4_genotype[0] , _["propC4_genotype_g2"] = propC4_genotype[1], _["propC4_genotype_g3"] = propC4_genotype[2], _["propC4_genotype_g4"] = propC4_genotype[3], _["propC4_genotype_g5"] = propC4_genotype[4], _["propC4_genotype_g6"] = propC4_genotype[5]);
+  outlist[13] = List::create(Named("propHCC_A_genotype_g1") = propHCC_A_genotype[0] , _["propHCC_A_genotype_g2"] = propHCC_A_genotype[1], _["propHCC_A_genotype_g3"] = propHCC_A_genotype[2], _["propHCC_A_genotype_g4"] = propHCC_A_genotype[3], _["propHCC_A_genotype_g5"] = propHCC_A_genotype[4], _["propHCC_A_genotype_g6"] = propHCC_A_genotype[5]);
+  outlist[14] = List::create(Named("propHCC_B_genotype_g1") = propHCC_B_genotype[0] , _["propHCC_B_genotype_g2"] = propHCC_B_genotype[1], _["propHCC_B_genotype_g3"] = propHCC_B_genotype[2], _["propHCC_B_genotype_g4"] = propHCC_B_genotype[3], _["propHCC_B_genotype_g5"] = propHCC_B_genotype[4], _["propHCC_B_genotype_g6"] = propHCC_B_genotype[5]);
+  outlist[15] = List::create(Named("propHCC_C_genotype_g1") = propHCC_C_genotype[0] , _["propHCC_C_genotype_g2"] = propHCC_C_genotype[1], _["propHCC_C_genotype_g3"] = propHCC_C_genotype[2], _["propHCC_C_genotype_g4"] = propHCC_C_genotype[3], _["propHCC_C_genotype_g5"] = propHCC_C_genotype[4], _["propHCC_C_genotype_g6"] = propHCC_C_genotype[5]);
+  outlist[16] = List::create(Named("propHCC_D_genotype_g1") = propHCC_D_genotype[0] , _["propHCC_D_genotype_g2"] = propHCC_D_genotype[1], _["propHCC_D_genotype_g3"] = propHCC_D_genotype[2], _["propHCC_D_genotype_g4"] = propHCC_D_genotype[3], _["propHCC_D_genotype_g5"] = propHCC_D_genotype[4], _["propHCC_D_genotype_g6"] = propHCC_D_genotype[5]);
   
   return outlist;
   

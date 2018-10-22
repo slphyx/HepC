@@ -325,12 +325,6 @@ shinyUI(fluidPage(
 
                   actionButton("button", "Run model",class = "button btn btn-primary"),
                downloadButton("downloadData", "Download Table"),
-               downloadButton("downloadDataG1", "Download Table G1"),
-               downloadButton("downloadDataG2", "Download Table G2"),
-               downloadButton("downloadDataG3", "Download Table G3"),
-               downloadButton("downloadDataG4", "Download Table G4"),
-               downloadButton("downloadDataG5", "Download Table G5"),
-               downloadButton("downloadDataG6", "Download Table G6"),
                downloadButton("downloadparameter", "Download Parameter"),
                  tabsetPanel(
                     #output 1

@@ -16,12 +16,73 @@ library(tidyverse)
 library(dplyr)
 library(erer)
 library(xlsx)
+library(scales)
 library(shinyjs)
 
 # Define server logic required to draw a histogram
 shinyServer(function(input, output,session) {
 
   v <- reactiveValues(doPlot = FALSE)
+  Treatment <- reactiveValues(new_cureF0= c(0.1,0.1,0.1,0.1,0.1,0.1),
+                              new_cureF1= c(0.1,0.1,0.1,0.1,0.1,0.1),
+                              new_cureF2 = c(0.1,0.1,0.1,0.1,0.1,0.1),
+                              new_cureF3 = c(0.1,0.1,0.1,0.1,0.1,0.1),
+                              new_cureC1 = c(0.1,0.1,0.1,0.1,0.1,0.1),
+                              new_cureC2 = c(0.1,0.1,0.1,0.1,0.1,0.1),
+                              new_cureC3 = c(0.1,0.1,0.1,0.1,0.1,0.1),
+                              new_cureC4 = c(0.1,0.1,0.1,0.1,0.1,0.1))
+  
+  observeEvent(input$Treatment, {
+    if(input$Treatment == 1){
+      Treatment$new_cureF0 <- c(0.1,0.2,0.3,0.4,0.5,0.6)
+      Treatment$new_cureF1 <- c(0.3,0.2,0.3,0.4,0.5,0.6)
+      Treatment$new_cureF2 <- c(0.1,0.2,0.3,0.4,0.5,0.6)
+      Treatment$new_cureF3 <- c(0.1,0.2,0.5,0.4,0.5,0.6)
+      Treatment$new_cureC1 <- c(0.1,0.2,0.3,0.4,0.5,0.6)
+      Treatment$new_cureC2 <- c(0.1,0.2,0.3,0.8,0.5,0.6)
+      Treatment$new_cureC3 <- c(0.1,0.2,0.3,0.4,0.2,0.6)
+      Treatment$new_cureC4 <- c(0.1,0.2,0.3,0.4,0.5,0.4)
+      
+    }else if(input$Treatment == 2){
+      Treatment$new_cureF0 <- c(0.2,0.2,0.3,0.4,0.5,0.6)
+      Treatment$new_cureF1 <- c(0.3,0.2,0.3,0.4,0.5,0.6)
+      Treatment$new_cureF2 <- c(0.2,0.2,0.3,0.4,0.5,0.6)
+      Treatment$new_cureF3 <- c(0.2,0.2,0.5,0.4,0.5,0.6)
+      Treatment$new_cureC1 <- c(0.2,0.2,0.3,0.4,0.5,0.6)
+      Treatment$new_cureC2 <- c(0.2,0.2,0.3,0.8,0.5,0.6)
+      Treatment$new_cureC3 <- c(0.2,0.2,0.3,0.4,0.2,0.6)
+      Treatment$new_cureC4 <- c(0.2,0.2,0.3,0.4,0.5,0.4)
+    }else if(input$Treatment == 3){
+      Treatment$new_cureF0 <- c(0.3,0.3,0.3,0.4,0.5,0.6)
+      Treatment$new_cureF1 <- c(0.3,0.3,0.3,0.4,0.5,0.6)
+      Treatment$new_cureF2 <- c(0.3,0.3,0.3,0.4,0.5,0.6)
+      Treatment$new_cureF3 <- c(0.3,0.3,0.5,0.4,0.5,0.6)
+      Treatment$new_cureC1 <- c(0.3,0.3,0.3,0.4,0.5,0.6)
+      Treatment$new_cureC2 <- c(0.3,0.3,0.3,0.8,0.5,0.6)
+      Treatment$new_cureC3 <- c(0.3,0.3,0.3,0.4,0.3,0.6)
+      Treatment$new_cureC4 <- c(0.3,0.3,0.3,0.4,0.5,0.4)
+    }else if(input$Treatment == 4){
+      Treatment$new_cureF0 <- c(0.4,0.4,0.4,0.4,0.5,0.6)
+      Treatment$new_cureF1 <- c(0.4,0.4,0.4,0.4,0.5,0.6)
+      Treatment$new_cureF2 <- c(0.4,0.4,0.4,0.4,0.5,0.6)
+      Treatment$new_cureF3 <- c(0.4,0.4,0.5,0.4,0.5,0.6)
+      Treatment$new_cureC1 <- c(0.4,0.4,0.4,0.4,0.5,0.6)
+      Treatment$new_cureC2 <- c(0.4,0.4,0.4,0.8,0.5,0.6)
+      Treatment$new_cureC3 <- c(0.4,0.4,0.4,0.4,0.4,0.6)
+      Treatment$new_cureC4 <- c(0.4,0.4,0.4,0.4,0.5,0.4)
+    }else{
+      Treatment$new_cureF0 <- c(0.5,0.5,0.5,0.5,0.5,0.6)
+      Treatment$new_cureF1 <- c(0.5,0.5,0.5,0.5,0.5,0.6)
+      Treatment$new_cureF2 <- c(0.5,0.5,0.5,0.5,0.5,0.6)
+      Treatment$new_cureF3 <- c(0.5,0.5,0.5,0.5,0.5,0.6)
+      Treatment$new_cureC1 <- c(0.5,0.5,0.5,0.5,0.5,0.6)
+      Treatment$new_cureC2 <- c(0.5,0.5,0.5,0.8,0.5,0.6)
+      Treatment$new_cureC3 <- c(0.5,0.5,0.5,0.5,0.5,0.6)
+      Treatment$new_cureC4 <- c(0.5,0.5,0.5,0.5,0.5,0.5)
+    }
+    
+  })
+  
   options(scipen=6)
   setwd("C:/hepc/web")
   sourceCpp('p1_genotype.cpp')
@@ -32,6 +93,14 @@ shinyServer(function(input, output,session) {
   
   observe({
     toggle(id = "A_nonG", condition = !input$Anin_genotype)
+  })
+  
+  observe({
+    toggle(id = "Pie_G", condition = input$showgenotype_pie)
+  })
+  
+  observe({
+    toggle(id = "Pie_nonG", condition = !input$showgenotype_pie)
   })
   
   observeEvent(input$Treatment, {
@@ -512,19 +581,154 @@ shinyServer(function(input, output,session) {
         scale_x_continuous(breaks=seq(input$year[1], input$year[2], 1))
       })
     })
+    
+    #piePlot
+    output$piePlot <- renderPlot({
+      
+      if (v$doPlot == FALSE) return()
+      x <-  select(out_df(), time ,propF0,propF1,propF2,propF3)
+      isolate({
+        
+        
+        #time year == input$year[2]
+        x_time <- out_df()["time"] == input$year[2]
+        x <- x[x_time,]
+        
+        x_melt <-melt(x, id="time")
+        
+        ggplot(x_melt, aes(x="", y=value, fill=variable))+
+          geom_bar(width = 1, stat = "identity") + 
+          coord_polar("y", start=0) +  scale_fill_brewer(palette="Blues") + theme_minimal() +  
+          theme(axis.text.x=element_blank()) +
+          geom_text(aes(y = value/3 + c(0, cumsum(value)[-length(value)]), 
+                        label = percent(value)), size=3)
+      })
+    })
+    
+    #piePlotF0
+    output$piePlot_F0 <- renderPlot({
+      
+      if (v$doPlot == FALSE) return()
+      x <-  select(out_df(), time ,contains("propF0_genotype"))
+      isolate({
+        
+        
+        #time year == input$year[2]
+        x_time <- out_df()["time"] == input$year[2]
+        x <- x[x_time,]
+        
+        x_melt <-melt(x, id="time")
+        
+        ggplot(x_melt, aes(x="", y=value, fill=variable))+
+          geom_bar(width = 1, stat = "identity") + 
+          coord_polar("y", start=0) +  scale_fill_brewer(palette="Blues") + theme_minimal() +  
+          theme(axis.text.x=element_blank()) +
+          geom_text(aes(y = value/3 + c(0, cumsum(value)[-length(value)]), 
+                        label = percent(value)), size=3)
+      })
+    })
+    #piePlotF1
+    output$piePlot_F1 <- renderPlot({
+      
+      if (v$doPlot == FALSE) return()
+      x <-  select(out_df(), time ,contains("propF1_genotype"))
+      isolate({
+        
+        
+        #time year == input$year[2]
+        x_time <- out_df()["time"] == input$year[2]
+        x <- x[x_time,]
+        
+        x_melt <-melt(x, id="time")
+        
+        ggplot(x_melt, aes(x="", y=value, fill=variable))+
+          geom_bar(width = 1, stat = "identity") + 
+          coord_polar("y", start=0) +  scale_fill_brewer(palette="Blues") + theme_minimal() +  
+          theme(axis.text.x=element_blank()) +
+          geom_text(aes(y = value/3 + c(0, cumsum(value)[-length(value)]), 
+                        label = percent(value)), size=3)
+      })
+    })
+    
+    #piePlotF2
+    output$piePlot_F2 <- renderPlot({
+      
+      if (v$doPlot == FALSE) return()
+      x <-  select(out_df(), time ,contains("propF2_genotype"))
+      isolate({
+        
+        
+        #time year == input$year[2]
+        x_time <- out_df()["time"] == input$year[2]
+        x <- x[x_time,]
+        
+        x_melt <-melt(x, id="time")
+        
+        ggplot(x_melt, aes(x="", y=value, fill=variable))+
+          geom_bar(width = 1, stat = "identity") + 
+          coord_polar("y", start=0) +  scale_fill_brewer(palette="Blues") + theme_minimal() +  
+          theme(axis.text.x=element_blank()) +
+          geom_text(aes(y = value/3 + c(0, cumsum(value)[-length(value)]), 
+                        label = percent(value)), size=3)
+      })
+    })
+    
+    
+    #piePlotF3
+    output$piePlot_F3 <- renderPlot({
+      
+      if (v$doPlot == FALSE) return()
+      x <-  select(out_df(), time ,contains("propF3_genotype"))
+      isolate({
+        
+        
+        #time year == input$year[2]
+        x_time <- out_df()["time"] == input$year[2]
+        x <- x[x_time,]
+        
+        x_melt <-melt(x, id="time")
+        
+        ggplot(x_melt, aes(x="", y=value, fill=variable))+
+          geom_bar(width = 1, stat = "identity") + 
+          coord_polar("y", start=0) +  scale_fill_brewer(palette="Blues") + theme_minimal() +  
+          theme(axis.text.x=element_blank()) +
+          geom_text(aes(y = value/3 + c(0, cumsum(value)[-length(value)]), 
+                        label = percent(value)), size=3)
+      })
+    })
+    
+    
     #textoutput
     output$text1 <- renderText({
-      if(input$Treatment == 1){
-        "Treatment efficacy : 0.7"
-      } else if (input$Treatment == 2){
-        "Treatment efficacy : 0.9"
-      } else if (input$Treatment == 3){
-        "Treatment efficacy : 0.8"
-      } else if (input$Treatment == 4){
-        "Treatment efficacy : 0.9"
-      } else if (input$Treatment == 5){
-        "Treatment efficacy : 0.9 "
-      }
+        paste("Treatment efficacy F0 :" , mean(Treatment$new_cureF0))
+    })
+    
+    output$text2 <- renderText({
+        paste("Treatment efficacy F1 :" , mean(Treatment$new_cureF1))
+    })
+    
+    output$text3 <- renderText({
+       paste("Treatment efficacy F2 :" , mean(Treatment$new_cureF2))
+    })
+    
+    output$text4 <- renderText({
+      paste("Treatment efficacy F3 :" , mean(Treatment$new_cureF3))
+    })
+    
+    output$text5 <- renderText({
+      paste("Treatment efficacy C1 :" , mean(Treatment$new_cureC1))
+    })
+    
+    output$text6 <- renderText({
+      paste("Treatment efficacy C2 :" , mean(Treatment$new_cureC2))
+    })
+    
+    output$text7 <- renderText({
+      paste("Treatment efficacy C3 :" , mean(Treatment$new_cureC3))
+    })
+    
+    output$text8 <- renderText({
+      paste("Treatment efficacy C4 :" , mean(Treatment$new_cureC4))
     })
     
     output$downloadData <- 

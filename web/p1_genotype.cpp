@@ -509,7 +509,7 @@ List PanHepC(double time, List state, List parms){
   compartments[124] = dC4new_cured[4];
   compartments[125] = dC4new_cured[5];
   
-  List outlist(18);
+  List outlist(19);
   outlist[0] = compartments;
   outlist[1] = List::create(Named("prev_g1") = prev[0] , _["prev_g2"] = prev[1], _["prev_g3"] = prev[2], _["prev_g4"] = prev[3], _["prev_g5"] = prev[4], _["prev_g6"] = prev[5],_["total_prev"] = total_prev);
   outlist[2] = List::create(Named("incHCC_g1") = incHCC[0] , _["incHCC_g2"] = incHCC[1], _["incHCC_g3"] = incHCC[2], _["incHCC_g4"] = incHCC[3], _["incHCC_g5"] = incHCC[4], _["incHCC_g6"] = incHCC[5]);
@@ -528,6 +528,7 @@ List PanHepC(double time, List state, List parms){
   outlist[15] = List::create(Named("propHCC_C_genotype_g1") = propHCC_C_genotype[0] , _["propHCC_C_genotype_g2"] = propHCC_C_genotype[1], _["propHCC_C_genotype_g3"] = propHCC_C_genotype[2], _["propHCC_C_genotype_g4"] = propHCC_C_genotype[3], _["propHCC_C_genotype_g5"] = propHCC_C_genotype[4], _["propHCC_C_genotype_g6"] = propHCC_C_genotype[5]);
   outlist[16] = List::create(Named("propHCC_D_genotype_g1") = propHCC_D_genotype[0] , _["propHCC_D_genotype_g2"] = propHCC_D_genotype[1], _["propHCC_D_genotype_g3"] = propHCC_D_genotype[2], _["propHCC_D_genotype_g4"] = propHCC_D_genotype[3], _["propHCC_D_genotype_g5"] = propHCC_D_genotype[4], _["propHCC_D_genotype_g6"] = propHCC_D_genotype[5]);
   outlist[17] = List::create(Named("total_new_death") = total_new_death  );
+  outlist[18] = List::create(Named("propF0") = propF[0] , _["propF1"] = propF[1], _["propF2"] = propF[2], _["propF3"] = propF[3]);
   
   return outlist;
   

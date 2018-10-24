@@ -50,7 +50,7 @@ shinyUI(fluidPage(
                
                   tags$h2("Mathematical Modelling Approach"),
                   tags$p("We further develop the model from our previous study looking at the 
-                         treatment coverage and allocation strategies (Poovorawan",tags$a(class = "italic","et. al."), 
+                         treatment coverage and allocation strategies (Poovorawan",tags$i(class = "italic","et. al."), 
                          "2016)."),
                 tags$div(
                 tags$img(src="image/disease progression model.png" 
@@ -272,6 +272,8 @@ shinyUI(fluidPage(
                ), 
       #tab3
       tabPanel("Treatment",
+               tags$img(src="image/Novel Treatment efficacy.png" 
+                        ,alt="Novel Treatment efficacy"),
                tags$div(class = "sliderDisplay col-sm-12",
                         tags$h3("Treatment"),
                         tags$hr(),
@@ -284,7 +286,14 @@ shinyUI(fluidPage(
                                        "sofosbuvir with ravidasvir (pan-genotypic treatments, on-going clinical trial)" = 5))
                         ),
                         tags$div(class = "col-sm-11",id ="TreatmentOutput",
-                        textOutput("text1")
+                        textOutput("text1"),
+                        textOutput("text2"),
+                        textOutput("text3"),
+                        textOutput("text4"),
+                        textOutput("text5"),
+                        textOutput("text6"),
+                        textOutput("text7"),
+                        textOutput("text8")
                         ),
                         tags$h3("treatment Cost"),
                         tags$hr(),
@@ -366,6 +375,27 @@ shinyUI(fluidPage(
                     tabPanel("Estimated cost",
                              checkboxInput("showgenotype3", "By Genotype", FALSE),
                              plotOutput("distPlot4")
+                    ),
+                    #output 5
+                    tabPanel("Pie",
+                             checkboxInput("showgenotype_pie", "By Genotype", FALSE),
+                             div(id="Pie_nonG",
+                                plotOutput("piePlot")
+                                ),
+                             div(id="Pie_G",
+                                 tags$h3("propF0_genotype"),
+                                 hr(),
+                                 plotOutput("piePlot_F0"),
+                                 tags$h3("propF1_genotype"),
+                                 hr(),
+                                 plotOutput("piePlot_F1"),
+                                 tags$h3("propF2_genotype"),
+                                 hr(),
+                                 plotOutput("piePlot_F2"),
+                                 tags$h3("propF3_genotype"),
+                                 hr(),
+                                 plotOutput("piePlot_F3")
+                                 )
                     )
                   )
                )
@@ -374,3 +404,4 @@ shinyUI(fluidPage(
   
   )
 )
+

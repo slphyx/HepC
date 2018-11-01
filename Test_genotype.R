@@ -11,11 +11,15 @@ require(deSolve)
 library.dynam.unload("deSolve", libpath=paste(.libPaths()[1], "//deSolve", sep=""))
 library.dynam("deSolve", package="deSolve", lib.loc=.libPaths()[1])
 
+#set Working Directory
 setwd("C:/hepc")
+getwd()
+
+#parses the specified C++ file
 sourceCpp('p1_genotype.cpp')
 
 
-
+#Parameters
 parms <- list(
   K=66785001,
   P0=61623140, #popstat(YEAR=1999)
@@ -86,6 +90,8 @@ parms <- list(
 )
 
 S <- parms$S0* parms$P0;
+
+#Initial
 inits <- c(
   S_g1 = S, #;0.01*#pop_since1960(TIME=1)
   S_g2 = S,
@@ -251,6 +257,9 @@ outputs
 
 plot(outputs)
 
+#convert to data frame
+outputs_df <- as.data.frame(outputs)
+
 #pie chart
 #propF0_genotype
 x_pie <- outputs_df[colnames(outputs_df) %in% c("time",c("propF0_genotype_g1","propF0_genotype_g2","propF0_genotype_g3","propF0_genotype_g4","propF0_genotype_g5","propF0_genotype_g6"))]
@@ -263,7 +272,7 @@ x<- unlist(x_pie)
 piepercent<- round(100*x/sum(x), 1)
 pie(unlist(x_pie),labels = piepercent)
 
-#ggplot2 pie
+#pie chart(ggplot2)
 x_pie <- outputs_df[colnames(outputs_df) %in% c("time",c("propF0_genotype_g1","propF0_genotype_g2","propF0_genotype_g3","propF0_genotype_g4","propF0_genotype_g5","propF0_genotype_g6"))]
 x_melt_pie <-melt(x_pie, id="time")
 x_time <- outputs_df["time"] == 2000
@@ -280,32 +289,8 @@ gl2_pie
 
 #end pie chart
 
-outputs_df <- as.data.frame(outputs)
 
-ggplot(data = outputs_df) + 
-  geom_line(mapping = aes(x = 0, y =0)) 
-
-outputs_df_gtime <-outputs_df %>% group_by(time)
-
-
-ncol(outputs_df)
-x <- outputs_df["time"] >= 2000 & outputs_df["time"] <= 2010
-
-outputs_df["time"] >= 2000 
-outputs_df[x,]
-ggplot(data = outputs_df) + 
-    geom_line(mapping = aes(x = time, y = S),size = 1.5)
-
- 
-for (x in 1:10) {
- print(x) 
-}
-col(x)
-
-test_data_long <- melt(outputs_df, id="time")
-
-outputs <- ode( y = inits,times =  times, func = PanHepC, parms = parms, method = "rk4")
-outputs_df <- as.data.frame(outputs)
+#Choose column
 x <- outputs_df[colnames(outputs_df) %in% c("time","S")]
 x <- outputs_df[colnames(outputs_df) %in% c("time",c("prev_g1","prev_g2","prev_g3","prev_g4","prev_g5","prev_g6"))]
 x <- outputs_df[colnames(outputs_df) %in% c("time",c("C1","C2","C3","C4"))]
@@ -313,10 +298,12 @@ x <- outputs_df[colnames(outputs_df) %in% c("time",c("HHC_A","HHC_B","HHC_C","HH
 x <- outputs_df[colnames(outputs_df) %in% c("time",c("C1std_cured","C1new_cured"
                                             ,"C2new_cured","C3new_cured","C4new_cured"))]
 x <- outputs_df[colnames(outputs_df) %in% c("time",c("death","deathHCC","deathC14"))]
+
+#The melt function takes data in wide format 
+#and stacks a set of columns into a single column of data.
 x_melt <-melt(x, id="time")
 
+#plot graph(ggplot2) 
 ggplot(data = x_melt) + 
   geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)
-
-
 

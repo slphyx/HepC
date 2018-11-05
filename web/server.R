@@ -30,7 +30,7 @@ shinyServer(function(input, output) {
     v$doPlot <- FALSE
   })  
     
-    setwd("C:/hepc/web")
+    setwd("D:/Users/HepC-betaweb/HepC-betaweb/web")
     sourceCpp('p1.cpp')
     parameter <-function(){
       parms <- list(

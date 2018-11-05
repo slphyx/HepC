@@ -8,7 +8,7 @@
 #
 
 library(shiny)
-library(bootstrap)
+library(shinyBS)
 
 # Define UI for application that draws a histogram
 shinyUI(fluidPage(  
@@ -19,7 +19,7 @@ shinyUI(fluidPage(
   
   # Application title
   tags$div(class="header bg-primary",
-  tags$h1(class="text-center","Hepatitis C Virus Modelling",class = "font-family-sans-serif")
+  tags$h1(class="text-center","Hepatitis C Virus Modelling")
             ),
   tabsetPanel(
       #tab1
@@ -52,6 +52,7 @@ shinyUI(fluidPage(
                          treatment coverage and allocation strategies (Poovorawan",tags$a(class = "italic","et. al."), 
                          "2016)."),
                 tags$div(
+                #image
                 tags$img(src="image/disease progression model.png" 
                           ,alt="Study design of the transmission and disease progression model."),
                
@@ -65,6 +66,7 @@ shinyUI(fluidPage(
                       1.	Kohli A, Shaffer A, Sherman A, Kottilil S. Treatment of hepatitis C: a systematic review. Jama. 2014;
                           312(6):631-40.  doi:", tags$a (href="http://dx.doi.org/10.1001/jama.2014.7085","10.1001/jama.2014.7085"), "PMID: 25117132.")
       ),
+      
       #tab2
       tabPanel("Natural History Of Disease",
                tags$div(class = "sliderDisplay col-sm-12",

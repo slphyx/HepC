@@ -148,7 +148,7 @@ shinyUI(fluidPage(
                                  )
                         ),
                         tags$div(class = "col-sm-12",
-                                 sliderInput("f3cA",
+                                 sliderInput("f3c1",
                                              "Fibrosis stage F3 to Cirrhosis Child-Pugh class A",
                                              min = 0.05,
                                              max = 0.2,
@@ -160,7 +160,7 @@ shinyUI(fluidPage(
                         tags$h3("Progression of cirrhosis"),
                         tags$hr(),
                         tags$div(class = "col-sm-6",
-                                 sliderInput("cAcB",
+                                 sliderInput("c1c2",
                                              "Cirrhosis Child-Pugh class A to B",
                                              min = 0.03,
                                              max = 0.1,
@@ -169,7 +169,7 @@ shinyUI(fluidPage(
                                  )
                         ),
                         tags$div(class = "col-sm-6",
-                                 sliderInput("cBcC",
+                                 sliderInput("c2c3",
                                              "Cirrhosis Child-Pugh class B to C",
                                              min = 0.03,
                                              max = 0.1,
@@ -285,7 +285,8 @@ shinyUI(fluidPage(
                                        "sofosbuvir with ravidasvir (pan-genotypic treatments, on-going clinical trial)" = 5))
                         ),
                         tags$div(class = "col-sm-11",id ="TreatmentOutput",
-                        textOutput("text1")
+                        textOutput("text1"),
+                        textOutput("text2")
                         )
                   
                )
@@ -305,30 +306,27 @@ shinyUI(fluidPage(
       tabPanel("Model prediction",
 
                   actionButton("go", "Run model",class = "button btn btn-primary"),
-
+                  downloadButton("downloadData", "Download Parms"),
+                  downloadButton("downloadData2", "Download Result Table"),
                  tabsetPanel(
                     #output 1
                     tabPanel("Prevalence Of CHC",
-                             checkboxInput("bygenotype", "By Genotype", FALSE),
-                             downloadButton("downloadData", "Download"),
-                             downloadButton("downloadData2", "Download2"),
                              plotOutput("distPlot")
                              ),
                     #output 2
                     tabPanel("Cumulative Death",
-                             checkboxInput("showgenotype", "total death", FALSE),
+                             checkboxInput("showNewDeath", "New death", FALSE),
 
                              plotOutput("distPlot2")
                              
                              ),
                     #output 3
                     tabPanel("Annual Incidence",
-                             checkboxInput("showgenotype2", "By Genotype", FALSE),
                              plotOutput("distPlot3")
                             ),
                     #output 4
                     tabPanel("Estimated cost",
-                             checkboxInput("showgenotype3", "By Genotype", FALSE),
+                      
                              plotOutput("distPlot4")
                     )
                   )

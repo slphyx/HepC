@@ -101,7 +101,7 @@ shinyServer(function(input, output) {
     v$doPlot <- FALSE
   })  
     
-    setwd("D:/Users/HepC-betaweb/HepC-betaweb/web")
+    setwd("C:/Hep-c/HepC-betaweb/HepC-betaweb/Web")
     sourceCpp('p1.cpp')
     
     parms <- reactive({
@@ -239,6 +239,15 @@ shinyServer(function(input, output) {
       out_df
     })
     
+    #output per year
+    out_df_year <- reactive({
+      
+      time_year <- out_df()["time"] %% 1 ==0
+      out_df_year <- out_df()[time_year,]
+
+    })
+    
+    #cost plot
     cost_plot <- reactive({
       cost_times <- seq(1999, 2020, by = 1)
       cost_per_year <- 0
@@ -366,7 +375,7 @@ shinyServer(function(input, output) {
       filename = "result.xlsx",
       content = function(file) {
         
-        write.xlsx(out_df(), file, sheetName="Sheet1")
+        write.xlsx(out_df_year(), file, sheetName="Sheet1")
         
       }, contentType = "text/xlsx"
       

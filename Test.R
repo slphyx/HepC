@@ -7,7 +7,7 @@ library(scales)
 
 getwd()
 #set Working Directory
-setwd("C:/hepc/HepC-betaweb/HepC-betaweb")
+setwd("C:/Hep-c/HepC-betaweb/HepC-betaweb")
 
 
 #parses the specified C++ file
@@ -125,6 +125,8 @@ plot(outputs)
 
 
 outputs_df <- as.data.frame(outputs)
+time_year <- outputs_df["time"] %% 1 ==0
+outputs_df_year <- outputs_df[time_year,]
 
 #Choose column
 x <- outputs_df[colnames(outputs_df) %in% c("time","S")]

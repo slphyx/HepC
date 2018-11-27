@@ -6,12 +6,12 @@ library(reshape2)
 library(scales)
 
 getwd()
-#set Working Directory
+#set Working Directory (Change to your Working Directory)
 setwd("C:/Hep-c/HepC-betaweb/HepC-betaweb")
 
 
 #parses the specified C++ file
-sourceCpp('p1.cpp')
+sourceCpp('p1_backup.cpp')
 
 
 #Parameters

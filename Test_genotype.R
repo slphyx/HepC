@@ -11,12 +11,12 @@ require(deSolve)
 library.dynam.unload("deSolve", libpath=paste(.libPaths()[1], "//deSolve", sep=""))
 library.dynam("deSolve", package="deSolve", lib.loc=.libPaths()[1])
 
-#set Working Directory
+#set Working Directory (Change to your Working Directory)
 setwd("C:/hepc")
 getwd()
 
 #parses the specified C++ file
-sourceCpp('p1_genotype.cpp')
+sourceCpp('p1_genotype_backup.cpp')
 
 
 #Parameters

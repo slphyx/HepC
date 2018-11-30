@@ -9,6 +9,7 @@
 
 library(shiny)
 library(shinyBS)
+library(shinyjs)
 
 # Define UI for application that draws a histogram
 shinyUI(fluidPage(  
@@ -19,7 +20,7 @@ shinyUI(fluidPage(
   
   # Application title
   tags$div(class="header bg-primary",
-  tags$h1(class="text-center","Hepatitis C Virus Modelling")
+  tags$h1(class="text-center","Hepatitis C Virus Modelling",class = "font-family-sans-serif")
             ),
   tabsetPanel(
       #tab1
@@ -49,10 +50,9 @@ shinyUI(fluidPage(
                
                   tags$h2("Mathematical Modelling Approach"),
                   tags$p("We further develop the model from our previous study looking at the 
-                         treatment coverage and allocation strategies (Poovorawan",tags$a(class = "italic","et. al."), 
+                         treatment coverage and allocation strategies (Poovorawan",tags$i(class = "italic","et. al."), 
                          "2016)."),
                 tags$div(
-                #image
                 tags$img(src="image/disease progression model.png" 
                           ,alt="Study design of the transmission and disease progression model."),
                
@@ -66,7 +66,6 @@ shinyUI(fluidPage(
                       1.	Kohli A, Shaffer A, Sherman A, Kottilil S. Treatment of hepatitis C: a systematic review. Jama. 2014;
                           312(6):631-40.  doi:", tags$a (href="http://dx.doi.org/10.1001/jama.2014.7085","10.1001/jama.2014.7085"), "PMID: 25117132.")
       ),
-      
       #tab2
       tabPanel("Natural History Of Disease",
                tags$div(class = "sliderDisplay col-sm-12",
@@ -111,13 +110,13 @@ shinyUI(fluidPage(
                         tags$div(class = "col-sm-8",
                                  sliderInput("Fi",
                                              "Influx rate of the population to become susceptible per year",
-                                             min = 0.001,
-                                             max = 1,
-                                             step = 0.001,
-                                             value = 0.001
+                                             min = 0.0001,
+                                             max = 0.1,
+                                             step = 0.0001,
+                                             value = 0.0001
                                  )
                         ),
-
+                        
                         tags$h3("Progression of fibrosis"),
                         tags$hr(),
                         tags$div(class = "col-sm-4",
@@ -148,7 +147,7 @@ shinyUI(fluidPage(
                                  )
                         ),
                         tags$div(class = "col-sm-12",
-                                 sliderInput("f3c1",
+                                 sliderInput("f3cA",
                                              "Fibrosis stage F3 to Cirrhosis Child-Pugh class A",
                                              min = 0.05,
                                              max = 0.2,
@@ -160,7 +159,7 @@ shinyUI(fluidPage(
                         tags$h3("Progression of cirrhosis"),
                         tags$hr(),
                         tags$div(class = "col-sm-6",
-                                 sliderInput("c1c2",
+                                 sliderInput("cAcB",
                                              "Cirrhosis Child-Pugh class A to B",
                                              min = 0.03,
                                              max = 0.1,
@@ -169,7 +168,7 @@ shinyUI(fluidPage(
                                  )
                         ),
                         tags$div(class = "col-sm-6",
-                                 sliderInput("c2c3",
+                                 sliderInput("cBcC",
                                              "Cirrhosis Child-Pugh class B to C",
                                              min = 0.03,
                                              max = 0.1,
@@ -270,9 +269,51 @@ shinyUI(fluidPage(
                                  )
                         )
                )
-               ), 
+      ),
       #tab3
+      tabPanel("Screening",
+               tags$div(class = "sliderDisplay col-sm-12",
+                        tags$div(
+                          radioButtons("screening", "screening type:",
+                                       c("Age screen" = 1,
+                                         "Risk group " = 2),
+                                         inline = T)
+                        ),
+                          tags$div(id = "Age_screen",
+                          radioButtons("age_s", "Age screening range:",
+                                       c("40-50" = 1,
+                                         "50-60" = 2,
+                                         "40-60" = 3))
+                          ),
+                          tags$div(id = "Risk_group",
+                          radioButtons("risk_g", "Risk group:",
+                                       c("Human Immunodeficiency Virus (HIV)" = 1,
+                                         "Injecting Drug User (IDU)" = 2,
+                                         "Men who have Sex with Men (MSM)" = 3,
+                                         "Blood donate" = 4,
+                                         "Prisoner" = 5,
+                                         "Priner Children" = 6))
+                          )
+                        
+               ) 
+               ), 
+      #tab4
+      tabPanel("Diagrosis",
+               tags$div(class = "sliderDisplay col-sm-12",
+                 tags$div(
+                   radioButtons("test", "Test:",
+                                c("Ant HCV+RNA" = 1,
+                                  "Ant HCV+CORE Antigen" = 2,
+                                  "Ant HCV+Rapid HCV RNA" = 3,
+                                  "Rapid HCV RNA" = 4))
+                 )
+               )
+               ),
+               
+      #tab5
       tabPanel("Treatment",
+               tags$img(src="image/Novel Treatment efficacy.png" 
+                        ,alt="Novel Treatment efficacy"),
                tags$div(class = "sliderDisplay col-sm-12",
                         tags$h3("Treatment"),
                         tags$hr(),
@@ -286,7 +327,33 @@ shinyUI(fluidPage(
                         ),
                         tags$div(class = "col-sm-11",id ="TreatmentOutput",
                         textOutput("text1"),
-                        textOutput("text2")
+                        textOutput("text2"),
+                        textOutput("text3"),
+                        textOutput("text4"),
+                        textOutput("text5"),
+                        textOutput("text6"),
+                        textOutput("text7"),
+                        textOutput("text8")
+                        ),
+                        tags$h3("treatment Cost"),
+                        tags$hr(),
+                        tags$div(class = "col-sm-6",
+                                 sliderInput("Te1",
+                                             "treatment Cost ($)",
+                                             min = 0.05,
+                                             max = 0.1,
+                                             step = 0.001,
+                                             value = 0.066
+                                 )
+                        ),
+                        tags$div(class = "col-sm-6",
+                                 sliderInput("Te2",
+                                             "treatment Cost ($)",
+                                             min = 0.05,
+                                             max = 0.1,
+                                             step = 0.001,
+                                             value = 0.066
+                                 )
                         )
                   
                )
@@ -297,42 +364,88 @@ shinyUI(fluidPage(
                         sliderInput("year",
                                     "Time (Year)",
                                     min = 1999, 
-                                    max = 2020,
-                                    value = c(2000,2010)
+                                    max = 2035,
+                                    value = c(2000,2020)
                         )
                )
                ),
-      #tab5
+      #tab6
       tabPanel("Model prediction",
 
-                  actionButton("go", "Run model",class = "button btn btn-primary"),
-                  downloadButton("downloadData", "Download Parms"),
-                  downloadButton("downloadData2", "Download Result Table"),
+                  actionButton("button", "Run model",class = "button btn btn-primary"),
+               downloadButton("downloadData", "Download Table"),
+               downloadButton("downloadparameter", "Download Parameter"),
                  tabsetPanel(
                     #output 1
                     tabPanel("Prevalence Of CHC",
+                             checkboxInput("bygenotype", "By Genotype", FALSE),
                              plotOutput("distPlot")
                              ),
                     #output 2
                     tabPanel("Cumulative Death",
-                             checkboxInput("showNewDeath", "New death", FALSE),
+                             checkboxInput("showgenotype", "total death", FALSE),
 
                              plotOutput("distPlot2")
                              
                              ),
                     #output 3
                     tabPanel("Annual Incidence",
-                             plotOutput("distPlot3")
+                             useShinyjs(),
+                             checkboxInput("Anin_genotype", "By Genotype", FALSE),
+                             div(id="A_nonG",
+                               plotOutput("Anin_Plot")
+                               ),
+                             
+                             div(id="A_G",
+                                tags$h3("C1 Patient Cured"),
+                                hr(),
+                                plotOutput("Anin_G_C1_Plot"),
+                                tags$h3("C2 Patient Cured"),
+                                hr(),
+                                plotOutput("Anin_G_C2_Plot"),
+                                tags$h3("C3 Patient Cured"),
+                                hr(),
+                                plotOutput("Anin_G_C3_Plot"),
+                                tags$h3("C4 Patient Cured"),
+                                hr(),
+                                plotOutput("Anin_G_C4_Plot")
+                                )
                             ),
                     #output 4
                     tabPanel("Estimated cost",
-                      
+                             checkboxInput("showgenotype3", "By Genotype", FALSE),
                              plotOutput("distPlot4")
+                    ),
+                    #output 5
+                    tabPanel("Pie",
+                             checkboxInput("showgenotype_pie", "By Genotype", FALSE),
+                             div(id="Pie_nonG",
+                                plotOutput("piePlot")
+                                ),
+                             div(id="Pie_G",
+                                 tags$h3("propF0_genotype"),
+                                 hr(),
+                                 plotOutput("piePlot_F0"),
+                                 tags$h3("propF1_genotype"),
+                                 hr(),
+                                 plotOutput("piePlot_F1"),
+                                 tags$h3("propF2_genotype"),
+                                 hr(),
+                                 plotOutput("piePlot_F2"),
+                                 tags$h3("propF3_genotype"),
+                                 hr(),
+                                 plotOutput("piePlot_F3")
+                                 )
                     )
                   )
+               ),
+      #tab7
+      tabPanel("Appendix",
+                  div(id="A_G")
                )
     )
  
   
   )
 )
+

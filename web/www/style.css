@@ -1,3 +1,8 @@
+table{
+  border: 2px solid #000;
+}
+
+
 .button{
     width: 200px;
     height: 50px;
@@ -62,4 +67,31 @@ a.italic{
  background:  #fff;
  border-radius: 5px;
  border: 2px solid #73AD21;
+ width : 80%;
+}
+.linkToCareDes{
+  margin-top : 20px;
+  background:  #ccc;
+  width : 300px;
+  border: 2px solid black;
+  margin-bottom : 20px;
+}
+
+
+th,td{
+   border: 1px solid black;
+    height: 50px;
+    
+}
+tr:hover {
+    background-color: #ddd;
+}
+tr:nth-child(even) {
+    background-color: #eee;
+}
+tr:hover:nth-child(even) {
+    background-color: #aaa;
+}
+#TreatmentTable{
+  padding : 20p;
 }

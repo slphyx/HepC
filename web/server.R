@@ -71,7 +71,7 @@ shinyServer(function(input, output,session) {
       Treatment$new_cureC2 <- c(0.4,0.4,0.4,0.8,0.5,0.6)
       Treatment$new_cureC3 <- c(0.4,0.4,0.4,0.4,0.4,0.6)
       Treatment$new_cureC4 <- c(0.4,0.4,0.4,0.4,0.5,0.4)
-    }else{
+    }else if(input$Treatment == 5){
       Treatment$new_cureF0 <- c(0.5,0.5,0.5,0.5,0.5,0.6)
       Treatment$new_cureF1 <- c(0.5,0.5,0.5,0.5,0.5,0.6)
       Treatment$new_cureF2 <- c(0.5,0.5,0.5,0.5,0.5,0.6)
@@ -80,6 +80,16 @@ shinyServer(function(input, output,session) {
       Treatment$new_cureC2 <- c(0.5,0.5,0.5,0.8,0.5,0.6)
       Treatment$new_cureC3 <- c(0.5,0.5,0.5,0.5,0.5,0.6)
       Treatment$new_cureC4 <- c(0.5,0.5,0.5,0.5,0.5,0.5)
+    }
+    else{
+      Treatment$new_cureF0 <- c(0,0,0,0,0,0)
+      Treatment$new_cureF1 <- c(0,0,0,0,0,0)
+      Treatment$new_cureF2 <- c(0,0,0,0,0,0)
+      Treatment$new_cureF3 <- c(0,0,0,0,0,0)
+      Treatment$new_cureC1 <- c(0,0,0,0,0,0)
+      Treatment$new_cureC2 <- c(0,0,0,0,0,0)
+      Treatment$new_cureC3 <- c(0,0,0,0,0,0)
+      Treatment$new_cureC4 <- c(0,0,0,0,0,0)
     }
     
   })
@@ -112,6 +122,13 @@ shinyServer(function(input, output,session) {
     toggle(id = "Risk_group", condition = (input$screening == 2))
   })
   
+  observe({
+    toggle(id = "HCVDes", condition = (input$care == 1))
+  })
+  
+  observe({
+    toggle(id = "FibDes", condition = (input$care == 2))
+  })
   observeEvent(input$Treatment, {
     v$doPlot <- FALSE
   })  
@@ -897,36 +914,38 @@ shinyServer(function(input, output,session) {
     
     #textoutput
     output$text1 <- renderText({
-        paste("Treatment efficacy F0 :" , mean(Treatment$new_cureF0))
+        paste("Treatment efficacy F0 :" , round(mean(Treatment$new_cureF0),2))
     })
     
     output$text2 <- renderText({
-        paste("Treatment efficacy F1 :" , mean(Treatment$new_cureF1))
+        paste("Treatment efficacy F1 :" , round(mean(Treatment$new_cureF1),2))
     })
     
     output$text3 <- renderText({
-       paste("Treatment efficacy F2 :" , mean(Treatment$new_cureF2))
+       paste("Treatment efficacy F2 :" , round(mean(Treatment$new_cureF2),2))
     })
     
     output$text4 <- renderText({
-      paste("Treatment efficacy F3 :" , mean(Treatment$new_cureF3))
+      paste("Treatment efficacy F3 :" , round(mean(Treatment$new_cureF3),2))
     })
     
     output$text5 <- renderText({
-      paste("Treatment efficacy C1 :" , mean(Treatment$new_cureC1))
+      paste("Treatment efficacy C1 :" , round(mean(Treatment$new_cureC1),2))
     })
     
     output$text6 <- renderText({
-      paste("Treatment efficacy C2 :" , mean(Treatment$new_cureC2))
+      paste("Treatment efficacy C2 :" , round(mean(Treatment$new_cureC2),2))
     })
     
     output$text7 <- renderText({
-      paste("Treatment efficacy C3 :" , mean(Treatment$new_cureC3))
+      paste("Treatment efficacy C3 :" , round(mean(Treatment$new_cureC3),2))
     })
     
     output$text8 <- renderText({
-      paste("Treatment efficacy C4 :" , mean(Treatment$new_cureC4))
+      paste("Treatment efficacy C4 :" , round(mean(Treatment$new_cureC4),2))
     })
+    
+    
     
     output$downloadData <- 
       

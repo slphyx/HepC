@@ -275,25 +275,26 @@ shinyUI(fluidPage(
                tags$div(class = "sliderDisplay col-sm-12",
                         tags$div(
                           radioButtons("screening", "screening type:",
-                                       c("Age screen" = 1,
-                                         "Risk group " = 2),
+                                       c("By age" = 1,
+                                         "By Risks" = 2),
                                          inline = T)
                         ),
                           tags$div(id = "Age_screen",
-                          radioButtons("age_s", "Age screening range:",
+                          radioButtons("age_s", "Age screening range (Years):",
                                        c("40-50" = 1,
                                          "50-60" = 2,
                                          "40-60" = 3))
                           ),
                           tags$div(id = "Risk_group",
-                          radioButtons("risk_g", "Risk group:",
+                          radioButtons("risk_g", "Risk groups:",
                                        c("Human Immunodeficiency Virus (HIV)" = 1,
-                                         "Injecting Drug User (IDU)" = 2,
+                                         "Injection Drug User (IDU)" = 2,
                                          "Men who have Sex with Men (MSM)" = 3,
                                          "Blood donate" = 4,
                                          "Prisoner" = 5,
                                          "Priner Children" = 6))
                           )
+
                         
                ) 
                ), 
@@ -306,25 +307,166 @@ shinyUI(fluidPage(
                                   "Ant HCV+CORE Antigen" = 2,
                                   "Ant HCV+Rapid HCV RNA" = 3,
                                   "Rapid HCV RNA" = 4))
+                 ),
+                 tags$img(src="image/hcv testing sequence identifying hcv infection.jpg" 
+                          ,alt="Study design of the transmission and disease progression model."),
+                 tags$p("source : https://www.hepatitisc.uw.edu")
+               )
+               ),
+      #tab5
+      tabPanel("Link to care",
+               tags$div(class = "sliderDisplay col-sm-12",
+                        tags$div(class = "col-sm-6",
+                          radioButtons("care", "Link to care :",
+                                       c("HCV genotype testing" = 1,
+                                         "fibroscan stiffness score" = 2
+                                         )
+                          )
+                        ),
+               
+               tags$div(class= "linkToCareDes col-sm-6",
+                        tags$div( id = "HCVDes",
+                          "HCV genotype testing is recommended to guide selection of the most appropriate antiviral regimen."
+                          ),
+                        tags$div( id = "FibDes",
+                                  " FibroScan scores can be used to validate advanced fibrosis/cirrhosis for insurance companies, health care plans, or medical centers that require a significant amount of fibrosis before approving or allowing the start of HCV treatment."
+                        )
+               )
+               )
+               ),        
+      #tab6
+      tabPanel("Treatment",
+               tags$div(id="TreatmentTable",
+               tags$table(class= "table table-responsive",
+                 tags$th(class="col col-sm-2" ,rowspan="2","Treatment"),
+                 tags$th(class="col col-sm-5" ,colspan="6","Efficacy"),
+                 tags$th(class="col col-sm-5" ,colspan="6","Cost"),
+                 tags$tr(
+                 tags$td("G1"),
+                 tags$td("G2"),
+                 tags$td("G3"),
+                 tags$td("G4"),
+                 tags$td("G5"),
+                 tags$td("G6"),
+                 tags$td("G1"),
+                 tags$td("G2"),
+                 tags$td("G3"),
+                 tags$td("G4"),
+                 tags$td("G5"),
+                 tags$td("G6")
+                 ),
+                 
+                 tags$tr(
+                 tags$td("Stage 1"),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td()
+                 ),
+                 
+                 tags$tr(
+                 tags$td("Stage 2"),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td()
+                 ),
+                 
+                 tags$tr(
+                 tags$td("Stage 3"),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td()
+                 ),
+                 
+                 tags$tr(
+                 tags$td("Stage 4"),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td()
+                 ),
+                 
+                 tags$tr(
+                 tags$td("Stage 5"),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td()
+                 ),
+                 
+                 tags$tr(
+                 tags$td("Stage 6"),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td()
                  )
                )
                ),
                
-      #tab5
-      tabPanel("Treatment",
-               tags$img(src="image/Novel Treatment efficacy.png" 
-                        ,alt="Novel Treatment efficacy"),
                tags$div(class = "sliderDisplay col-sm-12",
                         tags$h3("Treatment"),
                         tags$hr(),
                         tags$div(class = "col-sm-12",
                         radioButtons("Treatment", "Novel Treatment type:",width = '100%',
-                                     c("sofosbuvir with peginterferon alfa type 2a or 2b and ribavirin (National List of Essential Medicines)" =1,
+                                     c("no novel treatment" = 0,
+                                       "sofosbuvir with peginterferon alfa type 2a or 2b and ribavirin (National List of Essential Medicines)" =1,
                                        "sofosbuvir with ledipasvir (National List of Essential Medicines)" = 2,
                                        "sofosbuvir with daclatasvir (pan-genotypic treatments)" = 3,
                                        "Log-sofosbuvir with velpatasvir (pan-genotypic treatments)" = 4,
                                        "sofosbuvir with ravidasvir (pan-genotypic treatments, on-going clinical trial)" = 5))
                         ),
+                        tags$div(class = "row",
                         tags$div(class = "col-sm-11",id ="TreatmentOutput",
                         textOutput("text1"),
                         textOutput("text2"),
@@ -334,7 +476,7 @@ shinyUI(fluidPage(
                         textOutput("text6"),
                         textOutput("text7"),
                         textOutput("text8")
-                        ),
+                        )),
                         tags$h3("treatment Cost"),
                         tags$hr(),
                         tags$div(class = "col-sm-6",
@@ -345,20 +487,11 @@ shinyUI(fluidPage(
                                              step = 0.001,
                                              value = 0.066
                                  )
-                        ),
-                        tags$div(class = "col-sm-6",
-                                 sliderInput("Te2",
-                                             "treatment Cost ($)",
-                                             min = 0.05,
-                                             max = 0.1,
-                                             step = 0.001,
-                                             value = 0.066
-                                 )
                         )
                   
                )
                ), 
-      #tab4
+      #tab7
       tabPanel("Display Seting",
                tags$div(class = "sliderDisplay col-sm-12",
                         sliderInput("year",
@@ -369,7 +502,7 @@ shinyUI(fluidPage(
                         )
                )
                ),
-      #tab6
+      #tab8
       tabPanel("Model prediction",
 
                   actionButton("button", "Run model",class = "button btn btn-primary"),
@@ -439,7 +572,7 @@ shinyUI(fluidPage(
                     )
                   )
                ),
-      #tab7
+      #tab9
       tabPanel("Appendix",
                   div(id="A_G")
                )

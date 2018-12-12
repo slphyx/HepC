@@ -98,6 +98,7 @@ shinyServer(function(input, output,session) {
   setwd("C:/Hep-c/main/web")
   sourceCpp('p1_scenario.cpp')
   
+  #Show and hide
   observe({
     toggle(id = "A_G", condition = input$Anin_genotype)
   })
@@ -129,6 +130,9 @@ shinyServer(function(input, output,session) {
   observe({
     toggle(id = "FibDes", condition = (input$care == 2))
   })
+  observe({
+    toggle(id = "test2", condition = (input$test1 == 1))
+  })
   observeEvent(input$Treatment, {
     v$doPlot <- FALSE
   })  
@@ -139,6 +143,173 @@ shinyServer(function(input, output,session) {
     v$doPlot <- TRUE
     
   })
+  
+  
+  
+  #parameter 
+  p_t <- reactiveValues(S_screening = 0,
+                        Pos_T = 0 , #Positive True
+                        Pos_F = 0 , #Positive False
+                        Neg_T = 0 , #Negative True
+                        Neg_T = 0   #Negative False
+                        )
+  
+  #Choosing groups (when Choosing age , risk group)
+  observeEvent(c(input$screening,input$age_s,input$risk_g ),{
+      
+      if(input$screening == 1){ #By age
+        
+          if(input$age_s == 1){# 40-50 Years
+            
+            p_t$S_screening <- 40000
+            
+          }else if(input$age_s == 2){# 50-60 Years
+            
+            p_t$S_screening  <- 40000
+            
+          }else if(input$age_s == 3){# 40-60 Years
+            
+            p_t$S_screening  <- 80000
+            
+          }
+        
+      }else if(input$screening == 2){ #risk group
+        
+        if(input$risk_g == 1){# HIV
+          
+          p_t$S_screening  <- 50000
+          
+        }else if(input$risk_g == 2){# IDU
+          
+          p_t$S_screening  <- 60000
+          
+        }else if(input$risk_g == 3){# MSM
+          
+          p_t$S_screening  <- 70000
+          
+        }else if(input$risk_g == 4){# Blood donate
+          
+          p_t$S_screening  <- 30000
+          
+        }else if(input$risk_g == 5){# Prisoner
+          
+          p_t$S_screening  <- 100000
+          
+        }
+      }
+
+    }
+  )
+  
+  #calculate Test + Test 2 + Link to care
+  load("Test_list.RData") # load list Test_cost_sen_spe.RData ("Cost per test","Sensitivity","Specificity")
+  
+  
+  
+  observeEvent(c(input$screening,input$age_s,input$risk_g), {
+    if(input$test1 == 1){#Test 1st(Ant HCV)
+      
+      if(input$test2 == 1){ #Test 2nd(RNA)
+        
+        if(input$care == 1){ #Link to care (HCV genotype testing)
+          
+          p_t$Pos_T <- p_t$S_screening * Test_list$Ant_HCV[2] * Test_list$RNA[2] * Test_list$Genotype[2]                #Sensitivity
+          
+          p_t$Pos_F <- p_t$S_screening * (1-Test_list$Ant_HCV[2]) * (1-Test_list$RNA[2]) * (1-Test_list$Genotype[2])    #Sensitivity
+          
+          p_t$Neg_T <- p_t$S_screening * Test_list$Ant_HCV[3] * Test_list$RNA[3] * Test_list$Genotype[3]                #Specificity
+          
+          p_t$Neg_F <- p_t$S_screening * (1-Test_list$Ant_HCV[3]) * (1-Test_list$RNA[3]) * (1-Test_list$Genotype[3])    #Specificity
+          
+        }else if(input$care == 2){ #Link to care (fibroscan stiffness score)
+          
+          p_t$Pos_T <- p_t$S_screening * Test_list$Ant_HCV[2] * Test_list$RNA[2] * Test_list$Fiboscan[2]                #Sensitivity
+          
+          p_t$Pos_F <- p_t$S_screening * (1-Test_list$Ant_HCV[2]) * (1-Test_list$RNA[2]) * (1-Test_list$Fiboscan[2])    #Sensitivity
+          
+          p_t$Neg_T <- p_t$S_screening * Test_list$Ant_HCV[3] * Test_list$RNA[3] * Test_list$Fiboscan[3]                #Specificity
+          
+          p_t$Neg_F <- p_t$S_screening * (1-Test_list$Ant_HCV[3]) * (1-Test_list$RNA[3]) * (1-Test_list$Fiboscan[3])    #Specificity
+          
+        }
+        
+        
+      }else if (input$test2 == 2){ #Test 2nd (CORE Antigen)
+        
+        if(input$care == 1){ #Link to care (HCV genotype testing)
+          
+          p_t$Pos_T <- p_t$S_screening * Test_list$Ant_HCV[2] * Test_list$CORE_Antigen[2] * Test_list$Genotype[2]                #Sensitivity
+          
+          p_t$Pos_F <- p_t$S_screening * (1-Test_list$Ant_HCV[2]) * (1-Test_list$CORE_Antigen[2]) * (1-Test_list$Genotype[2])    #Sensitivity
+          
+          p_t$Neg_T <- p_t$S_screening * Test_list$Ant_HCV[3] * Test_list$CORE_Antigen[3] * Test_list$Genotype[3]                #Specificity
+          
+          p_t$Neg_F <- p_t$S_screening * (1-Test_list$Ant_HCV[3]) * (1-Test_list$CORE_Antigen[3]) * (1-Test_list$Genotype[3])    #Specificity
+          
+        }else if(input$care == 2){ #Link to care (fibroscan stiffness score)
+          
+          p_t$Pos_T <- p_t$S_screening * Test_list$Ant_HCV[2] * Test_list$CORE_Antigen[2] * Test_list$Fiboscan[2]                #Sensitivity
+          
+          p_t$Pos_F <- p_t$S_screening * (1-Test_list$Ant_HCV[2]) * (1-Test_list$CORE_Antigen[2]) * (1-Test_list$Fiboscan[2])    #Sensitivity
+          
+          p_t$Neg_T <- p_t$S_screening * Test_list$Ant_HCV[3] * Test_list$CORE_Antigen[3] * Test_list$Fiboscan[3]                #Specificity
+          
+          p_t$Neg_F <- p_t$S_screening * (1-Test_list$Ant_HCV[3]) * (1-Test_list$CORE_Antigen[3]) * (1-Test_list$Fiboscan[3])    #Specificity
+          
+        }
+      }
+      else if(input$test2 == 3){ #Test 2nd (Rapid HCV RNA)
+        
+        if(input$care == 1){ #Link to care (HCV genotype testing)
+          
+          p_t$Pos_T <- p_t$S_screening * Test_list$Ant_HCV[2] * Test_list$Rapid_HCV_RNA[2] * Test_list$Genotype[2]                #Sensitivity
+          
+          p_t$Pos_F <- p_t$S_screening * (1-Test_list$Ant_HCV[2]) * (1-Test_list$Rapid_HCV_RNA[2]) * (1-Test_list$Genotype[2])    #Sensitivity
+          
+          p_t$Neg_T <- p_t$S_screening * Test_list$Ant_HCV[3] * Test_list$Rapid_HCV_RNA[3] * Test_list$Genotype[3]                #Specificity
+          
+          p_t$Neg_F <- p_t$S_screening * (1-Test_list$Ant_HCV[3]) * (1-Test_list$Rapid_HCV_RNA[3]) * (1-Test_list$Genotype[3])    #Specificity
+          
+        }else if(input$care == 2){ #Link to care (fibroscan stiffness score)
+          
+          p_t$Pos_T <- p_t$S_screening * Test_list$Ant_HCV[2] * Test_list$Rapid_HCV_RNA[2] * Test_list$Fiboscan[2]                #Sensitivity
+          
+          p_t$Pos_F <- p_t$S_screening * (1-Test_list$Ant_HCV[2]) * (1-Test_list$Rapid_HCV_RNA[2]) * (1-Test_list$Fiboscan[2])    #Sensitivity
+          
+          p_t$Neg_T <- p_t$S_screening * Test_list$Ant_HCV[3] * Test_list$Rapid_HCV_RNA[3] * Test_list$Fiboscan[3]                #Specificity
+          
+          p_t$Neg_F <- p_t$S_screening * (1-Test_list$Ant_HCV[3]) * (1-Test_list$Rapid_HCV_RNA[3]) * (1-Test_list$Fiboscan[3])    #Specificity
+          
+        }
+      }
+      
+    }else if(input$test1 == 2){ #Test 1st (Rapid HCV RNA)
+      
+        if(input$care == 1){ #Link to care (HCV genotype testing)
+          
+          p_t$Pos_T <- p_t$S_screening * Test_list$Rapid_HCV_RNA[2] * Test_list$Genotype[2]            #Sensitivity
+            
+          p_t$Pos_F <- p_t$S_screening * (1-Test_list$Rapid_HCV_RNA[2]) * (1-Test_list$Genotype[2])    #Sensitivity
+          
+          p_t$Neg_T <- p_t$S_screening * Test_list$Rapid_HCV_RNA[3] * Test_list$Genotype[3]            #Specificity
+          
+          p_t$Neg_F <- p_t$S_screening * (1-Test_list$Rapid_HCV_RNA[3]) * (1-Test_list$Genotype[3])    #Specificity
+            
+        }else if(input$care == 2){#Link to care (fibroscan stiffness score)
+          
+          p_t$Pos_T <- p_t$S_screening * Test_list$Rapid_HCV_RNA[2] * Test_list$Fiboscan[2]            #Sensitivity
+          
+          p_t$Pos_F <- p_t$S_screening * (1-Test_list$Rapid_HCV_RNA[2]) * (1-Test_list$Fiboscan[2])    #Sensitivity
+          
+          p_t$Neg_T <- p_t$S_screening * Test_list$Rapid_HCV_RNA[3] * Test_list$Fiboscan[3]            #Specificity
+          
+          p_t$Neg_F <- p_t$S_screening * (1-Test_list$Rapid_HCV_RNA[3]) * (1-Test_list$Fiboscan[3])    #Specificity
+          
+        }
+    }
+  }
+  )
+  
   parms <- reactive({
     list(
       P0=input$P0,       #popstat(YEAR=1999)
@@ -389,6 +560,7 @@ shinyServer(function(input, output,session) {
   })
   
   
+  
   out_df <- reactive({
 
     times_bf <- seq(1999, 2018, by = 0.01)
@@ -398,6 +570,8 @@ shinyServer(function(input, output,session) {
     #update inits
     out_bf_df <-as.data.frame(out_bf)
     out_bf_lastRow <- tail(out_bf_df,1)
+    
+    cal_test_care() #screening + testing
     
     #continuous inits
     inits_con <- reactive({ 
@@ -945,9 +1119,17 @@ shinyServer(function(input, output,session) {
       paste("Treatment efficacy C4 :" , round(mean(Treatment$new_cureC4),2))
     })
     
-    
-    
+    output$S_list <- renderPrint({
+      print(p_t$Pos_T)
+      print(p_t$Pos_F)
+      print(p_t$Neg_T)
+      print(p_t$Neg_F)
+    })
+    output$Test <- renderText({
+      paste("screening possitive :" , (p_t$Pos_T + p_t$Pos_F))
+    })
     output$downloadData <- 
+      
       
       downloadHandler(
         

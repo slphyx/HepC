@@ -291,9 +291,10 @@ shinyUI(fluidPage(
                                          "Injection Drug User (IDU)" = 2,
                                          "Men who have Sex with Men (MSM)" = 3,
                                          "Blood donate" = 4,
-                                         "Prisoner" = 5,
-                                         "Priner Children" = 6))
-                          )
+                                         "Prisoner" = 5
+                                         ))
+                          ),
+                        textOutput("Test")
 
                         
                ) 
@@ -301,12 +302,16 @@ shinyUI(fluidPage(
       #tab4
       tabPanel("Diagrosis",
                tags$div(class = "sliderDisplay col-sm-12",
-                 tags$div(
-                   radioButtons("test", "Test:",
-                                c("Ant HCV+RNA" = 1,
-                                  "Ant HCV+CORE Antigen" = 2,
-                                  "Ant HCV+Rapid HCV RNA" = 3,
-                                  "Rapid HCV RNA" = 4))
+                 tags$div(class = "col-sm-6",
+                   radioButtons("test1", "Test 1st:",
+                                c("Ant HCV" = 1,
+                                  "Rapid HCV RNA" = 2))
+                 ),
+                 tags$div(id = "test2",class = "col-sm-6",
+                            radioButtons("test2", "Test 2nd:",
+                                         c("RNA" = 1,
+                                           "CORE Antigen" = 2,
+                                           "Rapid HCV RNA" = 3))
                  ),
                  tags$img(src="image/hcv testing sequence identifying hcv infection.jpg" 
                           ,alt="Study design of the transmission and disease progression model."),
@@ -332,38 +337,29 @@ shinyUI(fluidPage(
                                   " FibroScan scores can be used to validate advanced fibrosis/cirrhosis for insurance companies, health care plans, or medical centers that require a significant amount of fibrosis before approving or allowing the start of HCV treatment."
                         )
                )
-               )
+               ),
+               verbatimTextOutput("S_list")
                ),        
       #tab6
       tabPanel("Treatment",
                tags$div(id="TreatmentTable",
                tags$table(class= "table table-responsive",
-                 tags$th(class="col col-sm-2" ,rowspan="2","Treatment"),
-                 tags$th(class="col col-sm-5" ,colspan="6","Efficacy"),
-                 tags$th(class="col col-sm-5" ,colspan="6","Cost"),
+                          tags$tr(
+                 tags$th(class ="col-sm-3", tags$h3("Treatment")),
+                 tags$th(class ="text-center col-sm-auto",colspan="6",tags$h3("Genotype"))
+                          ),
                  tags$tr(
-                 tags$td("G1"),
-                 tags$td("G2"),
-                 tags$td("G3"),
-                 tags$td("G4"),
-                 tags$td("G5"),
-                 tags$td("G6"),
-                 tags$td("G1"),
-                 tags$td("G2"),
-                 tags$td("G3"),
-                 tags$td("G4"),
-                 tags$td("G5"),
-                 tags$td("G6")
+                 tags$th("Efficacy"),
+                 tags$th("G1"),
+                 tags$th("G2"),
+                 tags$th("G3"),
+                 tags$th("G4"),
+                 tags$th("G5"),
+                 tags$th("G6")
                  ),
                  
                  tags$tr(
                  tags$td("Stage 1"),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
                  tags$td(),
                  tags$td(),
                  tags$td(),
@@ -379,23 +375,11 @@ shinyUI(fluidPage(
                  tags$td(),
                  tags$td(),
                  tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
                  tags$td()
                  ),
                  
                  tags$tr(
                  tags$td("Stage 3"),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
                  tags$td(),
                  tags$td(),
                  tags$td(),
@@ -411,23 +395,11 @@ shinyUI(fluidPage(
                  tags$td(),
                  tags$td(),
                  tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
                  tags$td()
                  ),
                  
                  tags$tr(
                  tags$td("Stage 5"),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
                  tags$td(),
                  tags$td(),
                  tags$td(),
@@ -443,14 +415,78 @@ shinyUI(fluidPage(
                  tags$td(),
                  tags$td(),
                  tags$td(),
-                 tags$td(),
+                 tags$td()
+                 ),
+               
+               tags$tr(
+                 tags$th("Cost"),
+                 tags$th("G1"),
+                 tags$th("G2"),
+                 tags$th("G3"),
+                 tags$th("G4"),
+                 tags$th("G5"),
+                 tags$th("G6")
+               ),
+               
+               tags$tr(
+                 tags$td("Stage 1"),
                  tags$td(),
                  tags$td(),
                  tags$td(),
                  tags$td(),
                  tags$td(),
                  tags$td()
-                 )
+               ),
+               
+               tags$tr(
+                 tags$td("Stage 2"),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td()
+               ),
+               
+               tags$tr(
+                 tags$td("Stage 3"),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td()
+               ),
+               
+               tags$tr(
+                 tags$td("Stage 4"),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td()
+               ),
+               
+               tags$tr(
+                 tags$td("Stage 5"),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td()
+               ),
+               
+               tags$tr(
+                 tags$td("Stage 6"),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td(),
+                 tags$td()
+               )
                )
                ),
                

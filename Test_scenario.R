@@ -278,6 +278,8 @@ x_melt_pie <-melt(x_pie, id="time")
 x_time <- outputs_df["time"] == 2000
 x_melt_pie <- x_melt_pie[x_time,]
 
+##scale_fill_brewer(palette="Blues") + theme_minimal() +
+
 gl2_pie <- ggplot(x_melt_pie, aes(x="", y=value, fill=variable))+
               geom_bar(width = 1, stat = "identity") + 
               coord_polar("y", start=0)+  scale_fill_brewer(palette="Blues") + theme_minimal() +  
@@ -285,6 +287,12 @@ gl2_pie <- ggplot(x_melt_pie, aes(x="", y=value, fill=variable))+
               geom_text(aes(y = value/3 + c(0, cumsum(value)[-length(value)]), 
               label = percent(value)), size=3)
               
+
+gl2_pie2 <-ggplot(x_melt, aes(x="", y=value, fill=variable))+
+              geom_bar(width = 1, stat = "identity") + 
+              coord_polar("y", start=0) +  scale_fill_brewer(palette="Blues") + theme_minimal() + 
+              theme(axis.text.x=element_blank()) +
+              geom_text(aes(label = percent(value)), size=3, position = position_stack(vjust = 0.5))
 gl2_pie
 
 #end pie chart

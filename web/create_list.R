@@ -24,3 +24,18 @@ save(Test_list, file="Test_list.RData")
 
 load("Test_list.RData")
 Test_list$RNA[2] *5  *Test_list$RNA[3]
+
+popscreen_list <- list(
+  ag1 =  30000,
+  ag2 = 32000,
+  ag3 = 62000,
+  risk1 =10000,
+  risk2 = 20000,
+  risk3 =10000,
+  risk4 = 20000,
+  risk5 =10000
+)
+
+save(popscreen_list, file="popscreen_list.RData")
+
+popscreen_list

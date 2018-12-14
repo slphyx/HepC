@@ -294,17 +294,17 @@ shinyUI(fluidPage(
                                          "Prisoner" = 5
                                          ))
                           ),
-                        textOutput("Test")
+                        textOutput("screening_p")
 
                         
                ) 
                ), 
       #tab4
-      tabPanel("Diagrosis",
+      tabPanel("diagnosis",
                tags$div(class = "sliderDisplay col-sm-12",
                  tags$div(class = "col-sm-6",
                    radioButtons("test1", "Test 1st:",
-                                c("Ant HCV" = 1,
+                                c("Anti HCV" = 1,
                                   "Rapid HCV RNA" = 2))
                  ),
                  tags$div(id = "test2",class = "col-sm-6",
@@ -338,157 +338,15 @@ shinyUI(fluidPage(
                         )
                )
                ),
-               verbatimTextOutput("S_list")
+               tags$div(class = "sliderDisplay col-sm-12",
+                 textOutput("Pos_T_Text"),
+                 textOutput("Pos_F_Text"),
+                 textOutput("Neg_T_Text"),
+                 textOutput("Neg_F_Text")
+               )
                ),        
       #tab6
       tabPanel("Treatment",
-               tags$div(id="TreatmentTable",
-               tags$table(class= "table table-responsive",
-                          tags$tr(
-                 tags$th(class ="col-sm-3", tags$h3("Treatment")),
-                 tags$th(class ="text-center col-sm-auto",colspan="6",tags$h3("Genotype"))
-                          ),
-                 tags$tr(
-                 tags$th("Efficacy"),
-                 tags$th("G1"),
-                 tags$th("G2"),
-                 tags$th("G3"),
-                 tags$th("G4"),
-                 tags$th("G5"),
-                 tags$th("G6")
-                 ),
-                 
-                 tags$tr(
-                 tags$td("Stage 1"),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td()
-                 ),
-                 
-                 tags$tr(
-                 tags$td("Stage 2"),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td()
-                 ),
-                 
-                 tags$tr(
-                 tags$td("Stage 3"),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td()
-                 ),
-                 
-                 tags$tr(
-                 tags$td("Stage 4"),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td()
-                 ),
-                 
-                 tags$tr(
-                 tags$td("Stage 5"),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td()
-                 ),
-                 
-                 tags$tr(
-                 tags$td("Stage 6"),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td()
-                 ),
-               
-               tags$tr(
-                 tags$th("Cost"),
-                 tags$th("G1"),
-                 tags$th("G2"),
-                 tags$th("G3"),
-                 tags$th("G4"),
-                 tags$th("G5"),
-                 tags$th("G6")
-               ),
-               
-               tags$tr(
-                 tags$td("Stage 1"),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td()
-               ),
-               
-               tags$tr(
-                 tags$td("Stage 2"),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td()
-               ),
-               
-               tags$tr(
-                 tags$td("Stage 3"),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td()
-               ),
-               
-               tags$tr(
-                 tags$td("Stage 4"),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td()
-               ),
-               
-               tags$tr(
-                 tags$td("Stage 5"),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td()
-               ),
-               
-               tags$tr(
-                 tags$td("Stage 6"),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td(),
-                 tags$td()
-               )
-               )
-               ),
                
                tags$div(class = "sliderDisplay col-sm-12",
                         tags$h3("Treatment"),
@@ -499,7 +357,7 @@ shinyUI(fluidPage(
                                        "sofosbuvir with peginterferon alfa type 2a or 2b and ribavirin (National List of Essential Medicines)" =1,
                                        "sofosbuvir with ledipasvir (National List of Essential Medicines)" = 2,
                                        "sofosbuvir with daclatasvir (pan-genotypic treatments)" = 3,
-                                       "Log-sofosbuvir with velpatasvir (pan-genotypic treatments)" = 4,
+                                       "sofosbuvir with velpatasvir (pan-genotypic treatments)" = 4,
                                        "sofosbuvir with ravidasvir (pan-genotypic treatments, on-going clinical trial)" = 5))
                         ),
                         tags$div(class = "row",
@@ -523,6 +381,28 @@ shinyUI(fluidPage(
                                              step = 0.001,
                                              value = 0.066
                                  )
+                        ),
+                        tags$div(class = "col-sm-6"),
+                        
+                        tags$div(id = "drugImg1",
+                        tags$img(src="image/drug1.png" 
+                                 ,alt="drug1")
+                        ),
+                        tags$div(id = "drugImg2",
+                                 tags$img(src="image/drug2.png" 
+                                          ,alt="drug2")
+                        ),
+                        tags$div(id = "drugImg3",
+                                 tags$img(src="image/drug3.png" 
+                                          ,alt="drug3")
+                        ),
+                        tags$div(id = "drugImg4",
+                                 tags$img(src="image/drug4.png" 
+                                          ,alt="drug4")
+                        ),
+                        tags$div(id = "drugImg5",
+                                 tags$img(src="image/drug5.png" 
+                                          ,alt="drug5")
                         )
                   
                )
@@ -610,11 +490,19 @@ shinyUI(fluidPage(
                ),
       #tab9
       tabPanel("Appendix",
-                  div(id="A_G")
+                  div(
+                      tags$p("1. progress 2nd _ 2018 10 03"),
+                      tags$a(
+                        #link
+                        href= "https://docs.google.com/presentation/d/1iHAfhqpBh5MpYjf4Sethcq5E3OhoYcyK_nugy2QXnik/edit?usp=sharing"
+                        ,"Google Drive" #text
+                      )
+                      )
+              
                )
     )
  
-  
+  #https://docs.google.com/presentation/d/1iHAfhqpBh5MpYjf4Sethcq5E3OhoYcyK_nugy2QXnik/edit?usp=sharing
   )
 )
 

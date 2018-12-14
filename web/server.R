@@ -131,12 +131,32 @@ shinyServer(function(input, output,session) {
     toggle(id = "FibDes", condition = (input$care == 2))
   })
   observe({
-    toggle(id = "test2", condition = (input$test1 == 1))
+    toggle(id = "drugImg1", condition = (input$Treatment == 1))
   })
+  observe({
+    toggle(id = "drugImg2", condition = (input$Treatment == 2))
+  })
+  observe({
+    toggle(id = "drugImg3", condition = (input$Treatment == 3))
+  })
+  observe({
+    toggle(id = "drugImg4", condition = (input$Treatment == 4))
+  })
+  observe({
+    toggle(id = "drugImg5", condition = (input$Treatment == 5))
+  })
+
+
+  
+  
   observeEvent(input$Treatment, {
     v$doPlot <- FALSE
   })  
-
+  
+  #Enable/Disable radio
+  observeEvent(input$test1, {
+    toggleState("test2", input$test1 == 1)
+  })
   
   observeEvent(input$button, {
     if( v$doPlot == TRUE) v$doPlot <- FALSE
@@ -153,6 +173,7 @@ shinyServer(function(input, output,session) {
                         Neg_T = 0 , #Negative True
                         Neg_T = 0   #Negative False
                         )
+  load("popscreen_list.RData")
   
   #Choosing groups (when Choosing age , risk group)
   observeEvent(c(input$screening,input$age_s,input$risk_g ),{
@@ -161,15 +182,15 @@ shinyServer(function(input, output,session) {
         
           if(input$age_s == 1){# 40-50 Years
             
-            p_t$S_screening <- 40000
+            p_t$S_screening <- popscreen_list$ag1
             
           }else if(input$age_s == 2){# 50-60 Years
             
-            p_t$S_screening  <- 40000
+            p_t$S_screening  <- popscreen_list$ag2
             
           }else if(input$age_s == 3){# 40-60 Years
             
-            p_t$S_screening  <- 80000
+            p_t$S_screening  <- popscreen_list$ag3
             
           }
         
@@ -177,23 +198,23 @@ shinyServer(function(input, output,session) {
         
         if(input$risk_g == 1){# HIV
           
-          p_t$S_screening  <- 50000
+          p_t$S_screening  <- popscreen_list$risk1
           
         }else if(input$risk_g == 2){# IDU
           
-          p_t$S_screening  <- 60000
+          p_t$S_screening  <- popscreen_list$risk2
           
         }else if(input$risk_g == 3){# MSM
           
-          p_t$S_screening  <- 70000
+          p_t$S_screening  <- popscreen_list$risk3
           
         }else if(input$risk_g == 4){# Blood donate
           
-          p_t$S_screening  <- 30000
+          p_t$S_screening  <- popscreen_list$risk4
           
         }else if(input$risk_g == 5){# Prisoner
           
-          p_t$S_screening  <- 100000
+          p_t$S_screening  <- popscreen_list$risk5
           
         }
       }
@@ -205,8 +226,8 @@ shinyServer(function(input, output,session) {
   load("Test_list.RData") # load list Test_cost_sen_spe.RData ("Cost per test","Sensitivity","Specificity")
   
   
-  
-  observeEvent(c(input$screening,input$age_s,input$risk_g), {
+  #Choosing test (when Choosing test 1st ,test 2nd, link to care)
+  observeEvent(c(input$test1,input$test2,input$care), {
     if(input$test1 == 1){#Test 1st(Ant HCV)
       
       if(input$test2 == 1){ #Test 2nd(RNA)
@@ -571,17 +592,16 @@ shinyServer(function(input, output,session) {
     out_bf_df <-as.data.frame(out_bf)
     out_bf_lastRow <- tail(out_bf_df,1)
     
-    cal_test_care() #screening + testing
-    
+    Pos_T_div6 <- p_t$Pos_T/6
     #continuous inits
     inits_con <- reactive({ 
       c(
-        S_g1 = out_bf_lastRow$S_g1, #;0.01*#pop_since1960(TIME=1)
-        S_g2 = out_bf_lastRow$S_g2,
-        S_g3 = out_bf_lastRow$S_g3,
-        S_g4 = out_bf_lastRow$S_g4,
-        S_g5 = out_bf_lastRow$S_g5,
-        S_g6 = out_bf_lastRow$S_g6,
+        S_g1 = out_bf_lastRow$S_g1 +Pos_T_div6, #;0.01*#pop_since1960(TIME=1)
+        S_g2 = out_bf_lastRow$S_g2 +Pos_T_div6,
+        S_g3 = out_bf_lastRow$S_g3 +Pos_T_div6,
+        S_g4 = out_bf_lastRow$S_g4 +Pos_T_div6,
+        S_g5 = out_bf_lastRow$S_g5 +Pos_T_div6,
+        S_g6 = out_bf_lastRow$S_g6 +Pos_T_div6,
         
         F0_g1 = out_bf_lastRow$F0_g1,
         F0_g2 = out_bf_lastRow$F0_g2,
@@ -987,8 +1007,7 @@ shinyServer(function(input, output,session) {
           geom_bar(width = 1, stat = "identity") + 
           coord_polar("y", start=0) +  scale_fill_brewer(palette="Blues") + theme_minimal() +  
           theme(axis.text.x=element_blank()) +
-          geom_text(aes(y = value/3 + c(0, cumsum(value)[-length(value)]), 
-                        label = percent(value)), size=3)
+          geom_text(aes(label = percent(value)), size=3, position = position_stack(vjust = 0.5))
       })
     })
     
@@ -1008,11 +1027,9 @@ shinyServer(function(input, output,session) {
         
         ggplot(x_melt, aes(x="", y=value, fill=variable))+
           geom_bar(width = 1, stat = "identity") + 
-          scale_fill_brewer(palette="Blues") + theme_minimal() +  
+          coord_polar("y", start=0) +  scale_fill_brewer(palette="Blues") + theme_minimal() + 
           theme(axis.text.x=element_blank()) +
-          geom_text(aes(y = value/3 + c(0, cumsum(value)[-length(value)]), 
-                        label = percent(value)), size=3, position = position_stack(vjust = 0.5))+
-          coord_polar(theta = "y") 
+          geom_text(aes(label = percent(value)), size=3, position = position_stack(vjust = 0.5))
       })
     })
     #piePlotF1
@@ -1033,8 +1050,7 @@ shinyServer(function(input, output,session) {
           geom_bar(width = 1, stat = "identity") + 
           coord_polar("y", start=0) +  scale_fill_brewer(palette="Blues") + theme_minimal() +  
           theme(axis.text.x=element_blank()) +
-          geom_text(aes(y = value/3 + c(0, cumsum(value)[-length(value)]), 
-                        label = percent(value)), size=3)
+          geom_text(aes(label = percent(value)), size=3, position = position_stack(vjust = 0.5))
       })
     })
     
@@ -1056,8 +1072,7 @@ shinyServer(function(input, output,session) {
           geom_bar(width = 1, stat = "identity") + 
           coord_polar("y", start=0) +  scale_fill_brewer(palette="Blues") + theme_minimal() +  
           theme(axis.text.x=element_blank()) +
-          geom_text(aes(y = value/3 + c(0, cumsum(value)[-length(value)]), 
-                        label = percent(value)), size=3)
+          geom_text(aes(label = percent(value)), size=3, position = position_stack(vjust = 0.5))
       })
     })
     
@@ -1080,8 +1095,7 @@ shinyServer(function(input, output,session) {
           geom_bar(width = 1, stat = "identity") + 
           coord_polar("y", start=0) +  scale_fill_brewer(palette="Blues") + theme_minimal() +  
           theme(axis.text.x=element_blank()) +
-          geom_text(aes(y = value/3 + c(0, cumsum(value)[-length(value)]), 
-                        label = percent(value)), size=3)
+          geom_text(aes(label = percent(value)), size=3, position = position_stack(vjust = 0.5))
       })
     })
     
@@ -1120,14 +1134,30 @@ shinyServer(function(input, output,session) {
     })
     
     output$S_list <- renderPrint({
-      print(p_t$Pos_T)
       print(p_t$Pos_F)
       print(p_t$Neg_T)
       print(p_t$Neg_F)
     })
-    output$Test <- renderText({
-      paste("screening possitive :" , (p_t$Pos_T + p_t$Pos_F))
+    output$screening_p <- renderText({
+      paste("screening people :" , (p_t$S_screening) )
     })
+    
+    output$Pos_T_Text <- renderText({
+      paste("Positive True :" , (p_t$Pos_T) )
+    })
+    
+    output$Pos_F_Text <- renderText({
+      paste("Positive False :" , (p_t$Pos_F) )
+    })
+    
+    output$Neg_T_Text <- renderText({
+      paste("Negative True :" , (p_t$Neg_T) )
+    })
+    
+    output$Neg_F_Text <- renderText({
+      paste("Negative False :" , (p_t$Neg_F) )
+    })
+    
     output$downloadData <- 
       
       

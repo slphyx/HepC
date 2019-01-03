@@ -8,11 +8,12 @@
 #
 
 library(shiny)
-library(Rcpp)
 library(deSolve)
 library(reshape2)
 library(ggplot2)
-# Define server logic required to draw a histogram
+
+Rcpp::sourceCpp('p1.cpp')
+
 shinyServer(function(input, output) {
   
   
@@ -28,8 +29,6 @@ shinyServer(function(input, output) {
     v$doPlot <- FALSE
   })  
 
-    setwd("C:/hepc/web")
-    sourceCpp('p1.cpp')
     
   output$distPlot <- renderPlot({
     if (v$doPlot == FALSE) return()

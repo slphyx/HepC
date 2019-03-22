@@ -28,7 +28,7 @@ shinyServer(function(input, output) {
     v$doPlot <- FALSE
   })  
 
-    setwd("C:/hepc/web")
+    #setwd("C:/hepc/web")
     sourceCpp('p1.cpp')
     
   output$distPlot <- renderPlot({

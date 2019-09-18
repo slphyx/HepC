@@ -251,7 +251,7 @@ shinyServer(function(input, output,session) {
   observeEvent(input$resetSect1, {
     #reset("P0")
     updateSliderInput(session, inputId = "P0",value = 60000000)
-    updateSliderInput(session, inputId = "K", value = 7000000)
+    updateSliderInput(session, inputId = "K", value = 70000000)
     updateSliderInput(session, inputId = "r", value = 0.16)
     updateSliderInput(session, inputId = "beta", value = 0.32)
     updateSliderInput(session, inputId = "Fi", value = 0.0001)

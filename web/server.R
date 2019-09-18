@@ -6,6 +6,8 @@
 # 
 #    http://shiny.rstudio.com/
 #
+#set work Working Directory
+#setwd("D:/Shiny-20190913T122337Z-001/Shiny/web") Tanaphum's Working Directory
 
 library(shiny)
 library(Rcpp)
@@ -15,9 +17,11 @@ library(ggplot2)
 library(tidyverse)
 library(dplyr)
 library(erer)
-library(xlsx)
+#library(xlsx)
 library(scales)
+library(plyr) 
 library(shinyjs)
+library(readxl)
 
 # Define server logic required to draw a histogram
 shinyServer(function(input, output,session) {
@@ -70,7 +74,7 @@ shinyServer(function(input, output,session) {
       Treatment$new_cureC2 <- c(0.4,0.4,0.4,0.8,0.5,0.6)
       Treatment$new_cureC3 <- c(0.4,0.4,0.4,0.4,0.4,0.6)
       Treatment$new_cureC4 <- c(0.4,0.4,0.4,0.4,0.5,0.4)
-    }else{
+    }else if(input$Treatment == 5){
       Treatment$new_cureF0 <- c(0.5,0.5,0.5,0.5,0.5,0.6)
       Treatment$new_cureF1 <- c(0.5,0.5,0.5,0.5,0.5,0.6)
       Treatment$new_cureF2 <- c(0.5,0.5,0.5,0.5,0.5,0.6)
@@ -80,13 +84,25 @@ shinyServer(function(input, output,session) {
       Treatment$new_cureC3 <- c(0.5,0.5,0.5,0.5,0.5,0.6)
       Treatment$new_cureC4 <- c(0.5,0.5,0.5,0.5,0.5,0.5)
     }
+    else{
+      Treatment$new_cureF0 <- c(0,0,0,0,0,0)
+      Treatment$new_cureF1 <- c(0,0,0,0,0,0)
+      Treatment$new_cureF2 <- c(0,0,0,0,0,0)
+      Treatment$new_cureF3 <- c(0,0,0,0,0,0)
+      Treatment$new_cureC1 <- c(0,0,0,0,0,0)
+      Treatment$new_cureC2 <- c(0,0,0,0,0,0)
+      Treatment$new_cureC3 <- c(0,0,0,0,0,0)
+      Treatment$new_cureC4 <- c(0,0,0,0,0,0)
+    }
     
   })
   
   options(scipen=6)
-  setwd("C:/hepc/web")
-  sourceCpp('p1_genotype.cpp')
+  #setwd("D:/PAN/GI/HepC_cost_screening_NSTDA/Model/HepC/web")
+  #  setwd("C:/Hep-c/main/web")
+  sourceCpp('p1_scenario.cpp')
   
+  #Show and hide
   observe({
     toggle(id = "A_G", condition = input$Anin_genotype)
   })
@@ -103,17 +119,340 @@ shinyServer(function(input, output,session) {
     toggle(id = "Pie_nonG", condition = !input$showgenotype_pie)
   })
   
+  observe({
+    toggle(id = "Age_screen", condition = (input$screening == 1))
+  })
+  
+  observe({
+    toggle(id = "Risk_group", condition = (input$screening == 2))
+  })
+  
+  # observe({
+  #  toggle(id = "HCVDes", condition = (input$care == 1))
+  # })
+  # 
+  # observe({
+  #   toggle(id = "FibDes", condition = (input$care == 2))
+  # })
+  # 
+  # observe({
+  #   toggle(id = "RelDes", condition = (input$care == 3))
+  # })
+  # 
+  # observe({
+  #   toggle(id = "APRIDes", condition = (input$care == 4))
+  # })
+  
+  observe({
+    toggle(id = "drugImg1", condition = (input$Treatment == 1))
+  })
+  observe({
+    toggle(id = "drugImg2", condition = (input$Treatment == 2))
+  })
+  observe({
+    toggle(id = "drugImg3", condition = (input$Treatment == 3))
+  })
+  observe({
+    toggle(id = "drugImg4", condition = (input$Treatment == 4))
+  })
+  observe({
+    toggle(id = "drugImg5", condition = (input$Treatment == 5))
+  })
+
   observeEvent(input$Treatment, {
     v$doPlot <- FALSE
   })  
   
-
+  #Enable/Disable radio
+  observeEvent(input$test1, {
+    toggleState("test2", input$test1 == 1)
+  })
   
   observeEvent(input$button, {
     if( v$doPlot == TRUE) v$doPlot <- FALSE
     v$doPlot <- TRUE
     
   })
+  
+  #table for "Extra" panel. involves importing data from excel
+  
+  extradesc <- read_excel("extradesc.xlsx")
+  observe({
+    output$extratbl <- render_tableHTML(
+      tableHTML(extradesc, rownames = FALSE, border = 3, 
+                collapse = c("collapse", "separate","separate_shiny"), 
+                spacing = "5px 2px"
+                ) %>%
+        add_theme("rshiny-blue")) 
+  })
+  
+  #table for "Diagnosis" panel. involves importing data from excel
+
+  testdesc <- read_excel("testdesc.xlsx")
+  observe({
+    output$testtbl <- render_tableHTML(
+      tableHTML(testdesc, rownames = FALSE,
+                row_groups = list(c(2,3), c("Test 1", "Test 2")),
+                border = 3, 
+                collapse = c("collapse", "separate","separate_shiny"), 
+                spacing = "5px 2px"
+      ) %>%
+        add_theme("rshiny-blue")) 
+  })
+  
+  #table for "Treatment" panel. involves importing data from excel
+
+  treatmentdesc <- read_excel("treatmentdesc.xlsx")
+  observe({
+    output$treatmenttbl <- render_tableHTML(
+      tableHTML(treatmentdesc, rownames = FALSE,
+                second_headers = list(c(1,2,1), c("","Sustained Virological Response (%)", "")),
+                border = 3, 
+                collapse = c("collapse", "separate","separate_shiny"), 
+                spacing = "5px 2px"
+      ) %>%
+        add_theme("rshiny-blue"))
+  })
+  
+  #table for "Screening" panel, age groups. involves importing data from excel
+
+  screeningdesc <- read_excel("treatmentdesc.xlsx")
+  observe({
+    output$screeningtbl <- render_tableHTML(
+      tableHTML(screeningdesc, rownames = FALSE,
+                border = 3, 
+                collapse = c("collapse", "separate","separate_shiny"), 
+                spacing = "5px 2px"
+      ) %>%
+        add_theme("rshiny-blue"))
+  })
+  
+  #table for "Screening" panel, risk groups. involves importing data from excel
+  library(readxl)
+  riskdesc <- read_excel("riskdesc.xlsx")
+  observe({
+    output$risktbl <- render_tableHTML(
+      tableHTML(riskdesc, rownames = FALSE,
+                border = 3, 
+                collapse = c("collapse", "separate","separate_shiny"), 
+                spacing = "5px 2px"
+      ) %>%
+        add_theme("rshiny-blue"))
+  })
+  
+  #Not possible to enable/disable specific radio buttons with shinyjs
+  #can only disable group of radio buttons
+  #observeEvent(input$Treatment,{
+  #  toggleState("care", input$Treatment == 1)
+  #})
+  
+  #button to reset changed values back to the default values (from ui)
+  #section 1
+  observeEvent(input$resetSect1, {
+    #reset("P0")
+    updateSliderInput(session, inputId = "P0",value = 60000000)
+    updateSliderInput(session, inputId = "K", value = 7000000)
+    updateSliderInput(session, inputId = "r", value = 0.16)
+    updateSliderInput(session, inputId = "beta", value = 0.32)
+    updateSliderInput(session, inputId = "Fi", value = 0.0001)
+  })
+  
+  #section 2
+  observeEvent(input$resetSect2, {
+    updateSliderInput(session, inputId = "f0f1", value = 0.117)
+    updateSliderInput(session, inputId = "f1f2", value = 0.085)
+    updateSliderInput(session, inputId = "f2f3", value = 0.12)
+    updateSliderInput(session, inputId = "f3cA", value = 0.116)
+  })
+  
+  #section3
+  observeEvent(input$resetSect3, {
+    updateSliderInput(session, inputId = "cAcB", value = 0.044)
+    updateSliderInput(session, inputId = "cBcC", value = 0.076)
+  })
+  
+  #section4
+  observeEvent(input$resetSect4, {
+    updateSliderInput(session, inputId = "c1bA",value = 0.0068)
+    updateSliderInput(session, inputId = "c2bA", value = 0.0068)
+    updateSliderInput(session, inputId = "c1bB", value = 0.0099)
+    updateSliderInput(session, inputId = "c2bB", value = 0.0099)
+    updateSliderInput(session, inputId = "c1bC", value = 0.0029)
+    updateSliderInput(session, inputId = "c2bC", value = 0.0029)
+    updateSliderInput(session, inputId = "c1bD", value = 0.0068)
+    updateSliderInput(session, inputId = "c2bD", value = 0.0068)
+    updateSliderInput(session, inputId = "c3bD", value = 0.066)
+    updateSliderInput(session, inputId = "c4bD", value = 0.066)
+  })
+  
+  #parameter 
+  p_t <- reactiveValues(S_screening = 0,
+                        Pos_T = 0 , #Positive True
+                        Pos_F = 0 , #Positive False
+                        Neg_T = 0 , #Negative True
+                        Neg_T = 0   #Negative False
+                        )
+  load("popscreen_list.RData")
+  
+  #Choosing groups (when Choosing age , risk group)
+  observeEvent(c(input$screening,input$age_s,input$risk_g ),{
+      
+      if(input$screening == 1){ #By age
+        
+          if(input$age_s == 1){# 40-50 Years
+            
+            p_t$S_screening <- popscreen_list$ag1
+            
+          }else if(input$age_s == 2){# 50-60 Years
+            
+            p_t$S_screening  <- popscreen_list$ag2
+            
+          }else if(input$age_s == 3){# 40-60 Years
+            
+            p_t$S_screening  <- popscreen_list$ag3
+            
+          }
+        
+      }else if(input$screening == 2){ #risk group
+        
+        if(input$risk_g == 1){# HIV
+          
+          p_t$S_screening  <- popscreen_list$risk1
+          
+        }else if(input$risk_g == 2){# IDU
+          
+          p_t$S_screening  <- popscreen_list$risk2
+          
+        }else if(input$risk_g == 3){# MSM
+          
+          p_t$S_screening  <- popscreen_list$risk3
+          
+        }else if(input$risk_g == 4){# Blood donate
+          
+          p_t$S_screening  <- popscreen_list$risk4
+          
+        }else if(input$risk_g == 5){# Prisoner
+          
+          p_t$S_screening  <- popscreen_list$risk5
+          
+        }
+      }
+
+    }
+  )
+  
+  # observeEvent(c(input$Treatment, input$care),{
+  #   
+  # })
+    
+  
+  #calculate Test + Test 2 + Link to care
+  load("Test_list.RData") # load list Test_cost_sen_spe.RData ("Cost per test","Sensitivity","Specificity")
+
+  #Choosing test (when Choosing test 1st ,test 2nd, link to care)
+   # observeEvent(c(input$test1,input$test2,input$care), {
+   #   if(input$test1 == 1){#Test 1st(Ant HCV)
+   # 
+   #     if(input$test2 == 1){ #Test 2nd(RNA)
+   # 
+   #       if(input$care == 1){ #Link to care (HCV genotype testing)
+   # 
+   #         p_t$Pos_T <- p_t$S_screening * Test_list$Ant_HCV[2] * Test_list$RNA[2] * Test_list$Genotype[2]                #Sensitivity
+   # 
+   #         p_t$Pos_F <- p_t$S_screening * (1-Test_list$Ant_HCV[2]) * (1-Test_list$RNA[2]) * (1-Test_list$Genotype[2])    #Sensitivity
+   # 
+   #         p_t$Neg_T <- p_t$S_screening * Test_list$Ant_HCV[3] * Test_list$RNA[3] * Test_list$Genotype[3]                #Specificity
+   # 
+   #         p_t$Neg_F <- p_t$S_screening * (1-Test_list$Ant_HCV[3]) * (1-Test_list$RNA[3]) * (1-Test_list$Genotype[3])    #Specificity
+   # 
+   #       }else if(input$care == 2){ #Link to care (fibroscan stiffness score)
+   # 
+   #         p_t$Pos_T <- p_t$S_screening * Test_list$Ant_HCV[2] * Test_list$RNA[2] * Test_list$Fiboscan[2]                #Sensitivity
+   # 
+   #         p_t$Pos_F <- p_t$S_screening * (1-Test_list$Ant_HCV[2]) * (1-Test_list$RNA[2]) * (1-Test_list$Fiboscan[2])    #Sensitivity
+   # 
+   #         p_t$Neg_T <- p_t$S_screening * Test_list$Ant_HCV[3] * Test_list$RNA[3] * Test_list$Fiboscan[3]                #Specificity
+   # 
+   #         p_t$Neg_F <- p_t$S_screening * (1-Test_list$Ant_HCV[3]) * (1-Test_list$RNA[3]) * (1-Test_list$Fiboscan[3])    #Specificity
+   # 
+   #       }
+   # 
+   # 
+   #     }else if (input$test2 == 2){ #Test 2nd (CORE Antigen)
+   # 
+   #       if(input$care == 1){ #Link to care (HCV genotype testing)
+   # 
+   #         p_t$Pos_T <- p_t$S_screening * Test_list$Ant_HCV[2] * Test_list$CORE_Antigen[2] * Test_list$Genotype[2]                #Sensitivity
+   # 
+   #         p_t$Pos_F <- p_t$S_screening * (1-Test_list$Ant_HCV[2]) * (1-Test_list$CORE_Antigen[2]) * (1-Test_list$Genotype[2])    #Sensitivity
+   # 
+   #         p_t$Neg_T <- p_t$S_screening * Test_list$Ant_HCV[3] * Test_list$CORE_Antigen[3] * Test_list$Genotype[3]                #Specificity
+   # 
+   #         p_t$Neg_F <- p_t$S_screening * (1-Test_list$Ant_HCV[3]) * (1-Test_list$CORE_Antigen[3]) * (1-Test_list$Genotype[3])    #Specificity
+   # 
+   #       }else if(input$care == 2){ #Link to care (fibroscan stiffness score)
+   # 
+   #         p_t$Pos_T <- p_t$S_screening * Test_list$Ant_HCV[2] * Test_list$CORE_Antigen[2] * Test_list$Fiboscan[2]                #Sensitivity
+   # 
+   #         p_t$Pos_F <- p_t$S_screening * (1-Test_list$Ant_HCV[2]) * (1-Test_list$CORE_Antigen[2]) * (1-Test_list$Fiboscan[2])    #Sensitivity
+   # 
+   #         p_t$Neg_T <- p_t$S_screening * Test_list$Ant_HCV[3] * Test_list$CORE_Antigen[3] * Test_list$Fiboscan[3]                #Specificity
+   # 
+   #         p_t$Neg_F <- p_t$S_screening * (1-Test_list$Ant_HCV[3]) * (1-Test_list$CORE_Antigen[3]) * (1-Test_list$Fiboscan[3])    #Specificity
+   # 
+   #       }
+   #     }
+   #     else if(input$test2 == 3){ #Test 2nd (Rapid HCV RNA)
+   # 
+   #       if(input$care == 1){ #Link to care (HCV genotype testing)
+   # 
+   #         p_t$Pos_T <- p_t$S_screening * Test_list$Ant_HCV[2] * Test_list$Rapid_HCV_RNA[2] * Test_list$Genotype[2]                #Sensitivity
+   # 
+   #         p_t$Pos_F <- p_t$S_screening * (1-Test_list$Ant_HCV[2]) * (1-Test_list$Rapid_HCV_RNA[2]) * (1-Test_list$Genotype[2])    #Sensitivity
+   # 
+   #         p_t$Neg_T <- p_t$S_screening * Test_list$Ant_HCV[3] * Test_list$Rapid_HCV_RNA[3] * Test_list$Genotype[3]                #Specificity
+   # 
+   #         p_t$Neg_F <- p_t$S_screening * (1-Test_list$Ant_HCV[3]) * (1-Test_list$Rapid_HCV_RNA[3]) * (1-Test_list$Genotype[3])    #Specificity
+   # 
+   #       }else if(input$care == 2){ #Link to care (fibroscan stiffness score)
+   # 
+   #         p_t$Pos_T <- p_t$S_screening * Test_list$Ant_HCV[2] * Test_list$Rapid_HCV_RNA[2] * Test_list$Fiboscan[2]                #Sensitivity
+   # 
+   #         p_t$Pos_F <- p_t$S_screening * (1-Test_list$Ant_HCV[2]) * (1-Test_list$Rapid_HCV_RNA[2]) * (1-Test_list$Fiboscan[2])    #Sensitivity
+   # 
+   #         p_t$Neg_T <- p_t$S_screening * Test_list$Ant_HCV[3] * Test_list$Rapid_HCV_RNA[3] * Test_list$Fiboscan[3]                #Specificity
+   # 
+   #         p_t$Neg_F <- p_t$S_screening * (1-Test_list$Ant_HCV[3]) * (1-Test_list$Rapid_HCV_RNA[3]) * (1-Test_list$Fiboscan[3])    #Specificity
+   # 
+   #       }
+   #     }
+   # 
+   #   }else if(input$test1 == 2){ #Test 1st (Rapid HCV RNA)
+   # 
+   #       if(input$care == 1){ #Link to care (HCV genotype testing)
+   # 
+   #         p_t$Pos_T <- p_t$S_screening * Test_list$Rapid_HCV_RNA[2] * Test_list$Genotype[2]            #Sensitivity
+   # 
+   #         p_t$Pos_F <- p_t$S_screening * (1-Test_list$Rapid_HCV_RNA[2]) * (1-Test_list$Genotype[2])    #Sensitivity
+   # 
+   #         p_t$Neg_T <- p_t$S_screening * Test_list$Rapid_HCV_RNA[3] * Test_list$Genotype[3]            #Specificity
+   # 
+   #         p_t$Neg_F <- p_t$S_screening * (1-Test_list$Rapid_HCV_RNA[3]) * (1-Test_list$Genotype[3])    #Specificity
+   # 
+   #       }else if(input$care == 2){#Link to care (fibroscan stiffness score)
+   # 
+   #         p_t$Pos_T <- p_t$S_screening * Test_list$Rapid_HCV_RNA[2] * Test_list$Fiboscan[2]            #Sensitivity
+   # 
+   #         p_t$Pos_F <- p_t$S_screening * (1-Test_list$Rapid_HCV_RNA[2]) * (1-Test_list$Fiboscan[2])    #Sensitivity
+   # 
+   #         p_t$Neg_T <- p_t$S_screening * Test_list$Rapid_HCV_RNA[3] * Test_list$Fiboscan[3]            #Specificity
+   # 
+   #         p_t$Neg_F <- p_t$S_screening * (1-Test_list$Rapid_HCV_RNA[3]) * (1-Test_list$Fiboscan[3])    #Specificity
+   # 
+   #       }
+   #   }
+   # })
+  
   parms <- reactive({
     list(
       P0=input$P0,       #popstat(YEAR=1999)
@@ -364,15 +703,205 @@ shinyServer(function(input, output,session) {
   })
   
   
+  
   out_df <- reactive({
 
-    times <- seq(1999, 2020, by = 0.01)
+    times_bf <- seq(1999, 2018, by = 0.01)
     
-    out <- ode( y = inits(),times =  times, func = PanHepC, parms = parms(), method = "rk4")
-
-    out_df <- as.data.frame(out)
+    
+    out_bf <- ode( y = inits(),times =  times_bf, func = PanHepC, parms = parms(), method = "rk4")
+    #update inits
+    out_bf_df <-as.data.frame(out_bf)
+    out_bf_lastRow <- tail(out_bf_df,1)
+    
+    Pos_T_div6 <- p_t$Pos_T/6
+    #continuous inits
+    inits_con <- reactive({ 
+      c(
+        S_g1 = out_bf_lastRow$S_g1 +Pos_T_div6, #;0.01*#pop_since1960(TIME=1)
+        S_g2 = out_bf_lastRow$S_g2 +Pos_T_div6,
+        S_g3 = out_bf_lastRow$S_g3 +Pos_T_div6,
+        S_g4 = out_bf_lastRow$S_g4 +Pos_T_div6,
+        S_g5 = out_bf_lastRow$S_g5 +Pos_T_div6,
+        S_g6 = out_bf_lastRow$S_g6 +Pos_T_div6,
+        
+        F0_g1 = out_bf_lastRow$F0_g1,
+        F0_g2 = out_bf_lastRow$F0_g2,
+        F0_g3 = out_bf_lastRow$F0_g3,
+        F0_g4 = out_bf_lastRow$F0_g4,
+        F0_g5 = out_bf_lastRow$F0_g5,
+        F0_g6 = out_bf_lastRow$F0_g6,
+        
+        F1_g1 = out_bf_lastRow$F1_g1,
+        F1_g2 = out_bf_lastRow$F1_g2,
+        F1_g3 = out_bf_lastRow$F1_g3,
+        F1_g4 = out_bf_lastRow$F1_g4,
+        F1_g5 = out_bf_lastRow$F1_g5,
+        F1_g6 = out_bf_lastRow$F1_g6,
+        
+        F2_g1 = out_bf_lastRow$F2_g1,
+        F2_g2 = out_bf_lastRow$F2_g2,
+        F2_g3 = out_bf_lastRow$F2_g3,
+        F2_g4 = out_bf_lastRow$F2_g4,
+        F2_g5 = out_bf_lastRow$F2_g5,
+        F2_g6 = out_bf_lastRow$F2_g6,
+        
+        F3_g1 = out_bf_lastRow$F3_g1,
+        F3_g2 = out_bf_lastRow$F3_g2,
+        F3_g3 = out_bf_lastRow$F3_g3,
+        F3_g4 = out_bf_lastRow$F3_g4,
+        F3_g5 = out_bf_lastRow$F3_g5,
+        F3_g6 = out_bf_lastRow$F3_g6,
+        
+        # ;CirA
+        C1_g1 = out_bf_lastRow$C1_g1,
+        C1_g2 = out_bf_lastRow$C1_g2,
+        C1_g3 = out_bf_lastRow$C1_g3,
+        C1_g4 = out_bf_lastRow$C1_g4,
+        C1_g5 = out_bf_lastRow$C1_g5,
+        C1_g6 = out_bf_lastRow$C1_g6,
+        
+        # ;CirA
+        C2_g1 = out_bf_lastRow$C2_g1,
+        C2_g2 = out_bf_lastRow$C2_g2,
+        C2_g3 = out_bf_lastRow$C2_g3,
+        C2_g4 = out_bf_lastRow$C2_g4,
+        C2_g5 = out_bf_lastRow$C2_g5,
+        C2_g6 = out_bf_lastRow$C2_g6,
+        
+        # ;CirB
+        C3_g1 = out_bf_lastRow$C3_g1,
+        C3_g2 = out_bf_lastRow$C3_g2,
+        C3_g3 = out_bf_lastRow$C3_g3,
+        C3_g4 = out_bf_lastRow$C3_g4,
+        C3_g5 = out_bf_lastRow$C3_g5,
+        C3_g6 = out_bf_lastRow$C3_g6,
+        
+        # ;CirC
+        C4_g1 = out_bf_lastRow$C4_g1,
+        C4_g2 = out_bf_lastRow$C4_g2,
+        C4_g3 = out_bf_lastRow$C4_g3,
+        C4_g4 = out_bf_lastRow$C4_g4,
+        C4_g5 = out_bf_lastRow$C4_g5,
+        C4_g6 = out_bf_lastRow$C4_g6,
+        
+        HCC_A_g1 = out_bf_lastRow$HCC_A_g1,
+        HCC_A_g2 = out_bf_lastRow$HCC_A_g2,
+        HCC_A_g3 = out_bf_lastRow$HCC_A_g3,
+        HCC_A_g4 = out_bf_lastRow$HCC_A_g4,
+        HCC_A_g5 = out_bf_lastRow$HCC_A_g5,
+        HCC_A_g6 = out_bf_lastRow$HCC_A_g6,
+        
+        HCC_B_g1 = out_bf_lastRow$HCC_B_g1,
+        HCC_B_g2 = out_bf_lastRow$HCC_B_g2,
+        HCC_B_g3 = out_bf_lastRow$HCC_B_g3,
+        HCC_B_g4 = out_bf_lastRow$HCC_B_g4,
+        HCC_B_g5 = out_bf_lastRow$HCC_B_g5,
+        HCC_B_g6 = out_bf_lastRow$HCC_B_g6,
+        
+        HCC_C_g1 = out_bf_lastRow$HCC_C_g1,
+        HCC_C_g2 = out_bf_lastRow$HCC_C_g2,
+        HCC_C_g3 = out_bf_lastRow$HCC_C_g3,
+        HCC_C_g4 = out_bf_lastRow$HCC_C_g4,
+        HCC_C_g5 = out_bf_lastRow$HCC_C_g5,
+        HCC_C_g6 = out_bf_lastRow$HCC_C_g6,
+        
+        HCC_D_g1 = out_bf_lastRow$HCC_D_g1,
+        HCC_D_g2 = out_bf_lastRow$HCC_D_g2,
+        HCC_D_g3 = out_bf_lastRow$HCC_D_g3,
+        HCC_D_g4 = out_bf_lastRow$HCC_D_g4,
+        HCC_D_g5 = out_bf_lastRow$HCC_D_g5,
+        HCC_D_g6 = out_bf_lastRow$HCC_D_g6,
+        
+        C1std_cured_g1 = out_bf_lastRow$C1std_cured_g1,
+        C1std_cured_g2 = out_bf_lastRow$C1std_cured_g2,
+        C1std_cured_g3 = out_bf_lastRow$C1std_cured_g3,
+        C1std_cured_g4 = out_bf_lastRow$C1std_cured_g4,
+        C1std_cured_g5 = out_bf_lastRow$C1std_cured_g5,
+        C1std_cured_g6 = out_bf_lastRow$C1std_cured_g6,
+        
+        C1new_cured_g1 = out_bf_lastRow$C1new_cured_g1,
+        C1new_cured_g2 = out_bf_lastRow$C1new_cured_g2,
+        C1new_cured_g3 = out_bf_lastRow$C1new_cured_g3,
+        C1new_cured_g4 = out_bf_lastRow$C1new_cured_g4,
+        C1new_cured_g5 = out_bf_lastRow$C1new_cured_g5,
+        C1new_cured_g6 = out_bf_lastRow$C1new_cured_g6,
+        
+        C2new_cured_g1 = out_bf_lastRow$C2new_cured_g1,
+        C2new_cured_g2 = out_bf_lastRow$C2new_cured_g2,
+        C2new_cured_g3 = out_bf_lastRow$C2new_cured_g3,
+        C2new_cured_g4 = out_bf_lastRow$C2new_cured_g4,
+        C2new_cured_g5 = out_bf_lastRow$C2new_cured_g5,
+        C2new_cured_g6 = out_bf_lastRow$C2new_cured_g6,
+        
+        C3new_cured_g1 = out_bf_lastRow$C3new_cured_g1,
+        C3new_cured_g2 = out_bf_lastRow$C3new_cured_g2,
+        C3new_cured_g3 = out_bf_lastRow$C3new_cured_g3,
+        C3new_cured_g4 = out_bf_lastRow$C3new_cured_g4,
+        C3new_cured_g5 = out_bf_lastRow$C3new_cured_g5,
+        C3new_cured_g6 = out_bf_lastRow$C3new_cured_g6,
+        
+        C4new_cured_g1 = out_bf_lastRow$C4new_cured_g1,
+        C4new_cured_g2 = out_bf_lastRow$C4new_cured_g2,
+        C4new_cured_g3 = out_bf_lastRow$C4new_cured_g3,
+        C4new_cured_g4 = out_bf_lastRow$C4new_cured_g4,
+        C4new_cured_g5 = out_bf_lastRow$C4new_cured_g5,
+        C4new_cured_g6 = out_bf_lastRow$C4new_cured_g6,
+        
+        death_g1 = out_bf_lastRow$death_g1,
+        death_g2 = out_bf_lastRow$death_g2,
+        death_g3 = out_bf_lastRow$death_g3,
+        death_g4 = out_bf_lastRow$death_g4,
+        death_g5 = out_bf_lastRow$death_g5,
+        death_g6 = out_bf_lastRow$death_g6,
+        
+        deathHCC_g1 = out_bf_lastRow$deathHCC_g1,
+        deathHCC_g2 = out_bf_lastRow$deathHCC_g2,
+        deathHCC_g3 = out_bf_lastRow$deathHCC_g3,
+        deathHCC_g4 = out_bf_lastRow$deathHCC_g4,
+        deathHCC_g5 = out_bf_lastRow$deathHCC_g5,
+        deathHCC_g6 = out_bf_lastRow$deathHCC_g6,
+        
+        deathC14_g1 = out_bf_lastRow$deathC14_g1,
+        deathC14_g2 = out_bf_lastRow$deathC14_g2,
+        deathC14_g3 = out_bf_lastRow$deathC14_g3,
+        deathC14_g4 = out_bf_lastRow$deathC14_g4,
+        deathC14_g5 = out_bf_lastRow$deathC14_g5,
+        deathC14_g6 = out_bf_lastRow$deathC14_g6
+        
+      )
+    })
+    #out_at
+    times_at <- seq(2018.01, 2035, by = 0.01)
+    out_at <- ode( y = inits_con(),times =  times_at, func = PanHepC, parms = parms(), method = "rk4")
+    
+    out_at_df <-as.data.frame(out_at)
+    
+    out_df <- rbind(out_bf_df,out_at_df)
+    
     out_df
 
+  })
+  
+  #output per year
+  out_df_year <- reactive({
+    
+    time_year <- out_df()["time"] %% 1 ==0
+    out_df_year <- out_df()[time_year,]
+    
+  })
+  
+  #cost plot
+  cost_plot <- reactive({
+    cost_times <- seq(1999, 2020, by = 1)
+    cost_per_year <- 0
+    cost_func <- function(time,state,parms){
+      list(parms)
+    }
+    out <- ode( y = cost_per_year,times =  cost_times, func = cost_func, parms = Treatment$cost, method = "rk4")
+    cost_plot <- as.data.frame(out)
+    colnames(cost_plot)[2] <- "Total_Cost"
+    cost_plot
   })
   
 
@@ -600,8 +1129,7 @@ shinyServer(function(input, output,session) {
           geom_bar(width = 1, stat = "identity") + 
           coord_polar("y", start=0) +  scale_fill_brewer(palette="Blues") + theme_minimal() +  
           theme(axis.text.x=element_blank()) +
-          geom_text(aes(y = value/3 + c(0, cumsum(value)[-length(value)]), 
-                        label = percent(value)), size=3)
+          geom_text(aes(label = percent(value)), size=3, position = position_stack(vjust = 0.5))
       })
     })
     
@@ -621,10 +1149,9 @@ shinyServer(function(input, output,session) {
         
         ggplot(x_melt, aes(x="", y=value, fill=variable))+
           geom_bar(width = 1, stat = "identity") + 
-          coord_polar("y", start=0) +  scale_fill_brewer(palette="Blues") + theme_minimal() +  
+          coord_polar("y", start=0) +  scale_fill_brewer(palette="Blues") + theme_minimal() + 
           theme(axis.text.x=element_blank()) +
-          geom_text(aes(y = value/3 + c(0, cumsum(value)[-length(value)]), 
-                        label = percent(value)), size=3)
+          geom_text(aes(label = percent(value)), size=3, position = position_stack(vjust = 0.5))
       })
     })
     #piePlotF1
@@ -645,8 +1172,7 @@ shinyServer(function(input, output,session) {
           geom_bar(width = 1, stat = "identity") + 
           coord_polar("y", start=0) +  scale_fill_brewer(palette="Blues") + theme_minimal() +  
           theme(axis.text.x=element_blank()) +
-          geom_text(aes(y = value/3 + c(0, cumsum(value)[-length(value)]), 
-                        label = percent(value)), size=3)
+          geom_text(aes(label = percent(value)), size=3, position = position_stack(vjust = 0.5))
       })
     })
     
@@ -668,8 +1194,7 @@ shinyServer(function(input, output,session) {
           geom_bar(width = 1, stat = "identity") + 
           coord_polar("y", start=0) +  scale_fill_brewer(palette="Blues") + theme_minimal() +  
           theme(axis.text.x=element_blank()) +
-          geom_text(aes(y = value/3 + c(0, cumsum(value)[-length(value)]), 
-                        label = percent(value)), size=3)
+          geom_text(aes(label = percent(value)), size=3, position = position_stack(vjust = 0.5))
       })
     })
     
@@ -692,53 +1217,78 @@ shinyServer(function(input, output,session) {
           geom_bar(width = 1, stat = "identity") + 
           coord_polar("y", start=0) +  scale_fill_brewer(palette="Blues") + theme_minimal() +  
           theme(axis.text.x=element_blank()) +
-          geom_text(aes(y = value/3 + c(0, cumsum(value)[-length(value)]), 
-                        label = percent(value)), size=3)
+          geom_text(aes(label = percent(value)), size=3, position = position_stack(vjust = 0.5))
       })
     })
     
     
-    #textoutput
-    output$text1 <- renderText({
-        paste("Treatment efficacy F0 :" , mean(Treatment$new_cureF0))
+    # #textoutput
+    # output$text1 <- renderText({
+    #     paste("Treatment efficacy F0 :" , round(mean(Treatment$new_cureF0),2))
+    # })
+    # 
+    # output$text2 <- renderText({
+    #     paste("Treatment efficacy F1 :" , round(mean(Treatment$new_cureF1),2))
+    # })
+    # 
+    # output$text3 <- renderText({
+    #    paste("Treatment efficacy F2 :" , round(mean(Treatment$new_cureF2),2))
+    # })
+    # 
+    # output$text4 <- renderText({
+    #   paste("Treatment efficacy F3 :" , round(mean(Treatment$new_cureF3),2))
+    # })
+    # 
+    # output$text5 <- renderText({
+    #   paste("Treatment efficacy C1 :" , round(mean(Treatment$new_cureC1),2))
+    # })
+    # 
+    # output$text6 <- renderText({
+    #   paste("Treatment efficacy C2 :" , round(mean(Treatment$new_cureC2),2))
+    # })
+    # 
+    # output$text7 <- renderText({
+    #   paste("Treatment efficacy C3 :" , round(mean(Treatment$new_cureC3),2))
+    # })
+    # 
+    # output$text8 <- renderText({
+    #   paste("Treatment efficacy C4 :" , round(mean(Treatment$new_cureC4),2))
+    # })
+    # 
+    output$S_list <- renderPrint({
+      print(p_t$Pos_F)
+      print(p_t$Neg_T)
+      print(p_t$Neg_F)
+    })
+    output$screening_p <- renderText({
+      paste("screening people :" , (p_t$S_screening) )
     })
     
-    output$text2 <- renderText({
-        paste("Treatment efficacy F1 :" , mean(Treatment$new_cureF1))
+    output$Pos_T_Text <- renderText({
+      paste("Positive True :" , (p_t$Pos_T) )
     })
     
-    output$text3 <- renderText({
-       paste("Treatment efficacy F2 :" , mean(Treatment$new_cureF2))
+    output$Pos_F_Text <- renderText({
+      paste("Positive False :" , (p_t$Pos_F) )
     })
     
-    output$text4 <- renderText({
-      paste("Treatment efficacy F3 :" , mean(Treatment$new_cureF3))
+    output$Neg_T_Text <- renderText({
+      paste("Negative True :" , (p_t$Neg_T) )
     })
     
-    output$text5 <- renderText({
-      paste("Treatment efficacy C1 :" , mean(Treatment$new_cureC1))
-    })
-    
-    output$text6 <- renderText({
-      paste("Treatment efficacy C2 :" , mean(Treatment$new_cureC2))
-    })
-    
-    output$text7 <- renderText({
-      paste("Treatment efficacy C3 :" , mean(Treatment$new_cureC3))
-    })
-    
-    output$text8 <- renderText({
-      paste("Treatment efficacy C4 :" , mean(Treatment$new_cureC4))
+    output$Neg_F_Text <- renderText({
+      paste("Negative False :" , (p_t$Neg_F) )
     })
     
     output$downloadData <- 
+      
       
       downloadHandler(
         
         filename = "result.xlsx",
         content = function(file) {
 
-          write.xlsx(out_df(), file,sheetName="Result" ,row.names = FALSE)
+          write.xlsx(out_df_year(), file,sheetName="Result" ,row.names = FALSE)
           
         },
         contentType = "text/xlsx"
@@ -757,4 +1307,5 @@ shinyServer(function(input, output,session) {
       )
     
 
+    
 })

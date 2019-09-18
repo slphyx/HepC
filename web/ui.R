@@ -10,9 +10,13 @@
 library(shiny)
 library(shinyBS)
 library(shinyjs)
+library(tableHTML)
+
+useShinyjs(rmd = T)
 
 # Define UI for application that draws a histogram
 shinyUI(fluidPage(  
+  
   tags$head(
     tags$link(rel = "stylesheet", type = "text/css", href = "style.css")
   ),
@@ -27,31 +31,28 @@ shinyUI(fluidPage(
       tabPanel("Introduction",
                   tags$h2("Rationale"),
                   tags$p("Hepatitis C virus (HCV) infection is an important worldwide public health problem, and most
-                          of the global HCV burden is in low- to middle-income countries.A mathematical model of CHC transmission
-                          dynamics was constructed to examine the disease burden over the next 20 years using different
-                          treatment strategies. We compared and evaluated the current treatment (PEGylated
-                          interferon and ribavirin) with new treatments using novel direct-acting antiviral agents
-                          among various treatment policies."),
+                          of the global HCV burden is in low- to middle-income countries. Mathematical model approach is used  
+                          to study the disease dynamics and estimate the cost-effectiveness, given different types of screening methods, diagnosis and treatment strategies. 
+                          In particular, we evaluate the benefits of using the new screening scheme, new diagnostic tests and 
+                          novel direct-acting antiviral agents for treatment against the current standards."),
                   tags$p("These advances have led to the potential of HCV treatment delivery to national public
                           health programs and decreased overall HCV-related morbidity and mortality [1]."),
                
                   tags$h2("Study Objectives"),
-                  tags$p("1) To assess impact of treating HCV patients (by measuring the incidence of CHC - related decompensated
+               tags$p("1) To asess impacts and costs of using different screening and diagnosis schemes on morbidity and mortality of HCV infections in Thai setting"),
+               tags$p("2) To assess impacts and costs of treating HCV patients (by measuring the incidence of CHC - related decompensated
                          cirrhosis and hepatocellular carcinoma (HCC) and mortality) wih different regimens including "),
                   tags$ol(type = "a",
-                    tags$li("sofosbuvir with peginterferon alfa type 2a or 2b and ribavirin (National List of Essential Medicines)"),
-                    tags$li("sofosbuvir with ledipasvir (National List of Essential Medicines)"),
-                    tags$li("sofosbuvir with daclatasvir (pan-genotypic treatments)"),
-                    tags$li("sofosbuvir with velpatasvir (pan-genotypic treatments)"),
-                    tags$li("sofosbuvir with ravidasvir (pan-genotypic treatments, on-going clinical trial)")
+                    tags$li("Sofosbuvir with Peginterferon alfa type 2a or 2b and ribavirin (National List of Essential Medicines)"),
+                    tags$li("Sofosbuvir with Ledipasvir (National List of Essential Medicines)"),
+                    tags$li("Sofosbuvir with Daclatasvir (pan-genotypic treatments)"),
+                    tags$li("Sofosbuvir with Velpatasvir (pan-genotypic treatments)"),
+                    tags$li("Sofosbuvir with Ravidasvir (pan-genotypic treatments, on-going clinical trial)")
                   ),
                
-                  tags$p("2) To estimate the cost of treatment for each regimen and compare with the standard treatment"),
-               
                   tags$h2("Mathematical Modelling Approach"),
-                  tags$p("We further develop the model from our previous study looking at the 
-                         treatment coverage and allocation strategies (Poovorawan",tags$i(class = "italic","et. al."), 
-                         "2016)."),
+                  tags$p("Based on our previous study looking at the coverage of novel direct-acting antiviral agents and allocation strategies in Poovorawan",tags$i(class = "italic","et. al."), 
+                         "2016 [2], we extend the model to consider the process of screening HCV patients from the general population and applying different diagnostic tests."),
                 tags$div(
                 tags$img(src="image/disease progression model.png" 
                           ,alt="Study design of the transmission and disease progression model."),
@@ -62,14 +63,17 @@ shinyUI(fluidPage(
                       mortality.")
                 ),
                tags$hr(),
-               tags$p("
-                      1.	Kohli A, Shaffer A, Sherman A, Kottilil S. Treatment of hepatitis C: a systematic review. Jama. 2014;
-                          312(6):631-40.  doi:", tags$a (href="http://dx.doi.org/10.1001/jama.2014.7085","10.1001/jama.2014.7085"), "PMID: 25117132.")
-      ),
+               tags$p("1.Kohli A, Shaffer A, Sherman A, Kottilil S. Treatment of hepatitis C: a systematic review. Jama. 2014;
+                        312(6):631-40.  doi:", tags$a (href="http://dx.doi.org/10.1001/jama.2014.7085","10.1001/jama.2014.7085"), "PMID: 25117132."),
+               tags$p("2.Poovorawan K, Pan-Ngum W, White LJ" , tags$i(class = "italic","et. al."),"Estimating the impact of expanding treatment coverage and allocation strategies for chronic Hepatitis C in a Direct Antiviral Agent Era.
+                        PLoS One. 2016 Sep 15;11(9):e0163095. doi:doi: 10.1371/journal.pone.0163095. eCollection 2016" )
+               ),
       #tab2
       tabPanel("Natural History Of Disease",
+               #actionButton("test","Test"), #reset button to change values back to default values
                tags$div(class = "sliderDisplay col-sm-12",
-                        tags$h3("Populations and Transmission Coefficient"),
+                        tags$h3("Populations and Transmission Coefficient"), 
+                        actionButton("resetSect1","RESET", style="color: #fff; background-color: #337ab7; border-color: #2e6da4; position:absolute; right:2em; top:25px"),
                         tags$hr(),
                         tags$div(class = "col-sm-4",
                                  sliderInput("P0",
@@ -116,8 +120,9 @@ shinyUI(fluidPage(
                                              value = 0.0001
                                  )
                         ),
-
-                        tags$h3("Progression of fibrosis"),
+                        
+                        tags$h3("Progression of Fibrosis"), 
+                        actionButton("resetSect2","RESET", style="color: #fff; background-color: #337ab7; border-color: #2e6da4; position:absolute; right:2em; top:315px"),
                         tags$hr(),
                         tags$div(class = "col-sm-4",
                                  sliderInput("f0f1",
@@ -156,7 +161,8 @@ shinyUI(fluidPage(
                                  )
                                  
                         ),
-                        tags$h3("Progression of cirrhosis"),
+                        tags$h3("Progression of Cirrhosis"),
+                        actionButton("resetSect3","RESET", style="color: #fff; background-color: #337ab7; border-color: #2e6da4; position:absolute; right:2em; top:600px"),
                         tags$hr(),
                         tags$div(class = "col-sm-6",
                                  sliderInput("cAcB",
@@ -176,7 +182,8 @@ shinyUI(fluidPage(
                                              value = 0.076
                                  )
                         ),
-                        tags$h3("Incidence of developing HCC"),
+                        tags$h3("Incidence of Developing HCC"),
+                        actionButton("resetSect4","RESET", style="color: #fff; background-color: #337ab7; border-color: #2e6da4; position:absolute; right:2em; top:765px"),
                         tags$hr(),
                         tags$div(class = "col-sm-4",
                                  sliderInput("c1bA",
@@ -269,22 +276,100 @@ shinyUI(fluidPage(
                                  )
                         )
                )
-               ), 
+      ),
       #tab3
+      tabPanel("Screening",
+               tags$div(class = "sliderDisplay col-sm-12",
+                        tags$div(
+                          radioButtons("screening", "Screening type:",
+                                       c("By age" = 1,
+                                         "By risk groups" = 2),
+                                         inline = T)
+                        ),
+                          tags$div(id = "Age_screen",
+                          radioButtons("age_s", "Age screening range (years):",
+                                       c("40 to 50" = 1,
+                                         "50 to 60" = 2,
+                                         "40 to 60" = 3)),
+                          tags$img(src="image/population2019.png" 
+                                   ,alt="Study design of the transmission and disease progression model."),
+                          
+                        #imported excel file and now in r as "screeningdesc"
+                        tags$div(class = "screeningdesc col-sm-6",
+                                 fluidRow(
+                                   
+                                   br(),
+                                   column(width = 1),
+                                   tableHTML_output("screeningtbl")), style = "position:absolute; right:1em; top:200px")),
+                                 
+                          tags$div(id = "Risk_group",
+                          radioButtons("risk_g", "Risk groups:",
+                                       c("Human Immunodeficiency Virus (HIV)" = 1,
+                                         "Injection Drug User (IDU)" = 2,
+                                         "Men who have Sex with Men (MSM)" = 3,
+                                         "Blood donors" = 4,
+                                         "Prisoners" = 5
+                                         )),
+                        
+                        #imported excel file and now in r as "riskdesc"
+                        tags$div(class = "riskdesc col-sm-6",
+                                 fluidRow(
+                                   
+                                   br(),
+                                   column(width = 1),
+                                   tableHTML_output("risktbl")), style = "position:absolute; right:5em; top:30px")),
+                        
+                        textOutput("screening_p")
+
+                        
+               ) 
+               ), 
+      #tab4
+      tabPanel("Diagnosis",
+               tags$div(class = "sliderDisplay col-sm-12",
+                 tags$div(class = "col-sm-6",
+                   radioButtons("test1", "First test:",
+                                c("HCV Antibody" = 1,
+                                  "Rapid HCV RNA" = 2))
+                 ),
+                 tags$div(id = "test2",class = "col-sm-6",
+                            radioButtons("test2", "Second test:",
+                                         c("HCV RNA" = 1,
+                                           "CORE Antigen" = 2,
+                                           "Rapid HCV RNA" = 3))
+                 ),
+                 #imported excel file and now in r as "testdesc"
+                 tags$div(class = "testdesc col-sm-6",
+                          fluidRow(
+                            
+                            br(),
+                            column(width = 1),
+                            tableHTML_output("testtbl"), style = "position:absolute; right:-40em; top:1px")
+               ),
+               
+               tags$div(
+    
+                  tags$img(src="image/hcv testing sequence identifying hcv infection.jpg" 
+                                 ,alt="Study design of the transmission and disease progression model."),
+                  tags$p("source : https://www.hepatitisc.uw.edu")
+               ))),
+      
+      #tab5
       tabPanel("Treatment",
-               tags$img(src="image/Novel Treatment efficacy.png" 
-                        ,alt="Novel Treatment efficacy"),
+               
                tags$div(class = "sliderDisplay col-sm-12",
                         tags$h3("Treatment"),
                         tags$hr(),
                         tags$div(class = "col-sm-12",
                         radioButtons("Treatment", "Novel Treatment type:",width = '100%',
-                                     c("sofosbuvir with peginterferon alfa type 2a or 2b and ribavirin (National List of Essential Medicines)" =1,
-                                       "sofosbuvir with ledipasvir (National List of Essential Medicines)" = 2,
-                                       "sofosbuvir with daclatasvir (pan-genotypic treatments)" = 3,
-                                       "Log-sofosbuvir with velpatasvir (pan-genotypic treatments)" = 4,
-                                       "sofosbuvir with ravidasvir (pan-genotypic treatments, on-going clinical trial)" = 5))
+                                     c("No novel treatment" = 0,
+                                       "Sofosbuvir with Peginterferon alfa type 2a or 2b and ribavirin (National List of Essential Medicines)" =1,
+                                       "Sofosbuvir with Ledipasvir (National List of Essential Medicines)" = 2,
+                                       "Sofosbuvir with Daclatasvir (pan-genotypic treatments)" = 3,
+                                       "Sofosbuvir with Velpatasvir (pan-genotypic treatments)" = 4,
+                                       "Sofosbuvir with Ravidasvir (pan-genotypic treatments, on-going clinical trial)" = 5))
                         ),
+                        tags$div(class = "row",
                         tags$div(class = "col-sm-11",id ="TreatmentOutput",
                         textOutput("text1"),
                         textOutput("text2"),
@@ -294,62 +379,144 @@ shinyUI(fluidPage(
                         textOutput("text6"),
                         textOutput("text7"),
                         textOutput("text8")
-                        ),
-                        tags$h3("treatment Cost"),
-                        tags$hr(),
-                        tags$div(class = "col-sm-6",
-                                 sliderInput("Te1",
-                                             "treatment Cost ($)",
-                                             min = 0.05,
-                                             max = 0.1,
-                                             step = 0.001,
-                                             value = 0.066
+                        
+                        # tags$h3("Treatment Cost"),
+                        # tags$hr(),
+                        # tags$div(class = "col-sm-6",
+                        #          sliderInput("Te1",
+                        #                      "Treatment Cost ($)",
+                        #                      min = 0.05,
+                        #                      max = 0.1,
+                        #                      step = 0.001,
+                        #                      value = 0.066
                                  )
                         ),
-                        tags$div(class = "col-sm-6",
-                                 sliderInput("Te2",
-                                             "treatment Cost ($)",
-                                             min = 0.05,
-                                             max = 0.1,
-                                             step = 0.001,
-                                             value = 0.066
-                                 )
+                        tags$div(class = "col-sm-6"),
+                        
+                        tags$div(id = "drugImg1",
+                        tags$img(src="image/drug1.png" 
+                                 ,alt="drug1")
+                        ),
+                        tags$div(id = "drugImg2",
+                                 tags$img(src="image/drug2.png" 
+                                          ,alt="drug2")
+                        ),
+                        tags$div(id = "drugImg3",
+                                 tags$img(src="image/drug3.png" 
+                                          ,alt="drug3")
+                        ),
+                        tags$div(id = "drugImg4",
+                                 tags$img(src="image/drug4.png" 
+                                          ,alt="drug4")
+                        ),
+                        tags$div(id = "drugImg5",
+                                 tags$img(src="image/drug5.png" 
+                                          ,alt="drug5")
                         )
                   
-               )
-               ), 
-      #tab4
-      tabPanel("Display Seting",
+               ),
+               #imported excel file and now in r as "treatmentdesc"
+               tags$div(class = "treatmentdesc col-sm-6",
+                        fluidRow(
+                          
+                          br(),
+                          column(width = 1),
+                          tableHTML_output("treatmenttbl"))
+               )), 
+      
+      #tab6new
+      tabPanel("Extra",
+               tags$div(class = "sliderDisplay col-sm-12",
+                       tags$div(class = "col-sm-12",
+                                checkboxGroupInput("care", "Link to care:",
+                                                   c("HCV genotype testing" = 1,
+                                                     "Fibroscan stiffness testing" = 2,
+                                                     "Relevant and safety lab" = 3,
+                                                     "APRI score" = 4
+                                                     ))
+                                )
+                       
+                       ),
+               #imported excel file and now in r as "extradesc"
+               tags$div(class = "extradesc col-sm-6",
+                        fluidRow(
+                          
+                          br(),
+                          column(width = 1),
+                          tableHTML_output("extratbl"))
+                        )),
+      
+      #tab6previous
+      # tabPanel("Extra",
+      #          tags$div(class = "sliderDisplay col-sm-12",
+      #                   tags$div(class = "col-sm-6",
+      #                            radioButtons("care", "Link to care:",
+      #                                         c("HCV genotype testing" = 1,
+      #                                           "Fibroscan stiffness testing" = 2,
+      #                                           "Relevant and safety lab" = 3,
+      #                                           "APRI score" = 4
+      #                                         )
+      #                            )
+      #                   ),
+      # 
+      #                   tags$div(class= "linkToCareDes col-sm-6",
+      #                            tags$div( id = "HCVDes",
+      #                                      "HCV genotype testing is recommended to guide selection of the most appropriate antiviral regimen."
+      #                            ),
+      #                            tags$div( id = "FibDes",
+      #                                      "FibroScan scores can be used to validate advanced fibrosis/cirrhosis for insurance companies, health care plans, or medical centers that require a significant amount of fibrosis before approving or allowing the start of HCV treatment.
+      #                                      Cost: USD$50 - 100"
+      #                            ),
+      #                            tags$div( id = "RelDes",
+      #                                     "Relevant and safety lab involves the monitoring of CBC, LFT, and Creatinine levels."
+      #                            ),
+      #                            tags$div( id = "APRIDes",
+      #                                     "APRI (aspartate aminotransferase to platelet ratio index) scores can be used to measure fibrosis of the liver.
+      #                                     Cost: THB200 - 500"
+      #                            )
+      #                   )
+      #         )),
+      #          tags$div(class = "sliderDisplay col-sm-12",
+      #                   textOutput("Pos_T_Text"),
+      #                   textOutput("Pos_F_Text"), 
+      #                   textOutput("Neg_T_Text"),
+      #                   textOutput("Neg_F_Text"))
+      # ),        
+      
+      #tab7
+      tabPanel("Timeline for Simulation",
                tags$div(class = "sliderDisplay col-sm-12",
                         sliderInput("year",
-                                    "Time (Year)",
+                                    "Time (years)",
                                     min = 1999, 
-                                    max = 2020,
-                                    value = c(2000,2010)
+                                    max = 2040,
+                                    value = c("2000","2020"),
+                                    sep = "" #removes "," in the number of years
                         )
                )
                ),
-      #tab5
-      tabPanel("Model prediction",
+      
+      #tab8
+      tabPanel("Model Prediction",
 
                   actionButton("button", "Run model",class = "button btn btn-primary"),
                downloadButton("downloadData", "Download Table"),
                downloadButton("downloadparameter", "Download Parameter"),
                  tabsetPanel(
                     #output 1
-                    tabPanel("Prevalence Of CHC",
+                    tabPanel("Prevalence of CHC",
                              checkboxInput("bygenotype", "By Genotype", FALSE),
                              plotOutput("distPlot")
                              ),
                     #output 2
-                    tabPanel("Cumulative Death",
+                    tabPanel("Cumulative death",
                              checkboxInput("showgenotype", "total death", FALSE),
 
                              plotOutput("distPlot2")
                              
                              ),
                     #output 3
-                    tabPanel("Annual Incidence",
+                    tabPanel("Annual incidence",
                              useShinyjs(),
                              checkboxInput("Anin_genotype", "By Genotype", FALSE),
                              div(id="A_nonG",
@@ -377,7 +544,7 @@ shinyUI(fluidPage(
                              plotOutput("distPlot4")
                     ),
                     #output 5
-                    tabPanel("Pie",
+                    tabPanel("Pie chart",
                              checkboxInput("showgenotype_pie", "By Genotype", FALSE),
                              div(id="Pie_nonG",
                                 plotOutput("piePlot")
@@ -398,10 +565,21 @@ shinyUI(fluidPage(
                                  )
                     )
                   )
+               ),
+      #tab9
+      tabPanel("Appendix",
+                  div(
+                      tags$p("1. progress 2nd _ 2018 10 03"),
+                      tags$a(
+                        #link
+                        href= "https://docs.google.com/presentation/d/1iHAfhqpBh5MpYjf4Sethcq5E3OhoYcyK_nugy2QXnik/edit?usp=sharing"
+                        ,"Google Drive" #text
+                      )
+                      )
+              
                )
     )
  
-  
+  #https://docs.google.com/presentation/d/1iHAfhqpBh5MpYjf4Sethcq5E3OhoYcyK_nugy2QXnik/edit?usp=sharing
   )
 )
-

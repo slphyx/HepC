@@ -22,7 +22,7 @@ library(scales)
 library(plyr) 
 library(shinyjs)
 library(readxl)
-
+library(openxlsx) 
 # Define server logic required to draw a histogram
 shinyServer(function(input, output,session) {
 
@@ -872,7 +872,7 @@ shinyServer(function(input, output,session) {
       )
     })
     #out_at
-    times_at <- seq(2018.01, 2035, by = 0.01)
+    times_at <- seq(2018.01, 2040, by = 0.01)
     out_at <- ode( y = inits_con(),times =  times_at, func = PanHepC, parms = parms(), method = "rk4")
     
     out_at_df <-as.data.frame(out_at)

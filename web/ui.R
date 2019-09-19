@@ -29,6 +29,10 @@ shinyUI(fluidPage(
   tabsetPanel(
       #tab1
       tabPanel("Introduction",
+               tags$h2("Introduction"),
+               tags$p("The aim of this interactive web application is to help decision makers design the screening programme for treatment of chronic Hepatitis C infection.																						
+                        The development of the model is based mainly on the Thai setting and Hepatitis C situations in Thai context. However, small adjustments of some parameters will allow the users to adapt the model to other settings.																						
+                        This is the first version of the web application. The research team is hoping to further devlope this application to serve more purposes for strategic planning to prevent and control chronic hepatitis C infections nationally and internationally."),
                   tags$h2("Rationale"),
                   tags$p("Hepatitis C virus (HCV) infection is an important worldwide public health problem, and most
                           of the global HCV burden is in low- to middle-income countries. Mathematical model approach is used  
@@ -62,6 +66,19 @@ shinyUI(fluidPage(
                       current standard treatment in Thailand was compared with new direct-acting antivirals with different treatment coverage and allocations. *HCV-related
                       mortality.")
                 ),
+               tags$hr(),
+               tags$h2("Collaborators"),
+               tags$h2("Funder"),
+               tags$h2("Software"),
+               tags$p("This App is built on the following open-source, free software:																									
+                        R Core Team (2014). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. ; Winston Chang (2015). shiny: Web Application Framework for R. ; Leaflet, a JavaScript library for interactive maps ; Datable table plug-in for jQuery."),
+               tags$h2("Contact"),
+               tags$p("For questions on the interactive web application, please contact wirichada.pan@mahidol.ac.th"),
+               tags$p("Further feedback and suggestion on this web application is greatly appreciated. Click here"),
+               tags$hr(),
+               tags$p("These advances have led to the potential of HCV treatment delivery to national public
+                          health programs and decreased overall HCV-related morbidity and mortality [1]."),
+               
                tags$hr(),
                tags$p("1.Kohli A, Shaffer A, Sherman A, Kottilil S. Treatment of hepatitis C: a systematic review. Jama. 2014;
                         312(6):631-40.  doi:", tags$a (href="http://dx.doi.org/10.1001/jama.2014.7085","10.1001/jama.2014.7085"), "PMID: 25117132."),
@@ -491,7 +508,7 @@ shinyUI(fluidPage(
                                     min = 1999, 
                                     max = 2040,
                                     value = c("2000","2020"),
-                                    sep = "" #removes "," in the number of years
+                                    sep = "" #removes "," in the number of years""
                         )
                )
                ),

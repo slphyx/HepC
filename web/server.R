@@ -24,6 +24,7 @@ library(openxlsx)
 
 # Define server logic required to draw a histogram
 shinyServer(function(input, output) {
+  
 
   v <- reactiveValues(doPlot = FALSE)
   options(scipen=6)
@@ -85,6 +86,17 @@ shinyServer(function(input, output) {
       Treatment$new_cureC4 <- 0.5
       Treatment$cost <- 25
       #drug 5
+    }else if(input$Treatment == 5){
+      Treatment$new_cureF0 <- 0.9
+      Treatment$new_cureF1 <- 0.9
+      Treatment$new_cureF2 <- 0.9
+      Treatment$new_cureF3 <- 0.9
+      Treatment$new_cureC1 <- 0.9
+      Treatment$new_cureC2 <- 0.9
+      Treatment$new_cureC3 <- 0.9
+      Treatment$new_cureC4 <- 0.5
+      Treatment$cost <- 20
+      #Another drug
     }else{
       Treatment$new_cureF0 <- 0.9
       Treatment$new_cureF1 <- 0.9
@@ -97,6 +109,14 @@ shinyServer(function(input, output) {
       Treatment$cost <- 20
     }
     
+  })
+  
+  observe({
+    if (input$Treatment != 6) {
+      disable("test")
+    }else{
+      enable("test")
+    }
   })
   
   observeEvent(input$go, {

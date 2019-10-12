@@ -27,6 +27,8 @@ shinyUI(fluidPage(
       #tab1
     tabPanel("Introduction",
              tags$h2("Introduction"),
+             
+             
              tags$p("The aim of this interactive web application is to help decision makers design the screening programme for treatment of chronic Hepatitis C infection.																						
                         The development of the model is based mainly on the Thai setting and Hepatitis C situations in Thai context. However, small adjustments of some parameters will allow the users to adapt the model to other settings.																						
                         This is the first version of the web application. The research team is hoping to further devlope this application to serve more purposes for strategic planning to prevent and control chronic hepatitis C infections nationally and internationally."),
@@ -376,7 +378,11 @@ shinyUI(fluidPage(
                                               "Sofosbuvir with Ledipasvir (National List of Essential Medicines)" = 2,
                                               "Sofosbuvir with Daclatasvir (pan-genotypic treatments)" = 3,
                                               "Sofosbuvir with Velpatasvir (pan-genotypic treatments)" = 4,
-                                              "Sofosbuvir with Ravidasvir (pan-genotypic treatments, on-going clinical trial)" = 5))
+                                              "Sofosbuvir with Ravidasvir (pan-genotypic treatments, on-going clinical trial)" = 5,
+                                              "Another durg" = 6),),
+                               shinyjs::useShinyjs(),
+                               numericInput("test", "Test", 5)
+                               
                       ),
                       tags$div(class = "row",
                                tags$div(class = "col-sm-11",id ="TreatmentOutput",

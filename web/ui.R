@@ -381,7 +381,15 @@ shinyUI(fluidPage(
                                               "Sofosbuvir with Ravidasvir (pan-genotypic treatments, on-going clinical trial)" = 5,
                                               "Another durg" = 6),),
                                shinyjs::useShinyjs(),
-                               numericInput("test", "Test", 5)
+                               numericInput("Input_F0", "F0", 0.5, min = 0, max = 1,step =0.1),
+                               numericInput("Input_F1", "F1", 0.5, min = 0, max = 1,step =0.1),
+                               numericInput("Input_F2", "F2", 0.5, min = 0, max = 1,step =0.1),
+                               numericInput("Input_F3", "F3", 0.5, min = 0, max = 1,step =0.1),
+                               numericInput("Input_C1", "C1", 0.5, min = 0, max = 1,step =0.1),
+                               numericInput("Input_C2", "C2", 0.5, min = 0, max = 1,step =0.1),
+                               numericInput("Input_C3", "C3", 0.5, min = 0, max = 1,step =0.1),
+                               numericInput("Input_C4", "C4", 0.5, min = 0, max = 1,step =0.1),
+                               numericInput("Input_Cost", "Cost", 20)
                                
                       ),
                       tags$div(class = "row",

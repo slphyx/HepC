@@ -6,6 +6,7 @@
 # 
 #    http://shiny.rstudio.com/
 #    setwd("D:/HepC-betaweb/HepC-betaweb/web")
+#C:\Hep-c
 
 library(shiny)
 library(Rcpp)
@@ -98,24 +99,42 @@ shinyServer(function(input, output) {
       Treatment$cost <- 20
       #Another drug
     }else{
-      Treatment$new_cureF0 <- 0.9
-      Treatment$new_cureF1 <- 0.9
-      Treatment$new_cureF2 <- 0.9
-      Treatment$new_cureF3 <- 0.9
-      Treatment$new_cureC1 <- 0.9
-      Treatment$new_cureC2 <- 0.9
-      Treatment$new_cureC3 <- 0.9
-      Treatment$new_cureC4 <- 0.5
-      Treatment$cost <- 20
+      Treatment$new_cureF0 <- input$Input_F0
+      Treatment$new_cureF1 <- input$Input_F1
+      Treatment$new_cureF2 <- input$Input_F2
+      Treatment$new_cureF3 <- input$Input_F3
+      Treatment$new_cureC1 <- input$Input_C1
+      Treatment$new_cureC2 <- input$Input_C2
+      Treatment$new_cureC3 <- input$Input_C3
+      Treatment$new_cureC4 <- input$Input_C4
+      Treatment$cost <- input$Input_Cost
     }
     
   })
   
   observe({
     if (input$Treatment != 6) {
-      disable("test")
+      disable("Input_F0")
+      disable("Input_F1")
+      disable("Input_F2")
+      disable("Input_F3")
+      disable("Input_C1")
+      disable("Input_C2")
+      disable("Input_C3")
+      disable("Input_C4")
+      disable("Input_Cost")
+      
     }else{
-      enable("test")
+      enable("Input_F0")
+      enable("Input_F1")
+      enable("Input_F2")
+      enable("Input_F3")
+      enable("Input_C1")
+      enable("Input_C2")
+      enable("Input_C3")
+      enable("Input_C4")
+      enable("Input_Cost")
+
     }
   })
   
@@ -129,7 +148,7 @@ shinyServer(function(input, output) {
     v$doPlot <- FALSE
   })  
     
-    setwd("D:/HepC-betaweb/HepC-betaweb/web")
+    setwd("D:/Hep-c/web")
     sourceCpp('p1.cpp')
     
     parms <- reactive({

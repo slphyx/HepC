@@ -14,6 +14,23 @@
     margin-top : 10px;
 
 }
+
+.center2{
+    text-align:center;
+    margin-top : 20px;
+    margin-bottom : 20px;
+
+}
+
+.right{
+    text-align: right;
+}
+
+.Mbottom{
+    margin-bottom : 30px;
+
+}
+
 .tab-content{
     margin-top : 30px;
 }
@@ -55,4 +72,17 @@ a.italic{
  background:  #fff;
  border-radius: 5px;
  border: 2px solid #73AD21;
+}
+.logo{
+    height: 300px;
+    width : 300px;
+}
+p,b{
+    font-size: 18px;
+}
+.resetbutton{
+    color: #fff; 
+    background-color: #337ab7; 
+    border-color: #2e6da4; 
+    
 }

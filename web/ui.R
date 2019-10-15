@@ -67,13 +67,23 @@ shinyUI(fluidPage(
                       mortality.")
              ),
              tags$hr(),
-             tags$h2("Collaborators"),
-             tags$h2("Funder"),
+             tags$h2(class = "center2","Collaborators"),
+             tags$div(class = "col-sm-12 Mbottom",
+             tags$div(class = "col-sm-4",tags$img(class = "logo",src="image/mahidol.png" 
+                      ,alt="Mahidol University")),
+             tags$div(class = "col-sm-4",tags$img(class = "logo",src="image/Moru.webp" 
+                      ,alt="Mahidol Oxford Tropical Medicine Research Unit")),
+             tags$div(class = "col-sm-4",tags$img(class = "logo",src="image/Hitap.jpg" 
+                      ,alt="Health Intervention and Technology Assessment Program"))
+              ),
+             tags$h2(class = "center2","Funder"),
+             tags$div(class = "center",tags$img(src="image/nstda.png" 
+                      ,alt="National Science and Technology Development Agency")),
              tags$h2("Software"),
              tags$p("This App is built on the following open-source, free software:																									
                         R Core Team (2014). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. ; Winston Chang (2015). shiny: Web Application Framework for R. ; Leaflet, a JavaScript library for interactive maps ; Datable table plug-in for jQuery."),
              tags$h2("Contact"),
-             tags$p("For questions on the interactive web application, please contact wirichada.pan@mahidol.ac.th"),
+             tags$p("For questions on the interactive web application, please contact",tags$b("wirichada.pan@mahidol.ac.th")),
              tags$p("Further feedback and suggestion on this web application is greatly appreciated. Click here"),
              tags$hr(),
              tags$p("These advances have led to the potential of HCV treatment delivery to national public
@@ -89,8 +99,16 @@ shinyUI(fluidPage(
       #tab2
       tabPanel("Natural History Of Disease",
                tags$div(class = "sliderDisplay col-sm-12",
+                        tags$div(class = "col-sm-12",
+                        tags$div(class = "col-sm-8",
                         tags$h3("Populations and Transmission Coefficient"),
+                        ),tags$div(class = "col-sm-4 right",
+                        actionButton("resetSect1","RESET", class="resetbutton"),
+                        ),
+                        ),
+                        tags$div(class = "col-sm-12",
                         tags$hr(),
+                        ),
                         tags$div(class = "col-sm-4",
                                  sliderInput("P0",
                                              "Total population at the beginning",
@@ -136,9 +154,16 @@ shinyUI(fluidPage(
                                              value = 0.001
                                  )
                         ),
-
-                        tags$h3("Progression of fibrosis"),
-                        tags$hr(),
+                        tags$div(class = "col-sm-12",
+                                 tags$div(class = "col-sm-8",
+                                          tags$h3("Progression of fibrosis"),
+                                 ),tags$div(class = "col-sm-4 right",
+                                            actionButton("resetSect2","RESET", class="resetbutton"),
+                                 ),
+                        ),
+                        tags$div(class = "col-sm-12",
+                                 tags$hr(),
+                        ),
                         tags$div(class = "col-sm-4",
                                  sliderInput("f0f1",
                                              "Fibrosis stage F0 to F1",
@@ -176,10 +201,18 @@ shinyUI(fluidPage(
                                  )
                                  
                         ),
-                        tags$h3("Progression of cirrhosis"),
-                        tags$hr(),
+                        tags$div(class = "col-sm-12",
+                                 tags$div(class = "col-sm-8",
+                                    tags$h3("Progression of cirrhosis"),
+                                 ),tags$div(class = "col-sm-4 right",
+                                    actionButton("resetSect3","RESET", class="resetbutton"),
+                                 ),
+                        ),
+                        tags$div(class = "col-sm-12",
+                                 tags$hr(),
+                        ),
                         tags$div(class = "col-sm-6",
-                                 sliderInput("c1c2",
+                                 sliderInput("cAcB",
                                              "Cirrhosis Child-Pugh class A to B",
                                              min = 0.03,
                                              max = 0.1,
@@ -188,7 +221,7 @@ shinyUI(fluidPage(
                                  )
                         ),
                         tags$div(class = "col-sm-6",
-                                 sliderInput("c2c3",
+                                 sliderInput("cBcC",
                                              "Cirrhosis Child-Pugh class B to C",
                                              min = 0.03,
                                              max = 0.1,
@@ -196,8 +229,16 @@ shinyUI(fluidPage(
                                              value = 0.076
                                  )
                         ),
-                        tags$h3("Incidence of developing HCC"),
-                        tags$hr(),
+                        tags$div(class = "col-sm-12",
+                                 tags$div(class = "col-sm-8",
+                                          tags$h3("Incidence of developing HCC"),
+                                 ),tags$div(class = "col-sm-4 right",
+                                            actionButton("resetSect4","RESET", class="resetbutton"),
+                                 ),
+                        ),
+                        tags$div(class = "col-sm-12",
+                                 tags$hr(),
+                        ),
                         tags$div(class = "col-sm-4",
                                  sliderInput("c1bA",
                                              "Cirrhosis stage C1 to HCC_BCLC_A",
@@ -434,17 +475,7 @@ shinyUI(fluidPage(
                         column(width = 1),
                         tableHTML_output("extratbl"))
              )),
-      #tab6
-      tabPanel("Display Seting",
-                       tags$div(class = "sliderDisplay col-sm-12",
-                                sliderInput("year",
-                                            "Time (Year)",
-                                            min = 1999, 
-                                            max = 2020,
-                                            value = c(2000,2010)
-                                )
-                       )
-              ),
+
 
       #tab7
       tabPanel("Model prediction",

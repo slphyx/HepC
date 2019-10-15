@@ -24,7 +24,7 @@ library(readxl)
 library(openxlsx) 
 
 # Define server logic required to draw a histogram
-shinyServer(function(input, output) {
+shinyServer(function(input, output,session) {
   
 
   v <- reactiveValues(doPlot = FALSE)
@@ -218,6 +218,45 @@ shinyServer(function(input, output) {
     v$doPlot <- FALSE
   })  
     
+  
+  #button to reset changed values back to the default values (from ui)
+  #section 1
+  observeEvent(input$resetSect1, {
+    #reset("P0")
+    updateSliderInput(session, inputId = "P0",value = 60000000)
+    updateSliderInput(session, inputId = "K", value = 70000000)
+    updateSliderInput(session, inputId = "r", value = 0.16)
+    updateSliderInput(session, inputId = "beta", value = 0.32)
+    updateSliderInput(session, inputId = "Fi", value = 0.0001)
+  })
+  
+  #section 2
+  observeEvent(input$resetSect2, {
+    updateSliderInput(session, inputId = "f0f1", value = 0.117)
+    updateSliderInput(session, inputId = "f1f2", value = 0.085)
+    updateSliderInput(session, inputId = "f2f3", value = 0.12)
+    updateSliderInput(session, inputId = "f3cA", value = 0.116)
+  })
+  
+  #section3
+  observeEvent(input$resetSect3, {
+    updateSliderInput(session, inputId = "cAcB", value = 0.044)
+    updateSliderInput(session, inputId = "cBcC", value = 0.076)
+  })
+  
+  #section4
+  observeEvent(input$resetSect4, {
+    updateSliderInput(session, inputId = "c1bA",value = 0.0068)
+    updateSliderInput(session, inputId = "c2bA", value = 0.0068)
+    updateSliderInput(session, inputId = "c1bB", value = 0.0099)
+    updateSliderInput(session, inputId = "c2bB", value = 0.0099)
+    updateSliderInput(session, inputId = "c1bC", value = 0.0029)
+    updateSliderInput(session, inputId = "c2bC", value = 0.0029)
+    updateSliderInput(session, inputId = "c1bD", value = 0.0068)
+    updateSliderInput(session, inputId = "c2bD", value = 0.0068)
+    updateSliderInput(session, inputId = "c3bD", value = 0.066)
+    updateSliderInput(session, inputId = "c4bD", value = 0.066)
+  })
     setwd("C:/Hep-c/web")
     sourceCpp('p1_scr_SS.cpp')
     

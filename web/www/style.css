@@ -77,6 +77,11 @@ a.italic{
     height: 300px;
     width : 300px;
 }
+
+.logo2{
+    height: 300px;
+    width : 450px;
+}
 p,b{
     font-size: 18px;
 }

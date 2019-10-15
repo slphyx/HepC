@@ -112,6 +112,7 @@ shinyServer(function(input, output,session) {
     
   })
   
+  #comfirm
   observeEvent(input$Comfirm, {
     if(input$Treatment == 1){
       Treatment$new_cureF0 <- 0.6
@@ -218,6 +219,19 @@ shinyServer(function(input, output,session) {
     v$doPlot <- FALSE
   })  
     
+  observeEvent(input$screening, {
+    if(input$screening==1){
+      disable("risk_g")
+      enable("age_s")
+    }
+    if(input$screening==2){
+      disable("age_s")
+      enable("risk_g")
+    }
+  }
+  )
+  
+  
   
   #button to reset changed values back to the default values (from ui)
   #section 1

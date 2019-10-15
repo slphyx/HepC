@@ -71,7 +71,7 @@ shinyUI(fluidPage(
              tags$div(class = "col-sm-12 Mbottom",
              tags$div(class = "col-sm-4",tags$img(class = "logo",src="image/mahidol.png" 
                       ,alt="Mahidol University")),
-             tags$div(class = "col-sm-4",tags$img(class = "logo",src="image/Moru.webp" 
+             tags$div(class = "col-sm-4",tags$img(class = "logo2",src="image/Moru.webp" 
                       ,alt="Mahidol Oxford Tropical Medicine Research Unit")),
              tags$div(class = "col-sm-4",tags$img(class = "logo",src="image/Hitap.jpg" 
                       ,alt="Health Intervention and Technology Assessment Program"))
@@ -334,6 +334,7 @@ shinyUI(fluidPage(
       #tab3
       tabPanel("Screening",
                tags$div(class = "sliderDisplay col-sm-12",
+                        shinyjs::useShinyjs(),
                         tags$div(
                           radioButtons("screening", "Screening type:",
                                        c("By age" = 1,
@@ -398,7 +399,7 @@ shinyUI(fluidPage(
                                    
                                    br(),
                                    column(width = 1),
-                                   tableHTML_output("testtbl"), style = "position:absolute; right:-40em; top:1px")
+                                   tableHTML_output("testtbl"))
                         ),
                         
                         tags$div(

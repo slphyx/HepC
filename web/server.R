@@ -112,6 +112,76 @@ shinyServer(function(input, output) {
     
   })
   
+  observeEvent(input$Comfirm, {
+    if(input$Treatment == 1){
+      Treatment$new_cureF0 <- 0.6
+      Treatment$new_cureF1 <- 0.6
+      Treatment$new_cureF2 <- 0.6
+      Treatment$new_cureF3 <- 0.6
+      Treatment$new_cureC1 <- 0.6
+      Treatment$new_cureC2 <- 0.6
+      Treatment$new_cureC3 <- 0.6
+      Treatment$new_cureC4 <- 0.4
+      Treatment$cost <- 10
+      #drug 2
+    }else if(input$Treatment == 2){
+      Treatment$new_cureF0 <- 0.7
+      Treatment$new_cureF1 <- 0.7
+      Treatment$new_cureF2 <- 0.8
+      Treatment$new_cureF3 <- 0.7
+      Treatment$new_cureC1 <- 0.7
+      Treatment$new_cureC2 <- 0.7
+      Treatment$new_cureC3 <- 0.7
+      Treatment$new_cureC4 <- 0.4
+      Treatment$cost <- 15
+      #drug 3
+    }else if(input$Treatment == 3){
+      Treatment$new_cureF0 <- 0.8
+      Treatment$new_cureF1 <- 0.8
+      Treatment$new_cureF2 <- 0.8
+      Treatment$new_cureF3 <- 0.8
+      Treatment$new_cureC1 <- 0.8
+      Treatment$new_cureC2 <- 0.8
+      Treatment$new_cureC3 <- 0.8
+      Treatment$new_cureC4 <- 0.5
+      Treatment$cost <- 20
+      #drug 4
+    }else if(input$Treatment == 4){
+      Treatment$new_cureF0 <- 0.9
+      Treatment$new_cureF1 <- 0.9
+      Treatment$new_cureF2 <- 0.9
+      Treatment$new_cureF3 <- 0.9
+      Treatment$new_cureC1 <- 0.9
+      Treatment$new_cureC2 <- 0.9
+      Treatment$new_cureC3 <- 0.9
+      Treatment$new_cureC4 <- 0.5
+      Treatment$cost <- 25
+      #drug 5
+    }else if(input$Treatment == 5){
+      Treatment$new_cureF0 <- 0.9
+      Treatment$new_cureF1 <- 0.9
+      Treatment$new_cureF2 <- 0.9
+      Treatment$new_cureF3 <- 0.9
+      Treatment$new_cureC1 <- 0.9
+      Treatment$new_cureC2 <- 0.9
+      Treatment$new_cureC3 <- 0.9
+      Treatment$new_cureC4 <- 0.5
+      Treatment$cost <- 20
+      #Another drug
+    }else{
+      Treatment$new_cureF0 <- input$Input_F0
+      Treatment$new_cureF1 <- input$Input_F1
+      Treatment$new_cureF2 <- input$Input_F2
+      Treatment$new_cureF3 <- input$Input_F3
+      Treatment$new_cureC1 <- input$Input_C1
+      Treatment$new_cureC2 <- input$Input_C2
+      Treatment$new_cureC3 <- input$Input_C3
+      Treatment$new_cureC4 <- input$Input_C4
+      Treatment$cost <- input$Input_Cost
+    }
+    
+  }
+  )
   observe({
     if (input$Treatment != 6) {
       disable("Input_F0")
@@ -148,49 +218,81 @@ shinyServer(function(input, output) {
     v$doPlot <- FALSE
   })  
     
-    setwd("D:/Hep-c/web")
-    sourceCpp('p1.cpp')
+    setwd("C:/Hep-c/web")
+    sourceCpp('p1_scr_SS.cpp')
     
     parms <- reactive({
-        list(
-        K= input$K,        #Maximum population (carrying capacity)
-        P0=input$P0,       #popstat(YEAR=1999)
-        r =input$r,        #Population growth rate (logistic growth curve)
-        S0=0.0305853,
-        standard_start = 2004,
-        new_start = 2015,
+      list(
+        P0=61623143,       #popstat(YEAR=1999)
+        K= 66785001,        #Maximum population (carrying capacity)
+        r = 0.5,        #Population growth rate (logistic growth curve)
+        flowin = 0.01,
+        caset0 =  1848694,      #0.03*P0,
+        standard_start = 5,
+        new_start = 20,
+        nscr = 0.05,
+        scr_yr = 10,
+        scr_cov = 0.09,      #0.9/scr.yr,
+        sens = 0.985,
+        pF0scr = 0.07,
+        pF1scr = 0.03,
+        pF2scr=0.49,
+        pF3scr=0.12,
+        pC1scr=0.0012,
+        pC2scr=0.0012,
+        pC3scr=0.0099,
+        pC4scr=0.15,
         
+        #Natural rate of death
+        natdeath=0.0424, #Unrelated to cirrhosis and hepatitis C
         
-        #cost = treated1+treated2
-        total_HCC=0,
-        total_HCV=631000,
+        beta= 0.02,              #Transmission coefficient
         
-        FI= input$Fi,     #Influx rate of the population to become susceptible per year
+        #standard treatment allocation
+        F0std = 0.05,
+        F1std = 0.05,
+        F2std = 0.3,
+        F3std = 0.3,
+        C1std = 0.3,
+        
+        std_cureF0=0.7,
+        std_cureF1=0.7,
+        std_cureF2=0.7,
+        std_cureF3=0.7,
+        std_cureC1=0.7,
+        new_cureF0=0.985,
+        new_cureF1=0.985,
+        new_cureF2=0.985,
+        new_cureF3=0.985,
+        new_cureC1=0.985,
+        new_cureC2=0.985,
+        new_cureC3=0.985,
+        new_cureC4=0.985,
         
         #Progression of fibrosis
-        f0f1=input$f0f1,       #Fibrosis stage F0 to F1
-        f1f2=input$f1f2,       #Fibrosis stage F1 to F2
-        f2f3=input$f2f3,        #Fibrosis stage F2 to F3
-        f3c1=input$f3c1,       #Fibrosis stage F3 to C1
+        f0f1=0.117,       #Fibrosis stage F0 to F1
+        f1f2=0.085,       #Fibrosis stage F1 to F2
+        f2f3=0.12,        #Fibrosis stage F2 to F3
+        f3c1=0.116,       #Fibrosis stage F3 to C1
         
         #Progression of cirrhosis
-        c1c2 = input$c1c2,       #Fibrosis stage C1 to C2
-        c2c3 = input$c2c3,       #Fibrosis stage C2 to C3
-        c3c4 = 0.076,       #Fibrosis stage C3 to C4
+        c1c2=0.044,       #Fibrosis stage C1 to C2
+        c2c3=0.044,       #Fibrosis stage C2 to C3
+        c3c4=0.076,       #Fibrosis stage C3 to C4
         
         #Incidence of developing HCC
-        c1bA= input$c1bA,      #Fibrosis stage C1 to bA
-        c1bB= input$c1bB,      #Fibrosis stage C1 to bB
-        c1bC= input$c1bC,      #Fibrosis stage C1 to bC
-        c1bD= input$c1bD,      #Fibrosis stage C1 to bD
+        c1bA=0.0068,      #Fibrosis stage C1 to bA
+        c1bB=0.0099,      #Fibrosis stage C1 to bB
+        c1bC=0.0029,      #Fibrosis stage C1 to bC
+        c1bD=0.0068,      #Fibrosis stage C1 to bD
         
-        c2bA= input$c2bA,      #Fibrosis stage C2 to bA
-        c2bB= input$c2bB,      #Fibrosis stage C2 to bB
-        c2bC= input$c2bC,      #Fibrosis stage C2 to bC
-        c2bD= input$c2bD,      #Fibrosis stage C2 to bD
+        c2bA=0.0068,      #Fibrosis stage C2 to bA
+        c2bB=0.0099,      #Fibrosis stage C2 to bB
+        c2bC=0.0029,      #Fibrosis stage C2 to bC
+        c2bD=0.0068,      #Fibrosis stage C2 to bD
         
-        c3bD= input$c3bD,      #Fibrosis stage C3 to bD
-        c4bD= input$c4bD,      #Fibrosis stage C4 to bD
+        c3bD=0.0664,      #Fibrosis stage C3 to bD
+        c4bD=0.0664,      #Fibrosis stage C4 to bD
         
         #Death rate from cirrhosis and HCC
         deathc1=0.01,         #Death rate for Cirrhosis Child-Pugh class A
@@ -203,71 +305,64 @@ shinyServer(function(input, output) {
         deathbC=1/(6/12),     #Death rate for HCC_BCLC_C
         deathbD=1/(3/12),     #Death rate for HCC_BCLC_D
         
-        deathtrn=1/(240/12),
+        deathtran=1/(240/12),
         
         #Transplantation
         tranc4=0.0015, #Transplantation rate in cirrhosis stage C4
         tranbA=0.0015, #Transplantation rate in HCC_BCLC_A
         tranbB=0.0015, #Transplantation rate in HCC_BCLC_B
-        #;newcase=17000,
-        cover = 5,
-        #Natural rate of death
-        natdeath=0.0424, #Unrelated to cirrhosis and hepatitis C
         
-        beta= 0.327,              #Transmission coefficient
         #Treatment efficacy
         #Standard treatment response based on genotype (weighted average)
-        std_cureF0=0,
-        std_cureF1 =0,
-        std_cureF2 =0,
-        std_cureF3 =0,
-        std_cureC1 =0,
-        std_cureC2=0,
+        std_cureF0=0.72,
+        std_cureF1 =0.72,
+        std_cureF2 =0.72,
+        std_cureF3 =0.72,
+        std_cureC1 =0.72,
+        std_cureC2=0.72,
         #Novel treatment response based on genotype (weighted average)
-        new_cureF0 = Treatment$new_cureF0,
-        new_cureF1 = Treatment$new_cureF1,
-        new_cureF2 = Treatment$new_cureF2,
-        new_cureF3 = Treatment$new_cureF3,
-        new_cureC1 = Treatment$new_cureC1,
-        new_cureC2 = Treatment$new_cureC2,
-        new_cureC3 = Treatment$new_cureC3,
-        new_cureC4 = Treatment$new_cureC4,
-        
-        std_dist = c(0.05,0.05,0.3,0.3,0.3)
+        new_cureF0= 0.985,
+        new_cureF1= 0.985,
+        new_cureF2  = 0.985,
+        new_cureF3 = 0.985,
+        new_cureC1 = 0.985,
+        new_cureC2 = 0.985,
+        new_cureC3 = 0.985,
+        new_cureC4 = 0.985
         
       )
     })
     
     S <-reactive({
-      parms()$S0 * parms()$P0
+      1*(parms()$P0 - parms()$caset0) 
     })
+    
     
     inits <- reactive({ 
       c(
-        S = S(), #;0.01*#pop_since1960(TIME=1)
-        F0=0.2825*S(),#;genotype1
-        F1=0.2825*S(),
-        F2=0.184*S(),
-        F3=0.124*S(),
-        C1=0.03175*S(),# ;CirA
-        C2=0.03175*S(),#; CirA
-        C3=0.03175*S(),#; CirB
-        C4=0.03175*S(),#;CirC
-        
+        S=S(),
+        F0=0.2825*parms()$caset0,
+        F1=0.2825*parms()$caset0,
+        F2=0.184*parms()$caset0,
+        F3=0.124*parms()$caset0,
+        C1=0.03175*parms()$caset0,
+        C2=0.03175*parms()$caset0,
+        C3=0.03175*parms()$caset0,
+        C4=0.03174*parms()$caset0,
         HCC_A=0,
         HCC_B=0,
         HCC_C=0,
         HCC_D=0,
-        
-        C1std_cured=0,
+        D=0,
+        dthC14=0
+        ,dthHCC=0
+        ,C1std_cured=0,
         C1new_cured=0,
         C2new_cured=0,
         C3new_cured=0,
-        C4new_cured=0,
+        C4new_cured=0
+        #set up initial death
         
-        death = 0,
-        deathHCC = 0,
-        deathC14 = 0
         
       )
     })
@@ -319,16 +414,28 @@ shinyServer(function(input, output) {
           add_theme("rshiny-blue")) 
     })
     
+    #table for "Treatment" panel. involves importing data from excel
+    
+    treatmentdesc <- read_excel("treatmentdesc.xlsx")
+    observe({
+      output$treatmenttbl <- render_tableHTML(
+        tableHTML(treatmentdesc, rownames = FALSE,
+                  second_headers = list(c(1,2,1), c("","Sustained Virological Response (%)", "")),
+                  border = 3, 
+                  collapse = c("collapse", "separate","separate_shiny"), 
+                  spacing = "5px 2px"
+        ) %>%
+          add_theme("rshiny-blue"))
+    })
     
     
     out_df <- reactive({
       
-      times <- seq(1999, 2020, by = 0.01)
+      times <- seq(0, 40,by=1)
       
-      out <- ode( y = inits(),times =  times, func = PanHepC, parms = parms(), method = "rk4")
+      out <- ode( y = inits(),times =  times, func = PanHepC, parms = parms())
       
       out_df <- as.data.frame(out)
-      colnames(out_df)[23:29] <- c("prev","incHCC","pop","infect","total_HCV","total_HCC","New_Death")
       out_df
     })
     
@@ -347,7 +454,8 @@ shinyServer(function(input, output) {
       cost_func <- function(time,state,parms){
         list(parms)
       }
-      out <- ode( y = cost_per_year,times =  cost_times, func = cost_func, parms = Treatment$cost, method = "rk4")
+      cost <- as.numeric(Treatment$cost)
+      out <- ode( y = cost_per_year,times =  cost_times, func = cost_func, parms = cost, method = "rk4")
       cost_plot <- as.data.frame(out)
       colnames(cost_plot)[2] <- "Total_Cost"
       cost_plot
@@ -361,11 +469,7 @@ shinyServer(function(input, output) {
 
       x <- out_df()[,c(1,23)]
       
-      
-      #time year >= input$year[1] , year <= input$year[2]
-      x_time <- out_df()["time"] >= input$year[1] & out_df()["time"] <= input$year[2]
-
-      x <- x[x_time,]
+    
       x_melt <-melt(x, id="time")
       ggplot(data = x_melt) + 
         labs( x = "time", y = "Prevalence")+
@@ -377,19 +481,14 @@ shinyServer(function(input, output) {
     #output 2
     output$distPlot2 <- renderPlot({
       if (v$doPlot == FALSE) return()
-      x <- out_df()[,c(1,21,22)]
+      x <- out_df()[,c(1,15,16,17)]
       
       if(input$showNewDeath){
         
-        x <- out_df()[,c(1,21,22,29)]
+        x <- out_df()[,c(1,15,16,17,26)]
       }
       isolate({
 
-        
-        #time year >= input$year[1] , year <= input$year[2]
-        x_time <- out_df()["time"] >= input$year[1] & out_df()["time"] <= input$year[2]
-        
-        x <- x[x_time,]
         x_melt <-melt(x, id="time")
 
         ggplot(data = x_melt) + 
@@ -402,15 +501,10 @@ shinyServer(function(input, output) {
     output$distPlot3 <- renderPlot({
       
       if (v$doPlot == FALSE) return()
-      x <- out_df()[,c(1,27,28)]
+      x <- out_df()[,c(1,27)]
       
       isolate({
-        
-        
-        #time year >= input$year[1] , year <= input$year[2]
-        x_time <- out_df()["time"] >= input$year[1] & out_df()["time"] <= input$year[2]
-        
-        x <- x[x_time,]
+
 
       x_melt <-melt(x, id="time")
       
@@ -426,8 +520,6 @@ shinyServer(function(input, output) {
       x <- cost_plot()
       isolate({
         
-        
-        #time year >= input$year[1] , year <= input$year[2]
       
       ggplot(data = x) + 
         geom_line(mapping = aes(x = time, y =Total_Cost ),size = 1.5)

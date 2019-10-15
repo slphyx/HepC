@@ -11,6 +11,7 @@ library(shiny)
 library(shinyBS)
 library(shinyjs)
 library(tableHTML)
+library(ggplot2)
 
 # Define UI for application that draws a histogram
 shinyUI(fluidPage(  
@@ -392,16 +393,11 @@ shinyUI(fluidPage(
                                numericInput("Input_Cost", "Cost", 20)
                                
                       ),
+                      actionButton("Comfirm", "Comfirm"),
                       tags$div(class = "row",
                                tags$div(class = "col-sm-11",id ="TreatmentOutput",
                                         textOutput("text1"),
                                         textOutput("text2"),
-                                        textOutput("text3"),
-                                        textOutput("text4"),
-                                        textOutput("text5"),
-                                        textOutput("text6"),
-                                        textOutput("text7"),
-                                        textOutput("text8")
                                         
                                         # tags$h3("Treatment Cost"),
                                         # tags$hr(),
@@ -413,39 +409,42 @@ shinyUI(fluidPage(
                                         #                      step = 0.001,
                                         #                      value = 0.066
                                )
-                      ),
-                      tags$div(class = "col-sm-6"),
-                      
-                      tags$div(id = "drugImg1",
-                               tags$img(src="image/drug1.png" 
-                                        ,alt="drug1")
-                      ),
-                      tags$div(id = "drugImg2",
-                               tags$img(src="image/drug2.png" 
-                                        ,alt="drug2")
-                      ),
-                      tags$div(id = "drugImg3",
-                               tags$img(src="image/drug3.png" 
-                                        ,alt="drug3")
-                      ),
-                      tags$div(id = "drugImg4",
-                               tags$img(src="image/drug4.png" 
-                                        ,alt="drug4")
-                      ),
-                      tags$div(id = "drugImg5",
-                               tags$img(src="image/drug5.png" 
-                                        ,alt="drug5")
+                      )
+                  
+             )
+    ),
+    #tab6new
+    tabPanel("Extra",
+             tags$div(class = "sliderDisplay col-sm-12",
+                      tags$div(class = "col-sm-12",
+                               checkboxGroupInput("care", "Link to care:",
+                                                  c("HCV genotype testing" = 1,
+                                                    "Fibroscan stiffness testing" = 2,
+                                                    "Relevant and safety lab" = 3,
+                                                    "APRI score" = 4
+                                                  ))
                       )
                       
              ),
-             #imported excel file and now in r as "treatmentdesc"
-             tags$div(class = "treatmentdesc col-sm-6",
+             #imported excel file and now in r as "extradesc"
+             tags$div(class = "extradesc col-sm-6",
                       fluidRow(
                         
                         br(),
                         column(width = 1),
-                        tableHTML_output("treatmenttbl"))
-             )), 
+                        tableHTML_output("extratbl"))
+             )),
+      #tab6
+      tabPanel("Display Seting",
+                       tags$div(class = "sliderDisplay col-sm-12",
+                                sliderInput("year",
+                                            "Time (Year)",
+                                            min = 1999, 
+                                            max = 2020,
+                                            value = c(2000,2010)
+                                )
+                       )
+              ),
 
       #tab7
       tabPanel("Model prediction",
@@ -475,9 +474,19 @@ shinyUI(fluidPage(
                              plotOutput("distPlot4")
                     )
                   )
+               ),
+    #tab8
+    tabPanel("Appendix",
+             div(
+               tags$p("1. progress 2nd _ 2018 10 03"),
+               tags$a(
+                 #link
+                 href= "https://docs.google.com/presentation/d/1iHAfhqpBh5MpYjf4Sethcq5E3OhoYcyK_nugy2QXnik/edit?usp=sharing"
+                 ,"Google Drive" #text
                )
+             )
+             
     )
- 
-  
+    )
   )
 )

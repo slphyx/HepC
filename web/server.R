@@ -271,16 +271,16 @@ shinyServer(function(input, output,session) {
     updateSliderInput(session, inputId = "c3bD", value = 0.066)
     updateSliderInput(session, inputId = "c4bD", value = 0.066)
   })
-    setwd("C:/Hep-c/web")
+
     sourceCpp('p1_scr_SS.cpp')
     
     parms <- reactive({
       list(
-        P0=61623143,       #popstat(YEAR=1999)
-        K= 66785001,        #Maximum population (carrying capacity)
-        r = 0.5,        #Population growth rate (logistic growth curve)
-        flowin = 0.01,
-        caset0 =  1848694,      #0.03*P0,
+        P0=input$P0,       #popstat(YEAR=1999)
+        K= input$K,        #Maximum population (carrying capacity)
+        r = input$r,        #Population growth rate (logistic growth curve)
+        flowin = input$Fi,
+        caset0 =  input$P0*0.03,      #0.03*P0,
         standard_start = 5,
         new_start = 20,
         nscr = 0.05,
@@ -323,10 +323,10 @@ shinyServer(function(input, output,session) {
         new_cureC4=0.985,
         
         #Progression of fibrosis
-        f0f1=0.117,       #Fibrosis stage F0 to F1
-        f1f2=0.085,       #Fibrosis stage F1 to F2
-        f2f3=0.12,        #Fibrosis stage F2 to F3
-        f3c1=0.116,       #Fibrosis stage F3 to C1
+        f0f1=input$f0f1,       #Fibrosis stage F0 to F1
+        f1f2=input$f1f2,       #Fibrosis stage F1 to F2
+        f2f3=input$f2f3,        #Fibrosis stage F2 to F3
+        f3c1=input$f3c1,       #Fibrosis stage F3 to C1
         
         #Progression of cirrhosis
         c1c2=0.044,       #Fibrosis stage C1 to C2
@@ -334,18 +334,18 @@ shinyServer(function(input, output,session) {
         c3c4=0.076,       #Fibrosis stage C3 to C4
         
         #Incidence of developing HCC
-        c1bA=0.0068,      #Fibrosis stage C1 to bA
-        c1bB=0.0099,      #Fibrosis stage C1 to bB
-        c1bC=0.0029,      #Fibrosis stage C1 to bC
-        c1bD=0.0068,      #Fibrosis stage C1 to bD
+        c1bA=input$c1bA,      #Fibrosis stage C1 to bA
+        c1bB=input$c1bB,      #Fibrosis stage C1 to bB
+        c1bC=input$c1bC,      #Fibrosis stage C1 to bC
+        c1bD=input$c1bD,      #Fibrosis stage C1 to bD
         
-        c2bA=0.0068,      #Fibrosis stage C2 to bA
-        c2bB=0.0099,      #Fibrosis stage C2 to bB
-        c2bC=0.0029,      #Fibrosis stage C2 to bC
-        c2bD=0.0068,      #Fibrosis stage C2 to bD
+        c2bA=input$c2bA,      #Fibrosis stage C2 to bA
+        c2bB=input$c2bB,      #Fibrosis stage C2 to bB
+        c2bC=input$c2bC,      #Fibrosis stage C2 to bC
+        c2bD=input$c2bD,      #Fibrosis stage C2 to bD
         
-        c3bD=0.0664,      #Fibrosis stage C3 to bD
-        c4bD=0.0664,      #Fibrosis stage C4 to bD
+        c3bD=input$c3bD,      #Fibrosis stage C3 to bD
+        c4bD=input$c4bD,      #Fibrosis stage C4 to bD
         
         #Death rate from cirrhosis and HCC
         deathc1=0.01,         #Death rate for Cirrhosis Child-Pugh class A

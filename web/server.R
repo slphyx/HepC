@@ -183,29 +183,14 @@ shinyServer(function(input, output,session) {
     
   }
   )
+  
+  #numericInput in Treatment 
   observe({
     if (input$Treatment != 6) {
-      disable("Input_F0")
-      disable("Input_F1")
-      disable("Input_F2")
-      disable("Input_F3")
-      disable("Input_C1")
-      disable("Input_C2")
-      disable("Input_C3")
-      disable("Input_C4")
-      disable("Input_Cost")
-      
-    }else{
-      enable("Input_F0")
-      enable("Input_F1")
-      enable("Input_F2")
-      enable("Input_F3")
-      enable("Input_C1")
-      enable("Input_C2")
-      enable("Input_C3")
-      enable("Input_C4")
-      enable("Input_Cost")
+      shinyjs::hide("Newdurg")
 
+    }else{
+      shinyjs::show("Newdurg")
     }
   })
   
@@ -484,7 +469,7 @@ shinyServer(function(input, output,session) {
     
     out_df <- reactive({
       
-      times <- seq(0, 40,by=1)
+      times <- seq(1999, 2040,by=1)
       
       out <- ode( y = inits(),times =  times, func = PanHepC, parms = parms())
       
@@ -525,8 +510,13 @@ shinyServer(function(input, output,session) {
     
       x_melt <-melt(x, id="time")
       ggplot(data = x_melt) + 
-        labs( x = "time", y = "Prevalence")+
-        geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)
+        labs( x = "Year", y = "Prevalence")+
+        geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)+ 
+        theme(axis.title = element_text(size = 20))+
+        theme(axis.text = element_text(size = 15, colour="black"))+ 
+        theme(legend.title = element_text(size = 20),
+              legend.text = element_text(size = 15))
+
         
       })
     })
@@ -545,8 +535,12 @@ shinyServer(function(input, output,session) {
         x_melt <-melt(x, id="time")
 
         ggplot(data = x_melt) + 
-          
-          geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)
+          labs( x = "Year")+
+          geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)+ 
+          theme(axis.title = element_text(size = 20))+
+          theme(axis.text = element_text(size = 15, colour="black"))+ 
+          theme(legend.title = element_text(size = 20),
+                legend.text = element_text(size = 15))
       })
     })
     
@@ -562,7 +556,12 @@ shinyServer(function(input, output,session) {
       x_melt <-melt(x, id="time")
       
       ggplot(data = x_melt) + 
-        geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)
+        labs( x = "Year")+
+        geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)+ 
+        theme(axis.title = element_text(size = 20))+
+        theme(axis.text = element_text(size = 15, colour="black"))+ 
+        theme(legend.title = element_text(size = 20),
+              legend.text = element_text(size = 15))
       })
     })
     
@@ -575,7 +574,12 @@ shinyServer(function(input, output,session) {
         
       
       ggplot(data = x) + 
-        geom_line(mapping = aes(x = time, y =Total_Cost ),size = 1.5)
+          labs( x = "Year")+
+        geom_line(mapping = aes(x = time, y =Total_Cost ),size = 1.5)+ 
+          theme(axis.title = element_text(size = 20))+
+          theme(axis.text = element_text(size = 15, colour="black"))+ 
+          theme(legend.title = element_text(size = 20),
+                legend.text = element_text(size = 15))
       })
     })
     
@@ -594,7 +598,11 @@ shinyServer(function(input, output,session) {
 
     })
     output$text2 <-renderText({
-      paste("Treatment cost :" , Treatment$cost)
+      paste("Treatment cost :" , Treatment$cost , " THB")
+    })
+    
+    output$text3 <-renderText({
+      paste("Treatment cost :" , round(Treatment$cost/30.41,2) , " USD")
     })
     
     output$screening_p <- renderText({

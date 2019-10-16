@@ -69,16 +69,22 @@ shinyUI(fluidPage(
              tags$hr(),
              tags$h2(class = "center2","Collaborators"),
              tags$div(class = "col-sm-12 Mbottom",
-             tags$div(class = "col-sm-4",tags$img(class = "logo",src="image/mahidol.png" 
-                      ,alt="Mahidol University")),
-             tags$div(class = "col-sm-4",tags$img(class = "logo2",src="image/Moru.webp" 
-                      ,alt="Mahidol Oxford Tropical Medicine Research Unit")),
-             tags$div(class = "col-sm-4",tags$img(class = "logo",src="image/Hitap.jpg" 
-                      ,alt="Health Intervention and Technology Assessment Program"))
+             tags$div(class = "col-sm-4",tags$a(href="https://mahidol.ac.th/",
+                                                tags$img(class = "logo",src="image/mahidol.png",
+                                                alt="Mahidol University"))),
+             
+             tags$div(class = "col-sm-4",tags$a(href="http://www.tropmedres.ac/home",
+                                                tags$img(class = "logo2",src="image/Moru.webp",
+                                                alt="Mahidol Oxford Tropical Medicine Research Unit"))),
+             
+             tags$div(class = "col-sm-4",tags$a(href="http://www.hitap.net/en/",
+                                                tags$img(class = "logo3",src="image/Hitap.jpg", 
+                                                alt="Health Intervention and Technology Assessment Program")))
               ),
              tags$h2(class = "center2","Funder"),
-             tags$div(class = "center",tags$img(src="image/nstda.png" 
-                      ,alt="National Science and Technology Development Agency")),
+             tags$div(class = "center",tags$a(href="https://www.nstda.or.th/",
+                                              tags$img(class = "logo2",src="image/nstda.png"  
+                                              ,alt="National Science and Technology Development Agency"))),
              tags$h2("Software"),
              tags$p("This App is built on the following open-source, free software:																									
                         R Core Team (2014). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. ; Winston Chang (2015). shiny: Web Application Framework for R. ; Leaflet, a JavaScript library for interactive maps ; Datable table plug-in for jQuery."),
@@ -99,12 +105,18 @@ shinyUI(fluidPage(
       #tab2
       tabPanel("Natural History Of Disease",
                tags$div(class = "sliderDisplay col-sm-12",
+                        
+                        #Populations and Transmission Coefficient
                         tags$div(class = "col-sm-12",
                         tags$div(class = "col-sm-8",
                         tags$h3("Populations and Transmission Coefficient"),
                         ),tags$div(class = "col-sm-4 right",
                         actionButton("resetSect1","RESET", class="resetbutton"),
                         ),
+                        ),
+                        tags$div(class = "col-sm-12",
+                        tags$b(class="warning",
+                               "*Changing the value of any parameters could result in different baseline disease characteristics. Model validation against real data may be required."),
                         ),
                         tags$div(class = "col-sm-12",
                         tags$hr(),
@@ -154,12 +166,18 @@ shinyUI(fluidPage(
                                              value = 0.001
                                  )
                         ),
+                        
+                        #Progression of fibrosis
                         tags$div(class = "col-sm-12",
                                  tags$div(class = "col-sm-8",
                                           tags$h3("Progression of fibrosis"),
                                  ),tags$div(class = "col-sm-4 right",
                                             actionButton("resetSect2","RESET", class="resetbutton"),
                                  ),
+                        ),
+                        tags$div(class = "col-sm-12",
+                                 tags$b(class="warning",
+                                        "*Changing the value of any parameters could result in different baseline disease characteristics. Model validation against real data may be required."),
                         ),
                         tags$div(class = "col-sm-12",
                                  tags$hr(),
@@ -201,12 +219,18 @@ shinyUI(fluidPage(
                                  )
                                  
                         ),
+                        
+                        #Progression of cirrhosis
                         tags$div(class = "col-sm-12",
                                  tags$div(class = "col-sm-8",
                                     tags$h3("Progression of cirrhosis"),
                                  ),tags$div(class = "col-sm-4 right",
                                     actionButton("resetSect3","RESET", class="resetbutton"),
                                  ),
+                        ),
+                        tags$div(class = "col-sm-12",
+                                 tags$b(class="warning",
+                                        "*Changing the value of any parameters could result in different baseline disease characteristics. Model validation against real data may be required."),
                         ),
                         tags$div(class = "col-sm-12",
                                  tags$hr(),
@@ -229,12 +253,18 @@ shinyUI(fluidPage(
                                              value = 0.076
                                  )
                         ),
+                        
+                        #Incidence of developing HCC
                         tags$div(class = "col-sm-12",
                                  tags$div(class = "col-sm-8",
                                           tags$h3("Incidence of developing HCC"),
                                  ),tags$div(class = "col-sm-4 right",
                                             actionButton("resetSect4","RESET", class="resetbutton"),
                                  ),
+                        ),
+                        tags$div(class = "col-sm-12",
+                                 tags$b(class="warning",
+                                        "*Changing the value of any parameters could result in different baseline disease characteristics. Model validation against real data may be required."),
                         ),
                         tags$div(class = "col-sm-12",
                                  tags$hr(),
@@ -394,7 +424,7 @@ shinyUI(fluidPage(
                                                 "Rapid HCV RNA" = 3))
                         ),
                         #imported excel file and now in r as "testdesc"
-                        tags$div(class = "testdesc col-sm-6",
+                        tags$div(class = "testdesc col-sm-6 Mbottom",
                                  fluidRow(
                                    
                                    br(),
@@ -424,6 +454,8 @@ shinyUI(fluidPage(
                                               "Sofosbuvir with Ravidasvir (pan-genotypic treatments, on-going clinical trial)" = 5,
                                               "Another durg" = 6),),
                                shinyjs::useShinyjs(),
+                               hidden(
+                               tags$div(id="Newdurg",
                                numericInput("Input_F0", "F0", 0.5, min = 0, max = 1,step =0.1),
                                numericInput("Input_F1", "F1", 0.5, min = 0, max = 1,step =0.1),
                                numericInput("Input_F2", "F2", 0.5, min = 0, max = 1,step =0.1),
@@ -432,14 +464,19 @@ shinyUI(fluidPage(
                                numericInput("Input_C2", "C2", 0.5, min = 0, max = 1,step =0.1),
                                numericInput("Input_C3", "C3", 0.5, min = 0, max = 1,step =0.1),
                                numericInput("Input_C4", "C4", 0.5, min = 0, max = 1,step =0.1),
-                               numericInput("Input_Cost", "Cost", 20)
+                               numericInput("Input_Cost", "Cost (THB)", 6000),
+                               actionButton("Comfirm", "Comfirm"),
                                
+                      )
+                      )
                       ),
-                      actionButton("Comfirm", "Comfirm"),
+                      
                       tags$div(class = "row",
                                tags$div(class = "col-sm-11",id ="TreatmentOutput",
                                         textOutput("text1"),
                                         textOutput("text2"),
+                                        textOutput("text3"),
+                                        tags$p("1 USD = 30.41 THB")
                                         
                                         # tags$h3("Treatment Cost"),
                                         # tags$hr(),
@@ -516,6 +553,15 @@ shinyUI(fluidPage(
                  href= "https://docs.google.com/presentation/d/1iHAfhqpBh5MpYjf4Sethcq5E3OhoYcyK_nugy2QXnik/edit?usp=sharing"
                  ,"Google Drive" #text
                )
+             )
+             
+    ),
+    #tab9
+    tabPanel("Cost & Untility",
+             div(
+               tags$p("Cost"),
+               tags$p("Untility"),
+
              )
              
     )

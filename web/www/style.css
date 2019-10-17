@@ -52,8 +52,11 @@
 }
 .italic{
     font-style: italic;
-    font-size: 10px;
+    font-size: 16px;
 
+}
+i.italic{
+     font-size: 16px;
 }
 hr{
     border: 0;
@@ -79,15 +82,28 @@ a.italic{
 }
 
 .logo2{
-    height: 300px;
+    height: 250px;
     width : 450px;
 }
-p,b{
-    font-size: 18px;
+
+.logo3{
+    height: 250px;
+    width : 250px;
 }
+
 .resetbutton{
     color: #fff; 
     background-color: #337ab7; 
     border-color: #2e6da4; 
     
+}
+.warning{
+    color: #B33A3A; 
+}
+table,td,th{
+    border : 1px solid black;
+    
+}
+td,th{
+    padding : 10px 15px 10px 15px;
 }

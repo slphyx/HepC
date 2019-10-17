@@ -412,7 +412,7 @@ shinyServer(function(input, output,session) {
                           Neg_T = 0 , #Negative True
                           Neg_T = 0   #Negative False
     )
-    load("popscreen_list.RData")
+    #load("popscreen_list.RData")
     
     #table for "Screening" panel, age groups. involves importing data from excel
     screeningdesc <- read_excel("treatmentdesc.xlsx")

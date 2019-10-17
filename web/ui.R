@@ -409,8 +409,10 @@ shinyUI(fluidPage(
                                                     c("Human Immunodeficiency Virus (HIV)" = 1,
                                                       "Injection Drug User (IDU)" = 2,
                                                       "Men who have Sex with Men (MSM)" = 3,
-                                                      "Blood donors" = 4,
-                                                      "Prisoners" = 5
+                                                      "Received blood transfusion before HCV screening" = 4,
+                                                      "Blood donors" = 5,
+                                                      "Prisoners" = 6,
+                                                      "Chronic kidney disease" = 7
                                                     )),
                         ),
 
@@ -426,29 +428,30 @@ shinyUI(fluidPage(
                           tags$tr(id = "Scr_th",
                             tags$th("Risk group"),
                             tags$th("Population size"),
-                            tags$th("+ve Anti HCV (%)"),
-                            tags$th("Positive SLIDER"),
-                            tags$th("HCV infection (%)"),
+                            tags$th("Positive Anti HCV (%)"),
+                            tags$th("Screen Positive(%)"),
+                            tags$th("Confirm Positive (%)"),
                           ),
+                          #risk HIV
                           tags$tr(id = "Scr_td1",
-                            tags$td("1"),
+                            tags$td("HIV"),
                             tags$td("444,000 (2018)" ,tags$sup("[1]")),
                             tags$td("11 (1995)" ,tags$sup("[7]")," 
                                     ,8.4 (2010)" ,tags$sup("[8]") 
                                     ," ,7.7 (2015)" , tags$sup("[9]")
                                     ),
                             #slider
-                            tags$td(sliderInput("HIV_Pos",
-                                                "Positive",
+                            tags$td(sliderInput("HIV_Scr",
+                                                "",
                                                 min = 5,
                                                 max = 15,
-                                                step = 1,
+                                                step = 0.1,
                                                 value = 9
                                                 )
                                     
                                     ),
-                            tags$td(sliderInput("HIV_inf",
-                                                "infection",
+                            tags$td(sliderInput("HIV_Con",
+                                                "",
                                                 min = 50,
                                                 max = 100,
                                                 step = 1,
@@ -456,34 +459,150 @@ shinyUI(fluidPage(
                                                 )
                                     ),
                           ),
-                         tags$tr(id = "Scr_td2",
-                                 tags$td("2"),
-                                 tags$td("some"),
-                                 tags$td("some"),
-                                 tags$td("some"),
-                                 tags$td("some"),
+                          #risk IDU
+                          tags$tr(id = "Scr_td2",
+                                 tags$td("IDU"),
+                                 tags$td("260,305 (2019)"),
+                                 tags$td("44.3 (2019)"),
+                                 #slider
+                                 tags$td(sliderInput("IDU_Scr",
+                                                     "",
+                                                     min = 30,
+                                                     max = 60,
+                                                     step = 1,
+                                                     value = 44
+                                 )
+                                 
+                                 ),
+                                 tags$td(sliderInput("IDU_Con",
+                                                     "",
+                                                     min = 50,
+                                                     max = 100,
+                                                     step = 1,
+                                                     value = 70
+                                 )
+                                 ),
                           ),
+                          #risk MSM
                           tags$tr(id = "Scr_td3",
-                            tags$td("3"),
-                            tags$td("some"),
-                            tags$td("some"),
-                            tags$td("some"),
-                            tags$td("some"),
+                            tags$td("MSM"),
+                            tags$td("590,000 (2016)"),
+                            tags$td("4.9 (2019)"),
+                            #slider
+                            tags$td(sliderInput("MSM_Scr",
+                                                "",
+                                                min = 1,
+                                                max = 10,
+                                                step = 0.1,
+                                                value = 4.9
+                            )
+                            
+                            ),
+                            tags$td(sliderInput("MSM_Con",
+                                                "",
+                                                min = 50,
+                                                max = 100,
+                                                step = 1,
+                                                value = 70
+                            )
+                            ),
                           ),
+                          #risk Received blood
                           tags$tr(id = "Scr_td4",
-                            tags$td("4"),
-                            tags$td("some"),
-                            tags$td("some"),
-                            tags$td("some"),
-                            tags$td("some"),
+                            tags$td("Received blood"),
+                            tags$td("390,000(Estimate (1% age 30 or above)"),
+                            tags$td("Unknown"),
+                            #slider
+                            tags$td(sliderInput("Rb_Scr",
+                                                "",
+                                                min = 1,
+                                                max = 10,
+                                                step = 0.1,
+                                                value = 5
+                            )
+                            
+                            ),
+                            tags$td(sliderInput("Rb_Con",
+                                                "",
+                                                min = 50,
+                                                max = 100,
+                                                step = 1,
+                                                value = 70
+                            )
+                            ),
                           ),
+                          #risk Blood donor
                           tags$tr(id = "Scr_td5",
-                            tags$td("5"),
-                            tags$td("some"),
-                            tags$td("some"),
-                            tags$td("some"),
-                            tags$td("some"),
-                          )
+                            tags$td("Blood donor"),
+                            tags$td("89,311 (2009)"),
+                            tags$td("2.9 (2004)"),
+                            #slider
+                            tags$td(sliderInput("Rd_Scr",
+                                                "",
+                                                min = 1,
+                                                max = 5,
+                                                step = 0.1,
+                                                value = 2.9
+                            )
+                            
+                            ),
+                            tags$td(sliderInput("Rd_Con",
+                                                "",
+                                                min = 50,
+                                                max = 100,
+                                                step = 1,
+                                                value = 70
+                            )
+                            ),
+                          ),
+                          #Prisoner
+                         tags$tr(id = "Scr_td6",
+                                 tags$td("Prisoner"),
+                                 tags$td("372,979 (2019)"),
+                                 tags$td("7 (2019)"),
+                                 #slider
+                                 tags$td(sliderInput("Pri_Scr",
+                                                     "",
+                                                     min = 1,
+                                                     max = 10,
+                                                     step = 0.1,
+                                                     value = 7
+                                 )
+                                 
+                                 ),
+                                 tags$td(sliderInput("Pri_Con",
+                                                     "",
+                                                     min = 50,
+                                                     max = 100,
+                                                     step = 1,
+                                                     value = 70
+                                 )
+                                 ),
+                         ),
+                         #Chronic kidney disease
+                         tags$tr(id = "Scr_td7",
+                                 tags$td("CKD"),
+                                 tags$td("128,338(2016)"),
+                                 tags$td("5.6 (2016)"),
+                                 #slider
+                                 tags$td(sliderInput("CKD_Scr",
+                                                     "",
+                                                     min = 1,
+                                                     max = 10,
+                                                     step = 0.1,
+                                                     value = 5.6
+                                 )
+                                 
+                                 ),
+                                 tags$td(sliderInput("CKD_Con",
+                                                     "",
+                                                     min = 50,
+                                                     max = 100,
+                                                     step = 1,
+                                                     value = 70
+                                 )
+                                 ),
+                         )
                         )
                         ),
                         

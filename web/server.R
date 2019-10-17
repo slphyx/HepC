@@ -250,6 +250,16 @@ shinyServer(function(input, output,session) {
       }else{
         shinyjs::hide("Scr_td5")
       }
+      if(!length(which(x == 6)) == 0){
+        shinyjs::show("Scr_td6")
+      }else{
+        shinyjs::hide("Scr_td6")
+      }
+      if(!length(which(x == 7)) == 0){
+        shinyjs::show("Scr_td7")
+      }else{
+        shinyjs::hide("Scr_td7")
+      }
 
     }
     else if(is.null(x)){

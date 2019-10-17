@@ -11,7 +11,7 @@ library(shiny)
 library(shinyBS)
 library(shinyjs)
 library(tableHTML)
-library(ggplot2)
+
 
 # Define UI for application that draws a histogram
 shinyUI(fluidPage(  
@@ -89,13 +89,9 @@ shinyUI(fluidPage(
              tags$p("This App is built on the following open-source, free software:																									
                         R Core Team (2014). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. ; Winston Chang (2015). shiny: Web Application Framework for R. ; Leaflet, a JavaScript library for interactive maps ; Datable table plug-in for jQuery."),
              tags$h2("Contact"),
-             tags$p("For questions on the interactive web application, please contact",tags$b("wirichada.pan@mahidol.ac.th")),
-             tags$p("Further feedback and suggestion on this web application is greatly appreciated. Click here"),
+             tags$p("Further feedback and suggestion on this web application is greatly appreciated, please contact",tags$a(href = "mailto: wirichada.pan@mahidol.ac.th","wirichada.pan@mahidol.ac.th")),
              tags$hr(),
-             tags$p("These advances have led to the potential of HCV treatment delivery to national public
-                          health programs and decreased overall HCV-related morbidity and mortality [1]."),
-             
-             tags$hr(),
+             tags$h3("Reference"),
              tags$p("1.Kohli A, Shaffer A, Sherman A, Kottilil S. Treatment of hepatitis C: a systematic review. Jama. 2014;
                         312(6):631-40.  doi:", tags$a (href="http://dx.doi.org/10.1001/jama.2014.7085","10.1001/jama.2014.7085"), "PMID: 25117132."),
              tags$p("2.Poovorawan K, Pan-Ngum W, White LJ" , tags$i(class = "italic","et. al."),"Estimating the impact of expanding treatment coverage and allocation strategies for chronic Hepatitis C in a Direct Antiviral Agent Era.
@@ -365,49 +361,145 @@ shinyUI(fluidPage(
       tabPanel("Screening",
                tags$div(class = "sliderDisplay col-sm-12",
                         shinyjs::useShinyjs(),
+                        tags$div(class = " col-sm-6",
                         tags$div(
                           radioButtons("screening", "Screening type:",
                                        c("By age" = 1,
                                          "By risk groups" = 2),
                                        inline = T)
                         ),
-                        tags$div(id = "Age_screen",
+                        
+                        tags$div(id = "Age_screen",class = "row",
+
                                  radioButtons("age_s", "Age screening range (years):",
                                               c("40 to 50" = 1,
                                                 "50 to 60" = 2,
-                                                "40 to 60" = 3)),
+                                                "40 to 60" = 3))
+
+
+                                 ),
+                        tags$table(
+                          tags$tr(
+                                  tags$th("Screening option"),
+                                  tags$th("Age to screen (Years)"),
+                                  tags$th("HCV screening positive rate"),
+                                  tags$th("HCV confirming positive rate"),
+                          ),
+                          tags$tr(
+                            tags$td("A"),
+                            tags$td("41-50"),
+                            tags$td("2.72"),
+                            tags$td("1.69"),
+                          ),
+                          tags$tr(
+                            tags$td("B"),
+                            tags$td("51-60"),
+                            tags$td("1.46"),
+                            tags$td("0.93"),
+                          ),
+                          tags$tr(
+                            tags$td("C"),
+                            tags$td("41-60"),
+                            tags$td("4.18"),
+                            tags$td("2.62"),
+                          ),
+                        ),
+                        tags$div(id = "Risk_group",class = "row",
+                                 checkboxGroupInput("risk_g", "Risk groups:",
+                                                    c("Human Immunodeficiency Virus (HIV)" = 1,
+                                                      "Injection Drug User (IDU)" = 2,
+                                                      "Men who have Sex with Men (MSM)" = 3,
+                                                      "Blood donors" = 4,
+                                                      "Prisoners" = 5
+                                                    )),
+                        ),
+
+                        ),
+                        tags$div(class = " col-sm-6",
                                  tags$img(src="image/population2019.png" 
                                           ,alt="Study design of the transmission and disease progression model."),
-                                 
-                                 #imported excel file and now in r as "screeningdesc"
-                                 tags$div(class = "screeningdesc col-sm-6",
-                                          fluidRow(
-                                            
-                                            br(),
-                                            column(width = 1),
-                                            tableHTML_output("screeningtbl")), style = "position:absolute; right:1em; top:200px")),
+                        ),
+                        shinyjs::useShinyjs(),
                         
-                        tags$div(id = "Risk_group",
-                                 radioButtons("risk_g", "Risk groups:",
-                                              c("Human Immunodeficiency Virus (HIV)" = 1,
-                                                "Injection Drug User (IDU)" = 2,
-                                                "Men who have Sex with Men (MSM)" = 3,
-                                                "Blood donors" = 4,
-                                                "Prisoners" = 5
-                                              )),
-                                 
-                                 #imported excel file and now in r as "riskdesc"
-                                 tags$div(class = "riskdesc col-sm-6",
-                                          fluidRow(
-                                            
-                                            br(),
-                                            column(width = 1),
-                                            tableHTML_output("risktbl")), style = "position:absolute; right:5em; top:30px")),
+                        tags$table(id = "Scr_table",
+                         hidden(
+                          tags$tr(id = "Scr_th",
+                            tags$th("Risk group"),
+                            tags$th("Population size"),
+                            tags$th("+ve Anti HCV (%)"),
+                            tags$th("Positive SLIDER"),
+                            tags$th("HCV infection (%)"),
+                          ),
+                          tags$tr(id = "Scr_td1",
+                            tags$td("1"),
+                            tags$td("444,000 (2018)" ,tags$sup("[1]")),
+                            tags$td("11 (1995)" ,tags$sup("[7]")," 
+                                    ,8.4 (2010)" ,tags$sup("[8]") 
+                                    ," ,7.7 (2015)" , tags$sup("[9]")
+                                    ),
+                            #slider
+                            tags$td(sliderInput("HIV_Pos",
+                                                "Positive",
+                                                min = 5,
+                                                max = 15,
+                                                step = 1,
+                                                value = 9
+                                                )
+                                    
+                                    ),
+                            tags$td(sliderInput("HIV_inf",
+                                                "infection",
+                                                min = 50,
+                                                max = 100,
+                                                step = 1,
+                                                value = 70
+                                                )
+                                    ),
+                          ),
+                         tags$tr(id = "Scr_td2",
+                                 tags$td("2"),
+                                 tags$td("some"),
+                                 tags$td("some"),
+                                 tags$td("some"),
+                                 tags$td("some"),
+                          ),
+                          tags$tr(id = "Scr_td3",
+                            tags$td("3"),
+                            tags$td("some"),
+                            tags$td("some"),
+                            tags$td("some"),
+                            tags$td("some"),
+                          ),
+                          tags$tr(id = "Scr_td4",
+                            tags$td("4"),
+                            tags$td("some"),
+                            tags$td("some"),
+                            tags$td("some"),
+                            tags$td("some"),
+                          ),
+                          tags$tr(id = "Scr_td5",
+                            tags$td("5"),
+                            tags$td("some"),
+                            tags$td("some"),
+                            tags$td("some"),
+                            tags$td("some"),
+                          )
+                        )
+                        ),
                         
                         textOutput("screening_p")
                         
                         
-               ) 
+               ) ,
+               tags$hr(),
+               tags$h3("Reference"),
+               tags$p("1 HIV AIDS Asia Pacific Research Statistical Data Information Resources AIDS Data Hub. HIV in Thailand. 2018 [Available from: ",
+                      tags$a (href="https://www.aidsdatahub.org/Country-Profiles/Thailand","https://www.aidsdatahub.org/Country-Profiles/Thailand"), "]"
+                      ),
+               tags$p("2 Office of the Narcotics Control Board. Anual report. Office of the Narcotics Control Board, Ministry of Justice 2019 [Available from: ",
+                      tags$a (href="https://www.oncb.go.th/Pages/main_old.aspx","https://www.oncb.go.th/Pages/main_old.aspx"), "]"
+                      ),
+
       ), 
       #tab4
       tabPanel("Diagnosis",

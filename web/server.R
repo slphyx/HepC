@@ -208,13 +208,55 @@ shinyServer(function(input, output,session) {
     if(input$screening==1){
       disable("risk_g")
       enable("age_s")
+      shinyjs::hide("Scr_table")
     }
     if(input$screening==2){
       disable("age_s")
       enable("risk_g")
+      shinyjs::show("Scr_table")
     }
-  }
-  )
+  })
+  
+  observe({
+    x <- input$risk_g
+    if(!is.null(x)){
+      shinyjs::show("Scr_table")
+      shinyjs::show("Scr_th")
+
+      if(!length(which(x == 1)) == 0){
+        shinyjs::show("Scr_td1")
+      }else{
+        shinyjs::hide("Scr_td1")
+      }
+
+      if(!length(which(x == 2)) == 0){
+        shinyjs::show("Scr_td2")
+      }else{
+        shinyjs::hide("Scr_td2")
+      }
+
+      if(!length(which(x == 3)) == 0){
+        shinyjs::show("Scr_td3")
+      }else{
+        shinyjs::hide("Scr_td3")
+      }
+      if(!length(which(x == 4)) == 0){
+        shinyjs::show("Scr_td4")
+      }else{
+        shinyjs::hide("Scr_td4")
+      }
+      if(!length(which(x == 5)) == 0){
+        shinyjs::show("Scr_td5")
+      }else{
+        shinyjs::hide("Scr_td5")
+      }
+
+    }
+    else if(is.null(x)){
+      shinyjs::hide("Scr_table")
+
+      }
+  })
   
   
   
@@ -504,11 +546,11 @@ shinyServer(function(input, output,session) {
       if (v$doPlot == FALSE) return()
 
       isolate({
-
+        withProgress(message = 'Calculation in progress', {
       x <- out_df()[,c(1,23)]
       
     
-      x_melt <-melt(x, id="time")
+      x_melt <- reshape2::melt(x, id="time")
       ggplot(data = x_melt) + 
         labs( x = "Year", y = "Prevalence")+
         geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)+ 
@@ -516,8 +558,8 @@ shinyServer(function(input, output,session) {
         theme(axis.text = element_text(size = 15, colour="black"))+ 
         theme(legend.title = element_text(size = 20),
               legend.text = element_text(size = 15))
-
         
+        })
       })
     })
     
@@ -531,8 +573,8 @@ shinyServer(function(input, output,session) {
         x <- out_df()[,c(1,15,16,17,26)]
       }
       isolate({
-
-        x_melt <-melt(x, id="time")
+        withProgress(message = 'Calculation in progress', {
+        x_melt <- reshape2::melt(x, id="time")
 
         ggplot(data = x_melt) + 
           labs( x = "Year")+
@@ -541,6 +583,7 @@ shinyServer(function(input, output,session) {
           theme(axis.text = element_text(size = 15, colour="black"))+ 
           theme(legend.title = element_text(size = 20),
                 legend.text = element_text(size = 15))
+        })
       })
     })
     
@@ -551,9 +594,9 @@ shinyServer(function(input, output,session) {
       x <- out_df()[,c(1,27)]
       
       isolate({
-
-
-      x_melt <-melt(x, id="time")
+        withProgress(message = 'Calculation in progress', {
+  
+      x_melt <- reshape2::melt(x, id="time")
       
       ggplot(data = x_melt) + 
         labs( x = "Year")+
@@ -562,6 +605,7 @@ shinyServer(function(input, output,session) {
         theme(axis.text = element_text(size = 15, colour="black"))+ 
         theme(legend.title = element_text(size = 20),
               legend.text = element_text(size = 15))
+        })
       })
     })
     
@@ -571,7 +615,7 @@ shinyServer(function(input, output,session) {
       if (v$doPlot == FALSE) return()
       x <- cost_plot()
       isolate({
-        
+        withProgress(message = 'Calculation in progress', {  
       
       ggplot(data = x) + 
           labs( x = "Year")+
@@ -580,6 +624,7 @@ shinyServer(function(input, output,session) {
           theme(axis.text = element_text(size = 15, colour="black"))+ 
           theme(legend.title = element_text(size = 20),
                 legend.text = element_text(size = 15))
+        })
       })
     })
     
@@ -604,6 +649,8 @@ shinyServer(function(input, output,session) {
     output$text3 <-renderText({
       paste("Treatment cost :" , round(Treatment$cost/30.41,2) , " USD")
     })
+    
+    
     
     output$screening_p <- renderText({
       paste("screening people :" , (p_t$S_screening) )

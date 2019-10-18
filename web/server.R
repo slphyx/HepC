@@ -32,12 +32,18 @@ shinyServer(function(input, output,session) {
                               Cost = 10)
   
   observeEvent(input$Dia_Scr, {
-    if(!input$Dia_Scr == 3){
-      
+    if(input$Dia_Scr == 1 || input$Dia_Scr == 2){
       enable("Dia_Con")
-    }
-    if(input$Dia_Scr == 3){
+      shinyjs::hide("NewDiagnosis")
+      
+    }else if(input$Dia_Scr == 3){
       disable("Dia_Con")
+      shinyjs::hide("NewDiagnosis")
+      
+    }else if(input$Dia_Scr == 4){
+      disable("Dia_Con")
+      shinyjs::show("NewDiagnosis")
+      
     }
     
   })
@@ -54,7 +60,7 @@ shinyServer(function(input, output,session) {
   #do when checkbox of Treatment change.
   observeEvent(input$Treatment, {
     #drug 1
-    if(input$Treatment == 1){
+    if(input$Treatment == 0){
       Treatment$new_cureF0 <- 0.6
       Treatment$new_cureF1 <- 0.6
       Treatment$new_cureF2 <- 0.6
@@ -63,68 +69,74 @@ shinyServer(function(input, output,session) {
       Treatment$new_cureC2 <- 0.6
       Treatment$new_cureC3 <- 0.6
       Treatment$new_cureC4 <- 0.4
-      Treatment$cost <- 10
+      Treatment$cost <- 0
       #drug 2
-    }else if(input$Treatment == 2){
-      Treatment$new_cureF0 <- 0.7
-      Treatment$new_cureF1 <- 0.7
-      Treatment$new_cureF2 <- 0.8
-      Treatment$new_cureF3 <- 0.7
-      Treatment$new_cureC1 <- 0.7
-      Treatment$new_cureC2 <- 0.7
-      Treatment$new_cureC3 <- 0.7
-      Treatment$new_cureC4 <- 0.4
-      Treatment$cost <- 15
+    }else if(input$Treatment == 1){
+      Treatment$new_cureF0 <- 0.98
+      Treatment$new_cureF1 <- 0.98
+      Treatment$new_cureF2 <- 0.98
+      Treatment$new_cureF3 <- 0.98
+      Treatment$new_cureC1 <- 0.98
+      Treatment$new_cureC2 <- 0.98
+      Treatment$new_cureC3 <- 0.98
+      Treatment$new_cureC4 <- 0.98
+      Treatment$cost <- input$Tre1_Cost
       #drug 3
-    }else if(input$Treatment == 3){
-      Treatment$new_cureF0 <- 0.8
-      Treatment$new_cureF1 <- 0.8
-      Treatment$new_cureF2 <- 0.8
-      Treatment$new_cureF3 <- 0.8
-      Treatment$new_cureC1 <- 0.8
-      Treatment$new_cureC2 <- 0.8
-      Treatment$new_cureC3 <- 0.8
-      Treatment$new_cureC4 <- 0.5
-      Treatment$cost <- 20
+    }else if(input$Treatment == 2){
+      Treatment$new_cureF0 <- 0.826
+      Treatment$new_cureF1 <- 0.826
+      Treatment$new_cureF2 <- 0.826
+      Treatment$new_cureF3 <- 0.826
+      Treatment$new_cureC1 <- 0.826
+      Treatment$new_cureC2 <- 0.826
+      Treatment$new_cureC3 <- 0.826
+      Treatment$new_cureC4 <- 0.826
+      Treatment$cost <- input$Tre2_Cost
       #drug 4
-    }else if(input$Treatment == 4){
-      Treatment$new_cureF0 <- 0.9
-      Treatment$new_cureF1 <- 0.9
-      Treatment$new_cureF2 <- 0.9
-      Treatment$new_cureF3 <- 0.9
-      Treatment$new_cureC1 <- 0.9
-      Treatment$new_cureC2 <- 0.9
-      Treatment$new_cureC3 <- 0.9
-      Treatment$new_cureC4 <- 0.5
-      Treatment$cost <- 25
-      #drug 5
-    }else if(input$Treatment == 5){
-      Treatment$new_cureF0 <- 0.9
-      Treatment$new_cureF1 <- 0.9
-      Treatment$new_cureF2 <- 0.9
-      Treatment$new_cureF3 <- 0.9
-      Treatment$new_cureC1 <- 0.9
-      Treatment$new_cureC2 <- 0.9
-      Treatment$new_cureC3 <- 0.9
-      Treatment$new_cureC4 <- 0.5
-      Treatment$cost <- 20
+    }else if(input$Treatment == 3){
+      Treatment$new_cureF0 <- 0.874
+      Treatment$new_cureF1 <- 0.874
+      Treatment$new_cureF2 <- 0.874
+      Treatment$new_cureF3 <- 0.874
+      Treatment$new_cureC1 <- 0.874
+      Treatment$new_cureC2 <- 0.874
+      Treatment$new_cureC3 <- 0.874
+      Treatment$new_cureC4 <- 0.874
+      Treatment$cost <- input$Tre3_Cost
       #Another drug
     }else{
-      Treatment$new_cureF0 <- input$Input_F0
-      Treatment$new_cureF1 <- input$Input_F1
-      Treatment$new_cureF2 <- input$Input_F2
-      Treatment$new_cureF3 <- input$Input_F3
-      Treatment$new_cureC1 <- input$Input_C1
-      Treatment$new_cureC2 <- input$Input_C2
-      Treatment$new_cureC3 <- input$Input_C3
-      Treatment$new_cureC4 <- input$Input_C4
-      Treatment$cost <- input$Input_Cost
+      Treatment$new_cureF0 <- input$Input_Tre_Eff
+      Treatment$new_cureF1 <- input$Input_Tre_Eff
+      Treatment$new_cureF2 <- input$Input_Tre_Eff
+      Treatment$new_cureF3 <- input$Input_Tre_Eff
+      Treatment$new_cureC1 <- input$Input_Tre_Eff
+      Treatment$new_cureC2 <- input$Input_Tre_Eff
+      Treatment$new_cureC3 <- input$Input_Tre_Eff
+      Treatment$new_cureC4 <- input$Input_Tre_Eff
+      Treatment$cost <- input$Input_Tre_Cost
     }
     
   })
+  observeEvent(input$Tre1_Cost, {
+    if(input$Treatment == 1){
+    Treatment$cost <- input$Tre1_Cost
+    }
+  })
+  
+  observeEvent(input$Tre2_Cost, {
+    if(input$Treatment == 2){
+    Treatment$cost <- input$Tre2_Cost
+    }
+  })
+  
+  observeEvent(input$Tre3_Cost, {
+    if(input$Treatment == 3){
+    Treatment$cost <- input$Tre3_Cost
+    }
+  })
   
   #comfirm
-  observeEvent(input$Comfirm, {
+  observeEvent(input$Comfirm_Tre, {
     if(input$Treatment == 1){
       Treatment$new_cureF0 <- 0.6
       Treatment$new_cureF1 <- 0.6
@@ -134,7 +146,7 @@ shinyServer(function(input, output,session) {
       Treatment$new_cureC2 <- 0.6
       Treatment$new_cureC3 <- 0.6
       Treatment$new_cureC4 <- 0.4
-      Treatment$cost <- 10
+      Treatment$cost <- input$Tre1_Cost
       #drug 2
     }else if(input$Treatment == 2){
       Treatment$new_cureF0 <- 0.7
@@ -145,7 +157,7 @@ shinyServer(function(input, output,session) {
       Treatment$new_cureC2 <- 0.7
       Treatment$new_cureC3 <- 0.7
       Treatment$new_cureC4 <- 0.4
-      Treatment$cost <- 15
+      Treatment$cost <- input$Tre2_Cost
       #drug 3
     }else if(input$Treatment == 3){
       Treatment$new_cureF0 <- 0.8
@@ -156,40 +168,18 @@ shinyServer(function(input, output,session) {
       Treatment$new_cureC2 <- 0.8
       Treatment$new_cureC3 <- 0.8
       Treatment$new_cureC4 <- 0.5
-      Treatment$cost <- 20
-      #drug 4
-    }else if(input$Treatment == 4){
-      Treatment$new_cureF0 <- 0.9
-      Treatment$new_cureF1 <- 0.9
-      Treatment$new_cureF2 <- 0.9
-      Treatment$new_cureF3 <- 0.9
-      Treatment$new_cureC1 <- 0.9
-      Treatment$new_cureC2 <- 0.9
-      Treatment$new_cureC3 <- 0.9
-      Treatment$new_cureC4 <- 0.5
-      Treatment$cost <- 25
-      #drug 5
-    }else if(input$Treatment == 5){
-      Treatment$new_cureF0 <- 0.9
-      Treatment$new_cureF1 <- 0.9
-      Treatment$new_cureF2 <- 0.9
-      Treatment$new_cureF3 <- 0.9
-      Treatment$new_cureC1 <- 0.9
-      Treatment$new_cureC2 <- 0.9
-      Treatment$new_cureC3 <- 0.9
-      Treatment$new_cureC4 <- 0.5
-      Treatment$cost <- 20
+      Treatment$cost <- input$Tre3_Cost
       #Another drug
     }else{
-      Treatment$new_cureF0 <- input$Input_F0
-      Treatment$new_cureF1 <- input$Input_F1
-      Treatment$new_cureF2 <- input$Input_F2
-      Treatment$new_cureF3 <- input$Input_F3
-      Treatment$new_cureC1 <- input$Input_C1
-      Treatment$new_cureC2 <- input$Input_C2
-      Treatment$new_cureC3 <- input$Input_C3
-      Treatment$new_cureC4 <- input$Input_C4
-      Treatment$cost <- input$Input_Cost
+      Treatment$new_cureF0 <- input$Input_Tre_Eff
+      Treatment$new_cureF1 <- input$Input_Tre_Eff
+      Treatment$new_cureF2 <- input$Input_Tre_Eff
+      Treatment$new_cureF3 <- input$Input_Tre_Eff
+      Treatment$new_cureC1 <- input$Input_Tre_Eff
+      Treatment$new_cureC2 <- input$Input_Tre_Eff
+      Treatment$new_cureC3 <- input$Input_Tre_Eff
+      Treatment$new_cureC4 <- input$Input_Tre_Eff
+      Treatment$cost <- input$Input_Tre_Cost
     }
     
   }
@@ -197,7 +187,7 @@ shinyServer(function(input, output,session) {
   
   #numericInput in Treatment 
   observe({
-    if (input$Treatment != 6) {
+    if (input$Treatment != 4) {
       shinyjs::hide("Newdurg")
 
     }else{
@@ -589,14 +579,14 @@ shinyServer(function(input, output,session) {
     
     #textoutput
     output$text1 <- renderText({
-        paste("Treatment efficacy :" , mean(c(Treatment$new_cureF0
+        paste("Treatment efficacy :" , round(mean(c(Treatment$new_cureF0
                                                ,Treatment$new_cureF2
                                                ,Treatment$new_cureF3
                                                ,Treatment$new_cureF4
                                                ,Treatment$new_cureC1
                                                ,Treatment$new_cureC2
                                                ,Treatment$new_cureC3
-                                               ,Treatment$new_cureC4))
+                                               ,Treatment$new_cureC4)),4)*100, "%"
               )
       
 

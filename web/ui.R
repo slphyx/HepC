@@ -653,11 +653,20 @@ shinyUI(fluidPage(
       #tab4
       tabPanel("Diagnosis",
                tags$div(class = "sliderDisplay col-sm-12",
+                        tags$div(class = "col-sm-12 Mbottom",
                         tags$div(class = "col-sm-6",
                                  radioButtons("Dia_Scr", "Screening:",
                                               c("Rapid strip test ANT HCV" =1,
                                                 "HCV Antibody" = 2,
-                                                "Rapid HCV RNA" = 3))
+                                                "Rapid HCV RNA" = 3,
+                                                "Other test" = 4)),
+                                 hidden(
+                                   tags$div(id="NewDiagnosis",
+                                            numericInput("Input_Dia_Sen", "Sensitivity", 50, min = 0, max = 100,step =0.1),
+                                            numericInput("Input_Dia_Cost", "Cost (THB)", 6000),
+                                            actionButton("Comfirm_dia", "Comfirm"),
+                                   )       
+                                   ),
                         ),
                         tags$div(id = "test2",class = "col-sm-6",
                                  radioButtons("Dia_Con", "Confirming:",
@@ -665,50 +674,99 @@ shinyUI(fluidPage(
                                                 "CORE Antigen" = 2,
                                                 "Rapid HCV RNA" = 3))
                         ),
-                        #imported excel file and now in r as "testdesc"
+                        ),
+                        
                         tags$div(class = "col-sm-6 Mbottom",
+
                           tags$table(
                             tags$tr(
                               tags$th("Test"),
                               tags$th("Sensitivity/Specificity"),
                               tags$th("Cost (USD)"),
+                              tags$th("Cost (THB)"),
                             ),
                             tags$tr(
-                              tags$td(colspan="3","Screening"),
+                              tags$td(colspan="4","Screening"),
                             ),
                             tags$tr(
                               tags$td("Rapid strip test ANT HCV"),
                               tags$td("94/98",tags$sup("[1]")),
-                              tags$td("10"),
+                              tags$td("60",tags$sup("[1]")),
+                              tags$td(
+                                sliderInput("Scr1_Dia_Cost",
+                                                  "",
+                                                  min = 50,
+                                                  max = 1000,
+                                                  step = 10,
+                                                  value = 70
+                                           )
+                                
+                              ),
                             ),
                             tags$tr(
                               tags$td("Antibody HCV"),
                               tags$td("99.5/99.8",tags$sup("[2]")),
                               tags$td("10"),
+                              tags$td(
+                                sliderInput("Scr2_Dia_Cost",
+                                            "",
+                                            min = 200,
+                                            max = 500,
+                                            step = 10,
+                                            value = 300
+                                )
+                              ),
                             ),
                             tags$tr(
-                              tags$td(colspan="3","Confirming"),
+                              tags$td(colspan="4","Confirming"),
                             ),
                             tags$tr(
                               tags$td("HCV RNA"),
                               tags$td("81.2/96.15" ,tags$sup("[3]")),
-                              tags$td("50"),
+                              tags$td("50",tags$sup("[6],[7]")),
+                              tags$td(
+                                sliderInput("Con1_Dia_Cost",
+                                            "",
+                                            min = 300,
+                                            max = 2000,
+                                            step = 10,
+                                            value = 1500
+                                )
+                              ),
                             ),
                             tags$tr(
                               tags$td("Rapid HCV RNA test by Gene expert"),
                               tags$td("100/100" ,tags$sup("[4]")),
                               tags$td("10"),
+                              tags$td(
+                                sliderInput("Con1_Dia_Cost",
+                                            "",
+                                            min = 200,
+                                            max = 500,
+                                            step = 10,
+                                            value = 300
+                                )
+                              ),
                             ),
                             tags$tr(
                               tags$td("HCV core antigen"),
                               tags$td("94/98" ,tags$sup("[5]")),
-                              tags$td("30"),
+                              tags$td("30",tags$sup("[7]")),
+                              tags$td(
+                                sliderInput("Con1_Dia_Cost",
+                                            "",
+                                            min = 200,
+                                            max = 500,
+                                            step = 10,
+                                            value = 300
+                                )
+                              ),
                             )
                             
-                          )
+                          ),
                         ),
                         
-                        tags$div(
+                        tags$div(class="col-sm-6",
                           
                           tags$img(src="image/hcv testing sequence identifying hcv infection.jpg" 
                                    ,alt="Study design of the transmission and disease progression model."),
@@ -730,6 +788,12 @@ shinyUI(fluidPage(
                ),
                tags$p("5 Lamoury FMJ, Soker A, Martinez D, Hajarizadeh B, Cunningham EB, Cunningham P, et al. Hepatitis C virus core antigen: A simplified treatment monitoring tool, including for post-treatment relapse. Journal of Clinical Virology. 2017;92:32-8."
                ),
+               tags$p("6 National Health Security Office (NHSO). Guideline for screening and confirmation of Hepatitis C virus. 2018 [Available from: ",
+                      tags$a (href="https://bit.ly/2J2cMLT","https://r8way.moph.go.th/"), "]"
+               ),
+               tags$p("7 Alcorn K. Hepatitis C antigen testing could eliminate need for two-step HCV testing, reduce cost of access. 2016 [Available from: ",
+                      tags$a (href="ttps://www.aidsmap.com/news/jun-2016/hepatitis-c-antigen-testing-could-eliminate-need-two-step-hcv-testing-reduce-cost","ttps://www.aidsmap.com/news/jun-2016/hepatitis-c-antigen-testing-could-eliminate-need-two-step-hcv-testing-reduce-cost"), "]"
+               ),
                ),
       #tab5
     tabPanel("Treatment",
@@ -738,30 +802,82 @@ shinyUI(fluidPage(
                       tags$h3("Treatment"),
                       tags$hr(),
                       tags$div(class = "col-sm-12",
+                               tags$div(class = "col-sm-5",
                                radioButtons("Treatment", "Novel Treatment type:",width = '100%',
                                             c("No novel treatment" = 0,
-                                              "Sofosbuvir with Peginterferon alfa type 2a or 2b and ribavirin (National List of Essential Medicines)" =1,
+                                              "Sofosbuvir with Velpatasvir (pan-genotypic treatments)" =1,
                                               "Sofosbuvir with Ledipasvir (National List of Essential Medicines)" = 2,
-                                              "Sofosbuvir with Daclatasvir (pan-genotypic treatments)" = 3,
-                                              "Sofosbuvir with Velpatasvir (pan-genotypic treatments)" = 4,
-                                              "Sofosbuvir with Ravidasvir (pan-genotypic treatments, on-going clinical trial)" = 5,
-                                              "Another durg" = 6),),
+                                              "Sofosbuvir with Ravidasvir (pan-genotypic treatments, on-going clinical trial)" = 3,
+                                              "Another durg" = 4),),
                                shinyjs::useShinyjs(),
                                hidden(
                                tags$div(id="Newdurg",
-                               numericInput("Input_F0", "F0", 0.5, min = 0, max = 1,step =0.1),
-                               numericInput("Input_F1", "F1", 0.5, min = 0, max = 1,step =0.1),
-                               numericInput("Input_F2", "F2", 0.5, min = 0, max = 1,step =0.1),
-                               numericInput("Input_F3", "F3", 0.5, min = 0, max = 1,step =0.1),
-                               numericInput("Input_C1", "C1", 0.5, min = 0, max = 1,step =0.1),
-                               numericInput("Input_C2", "C2", 0.5, min = 0, max = 1,step =0.1),
-                               numericInput("Input_C3", "C3", 0.5, min = 0, max = 1,step =0.1),
-                               numericInput("Input_C4", "C4", 0.5, min = 0, max = 1,step =0.1),
-                               numericInput("Input_Cost", "Cost (THB)", 6000),
-                               actionButton("Comfirm", "Comfirm"),
-                               
-                      )
-                      )
+                               numericInput("Input_Tre_Eff", "Treatment Efficacy", 0.5, min = 0, max = 1,step =0.1),
+                               numericInput("Input_Tre_Cost", "Cost (THB)", 24000, min = 0,step =100),
+                               actionButton("Comfirm_Tre", "Comfirm"),
+                               )
+                        )
+                      ),
+                      tags$div(class = "col-sm-7",
+                                tags$table(
+                                  tags$tr(
+                                    tags$th("Regimen"),
+                                    tags$th("HCV genotype 3 (40%)" ,tags$sup("[1]")),
+                                    tags$th("HCV genotyp 1 & 6 (60%)" ,tags$sup("[1]")),
+                                    tags$th("weighted avg efficay (%)"),
+                                    tags$th("Cost (USD)"),
+                                    tags$th("cost (THB)"),
+                                  ),
+                                  tags$tr(
+                                    tags$td("Sofosbuvir + velpatasvir"),
+                                    tags$td("98 (96-99)"),
+                                    tags$td("98 (96-99)"),
+                                    tags$td("98"),
+                                    tags$td("800" ,tags$sup("[2]")),
+                                    tags$td(
+                                      sliderInput("Tre1_Cost",
+                                                  "",
+                                                  min = 10000,
+                                                  max = 35000,
+                                                  step = 1000,
+                                                  value = 24000
+                                      )
+                                    ),
+                                  ),
+                                  tags$tr(
+                                    tags$td("Sofosbuvir + Ledipasvir"),
+                                    tags$td("64 (42 - 82)"),
+                                    tags$td("95 (93 - 98)"),
+                                    tags$td("82.6"),
+                                    tags$td("560" ,tags$sup("[3]")),
+                                    tags$td(
+                                      sliderInput("Tre2_Cost",
+                                                  "",
+                                                  min = 10000,
+                                                  max = 35000,
+                                                  step = 100,
+                                                  value = 16800
+                                      )
+                                    ),
+                                  ),
+                                  tags$tr(
+                                    tags$td("Sofosbuvir + ravidasvir"),
+                                    tags$td("97"),
+                                    tags$td("81"),
+                                    tags$td("87.4"),
+                                    tags$td("320" ,tags$sup("[4]")),
+                                    tags$td(
+                                      sliderInput("Tre3_Cost",
+                                                  "",
+                                                  min = 5000,
+                                                  max = 20000,
+                                                  step = 100,
+                                                  value = 9600
+                                      )
+                                    ),
+                                  ),
+                                ),
+                        )
                       ),
                       
                       tags$div(class = "row",
@@ -771,19 +887,22 @@ shinyUI(fluidPage(
                                         textOutput("text3"),
                                         tags$p("1 USD = 30.41 THB")
                                         
-                                        # tags$h3("Treatment Cost"),
-                                        # tags$hr(),
-                                        # tags$div(class = "col-sm-6",
-                                        #          sliderInput("Te1",
-                                        #                      "Treatment Cost ($)",
-                                        #                      min = 0.05,
-                                        #                      max = 0.1,
-                                        #                      step = 0.001,
-                                        #                      value = 0.066
                                )
-                      )
+                      ),
                   
-             )
+             ),
+             tags$div(class = "col-sm-12",
+                      tags$hr(),
+             ),
+             tags$h3("Reference"),
+             tags$p("1 Wasitthankasem R, Vongpunsawad S, Siripon N, Suya C, Chulothok P, Chaiear K, et al. Genotypic distribution of hepatitis C virus in Thailand and Southeast Asia. PLoS One. 2015;10(5):e0126764."
+             ),
+             tags$p("2 Andrieux-Meyer I, Tan SS, Salvadori N, Simon F, Cressey TR, Said HRHM, et al. Safety and efficacy of ravidasvir plus sofosbuvir 12 weeks in noncirrhotic and 24 weeks in cirrhotic patients with hepatitis C virus genotypes 1, 2, 3 and 6: The STORM-C-1 pha"
+                    ),
+             tags$p("3 Rattanavipapong W, Anothaisintawee T, Teerawattananon Y. Revisiting policy on chronic HCV treatment under the Thai Universal Health Coverage: An economic evaluation and budget impact analysis. PLoS One. 2018;13(2):e0193112-e."
+                    ),
+             tags$p("4 Andrieux-Meyer I, Tan SS, Salvadori N, Simon F, Cressey TR, Said HRHM, et al. Safety and efficacy of ravidasvir plus sofosbuvir 12 weeks in noncirrhotic and 24 weeks in cirrhotic patients with hepatitis C virus genotypes 1, 2, 3 and 6: The STORM-C-1 phase II/III trial. Journal of Hepatology. 2018;68:S123-S4."
+                    ),
     ),
     #tab6new
     tabPanel("Extra",
@@ -797,15 +916,8 @@ shinyUI(fluidPage(
                                                   ))
                       )
                       
+                ),
              ),
-             #imported excel file and now in r as "extradesc"
-             tags$div(class = "extradesc col-sm-6",
-                      fluidRow(
-                        
-                        br(),
-                        column(width = 1),
-                        tableHTML_output("extratbl"))
-             )),
 
 
       #tab7

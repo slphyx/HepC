@@ -107,3 +107,7 @@ table,td,th{
 td,th{
     padding : 10px 15px 10px 15px;
 }
+td:nth-child(even),th:nth-child(even) {
+    background-color: #e2e2e2;
+    
+}

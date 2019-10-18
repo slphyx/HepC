@@ -16,12 +16,9 @@ library(ggplot2)
 library(tidyverse)
 library(dplyr)
 library(erer)
-library(xlsx)
 library(scales)
 library(plyr) 
 library(shinyjs)
-library(readxl)
-library(openxlsx) 
 
 # Define server logic required to draw a histogram
 shinyServer(function(input, output,session) {
@@ -477,60 +474,6 @@ shinyServer(function(input, output,session) {
                           Neg_T = 0 , #Negative True
                           Neg_T = 0   #Negative False
     )
-    #load("popscreen_list.RData")
-    
-    #table for "Screening" panel, age groups. involves importing data from excel
-    screeningdesc <- read_excel("treatmentdesc.xlsx")
-    observe({
-      output$screeningtbl <- render_tableHTML(
-        tableHTML(screeningdesc, rownames = FALSE,
-                  border = 3, 
-                  collapse = c("collapse", "separate","separate_shiny"), 
-                  spacing = "5px 2px"
-        ) %>%
-          add_theme("rshiny-blue"))
-    })
-    
-    #table for "Screening" panel, risk groups. involves importing data from excel
-    riskdesc <- read_excel("riskdesc.xlsx")
-    observe({
-      output$risktbl <- render_tableHTML(
-        tableHTML(riskdesc, rownames = FALSE,
-                  border = 3, 
-                  collapse = c("collapse", "separate","separate_shiny"), 
-                  spacing = "5px 2px"
-        ) %>%
-          add_theme("rshiny-blue"))
-    })
-    
-    #table for "Diagnosis" panel. involves importing data from excel
-    
-    testdesc <- read_excel("testdesc.xlsx")
-    observe({
-      output$testtbl <- render_tableHTML(
-        tableHTML(testdesc, rownames = FALSE,
-                  row_groups = list(c(2,3), c("Test 1", "Test 2")),
-                  border = 3, 
-                  collapse = c("collapse", "separate","separate_shiny"), 
-                  spacing = "5px 2px"
-        ) %>%
-          add_theme("rshiny-blue")) 
-    })
-    
-    #table for "Treatment" panel. involves importing data from excel
-    
-    treatmentdesc <- read_excel("treatmentdesc.xlsx")
-    observe({
-      output$treatmenttbl <- render_tableHTML(
-        tableHTML(treatmentdesc, rownames = FALSE,
-                  second_headers = list(c(1,2,1), c("","Sustained Virological Response (%)", "")),
-                  border = 3, 
-                  collapse = c("collapse", "separate","separate_shiny"), 
-                  spacing = "5px 2px"
-        ) %>%
-          add_theme("rshiny-blue"))
-    })
-    
     
     out_df <- reactive({
       
@@ -542,13 +485,6 @@ shinyServer(function(input, output,session) {
       out_df
     })
     
-    #output per year
-    out_df_year <- reactive({
-      
-      time_year <- out_df()["time"] %% 1 ==0
-      out_df_year <- out_df()[time_year,]
-
-    })
     
     #cost plot
     cost_plot <- reactive({
@@ -689,15 +625,14 @@ shinyServer(function(input, output,session) {
     )
 
     output$downloadData2 <-       
-
+    
     downloadHandler(
-
-      filename = "result.xlsx",
+      filename = "result.csv",
       content = function(file) {
         
-        write.xlsx(out_df_year(), file, sheetName="Sheet1")
+        write.csv(out_df(), file, row.names = FALSE)
         
-      }, contentType = "text/xlsx"
+      }, contentType = "text/csv"
       
     )
 

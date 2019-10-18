@@ -462,8 +462,8 @@ shinyUI(fluidPage(
                           #risk IDU
                           tags$tr(id = "Scr_td2",
                                  tags$td("IDU"),
-                                 tags$td("260,305 (2019)"),
-                                 tags$td("44.3 (2019)"),
+                                 tags$td("260,305 (2019)" ,tags$sup("[2]")),
+                                 tags$td("44.3 (2019)" ,tags$sup("[10]")),
                                  #slider
                                  tags$td(sliderInput("IDU_Scr",
                                                      "",
@@ -486,8 +486,8 @@ shinyUI(fluidPage(
                           #risk MSM
                           tags$tr(id = "Scr_td3",
                             tags$td("MSM"),
-                            tags$td("590,000 (2016)"),
-                            tags$td("4.9 (2019)"),
+                            tags$td("590,000 (2016)" ,tags$sup("[3]")),
+                            tags$td("4.9 (2019)" ,tags$sup("[11]")),
                             #slider
                             tags$td(sliderInput("MSM_Scr",
                                                 "",
@@ -534,8 +534,8 @@ shinyUI(fluidPage(
                           #risk Blood donor
                           tags$tr(id = "Scr_td5",
                             tags$td("Blood donor"),
-                            tags$td("89,311 (2009)"),
-                            tags$td("2.9 (2004)"),
+                            tags$td("89,311 (2009)" ,tags$sup("[4]")),
+                            tags$td("2.9 (2004)" ,tags$sup("[12]")),
                             #slider
                             tags$td(sliderInput("Rd_Scr",
                                                 "",
@@ -558,8 +558,8 @@ shinyUI(fluidPage(
                           #Prisoner
                          tags$tr(id = "Scr_td6",
                                  tags$td("Prisoner"),
-                                 tags$td("372,979 (2019)"),
-                                 tags$td("7 (2019)"),
+                                 tags$td("372,979 (2019)" ,tags$sup("[5]")),
+                                 tags$td("7 (2019)" ,tags$sup("[13]")),
                                  #slider
                                  tags$td(sliderInput("Pri_Scr",
                                                      "",
@@ -582,8 +582,8 @@ shinyUI(fluidPage(
                          #Chronic kidney disease
                          tags$tr(id = "Scr_td7",
                                  tags$td("CKD"),
-                                 tags$td("128,338(2016)"),
-                                 tags$td("5.6 (2016)"),
+                                 tags$td("128,338(2016)" ,tags$sup("[6]")),
+                                 tags$td("5.6 (2016)" ,tags$sup("[14]")) , 
                                  #slider
                                  tags$td(sliderInput("CKD_Scr",
                                                      "",
@@ -610,37 +610,102 @@ shinyUI(fluidPage(
                         
                         
                ) ,
-               tags$hr(),
+               tags$div(class = "col-sm-12",
+                        tags$hr(),
+               ),
                tags$h3("Reference"),
                tags$p("1 HIV AIDS Asia Pacific Research Statistical Data Information Resources AIDS Data Hub. HIV in Thailand. 2018 [Available from: ",
                       tags$a (href="https://www.aidsdatahub.org/Country-Profiles/Thailand","https://www.aidsdatahub.org/Country-Profiles/Thailand"), "]"
                       ),
                tags$p("2 Office of the Narcotics Control Board. Anual report. Office of the Narcotics Control Board, Ministry of Justice 2019 [Available from: ",
                       tags$a (href="https://www.oncb.go.th/Pages/main_old.aspx","https://www.oncb.go.th/Pages/main_old.aspx"), "]"
+               ),
+               tags$p("3 United Nations. World Population Prospects 2019. Office of the Director, Population Division, United Nations. 2019 [Available from: ",
+                      tags$a (href="https://population.un.org/wpp/","https://population.un.org/wpp/"), "]"
+               ),
+               tags$p("4 Chimparlee N, Oota S, Phikulsod S, Tangkijvanich P, Poovorawan Y. Hepatitis B and hepatitis C virus in Thai blood donors. The Southeast Asian journal of tropical medicine and public health. 2011;42(3):609-15."
                       ),
+               tags$p("5 Department of Corrections. Corrections statistics. Department of Corrections, Ministry of Justice. 2019 [Available from: ",
+                      tags$a (href="http://www.correct.go.th/stat102/display/select_type.php","http://www.correct.go.th/stat102/display/select_type.php"), "]"
+               ),
+               tags$p("6 Anutrakulchai S, Mairiang P, Pongskul C, Thepsuthammarat K, Chan-On C, Thinkhamrop B. Mortality and treatment costs of hospitalized chronic kidney disease patients between the three major health insurance schemes in Thailand. BMC Health Serv Res. 2016;16(1):528-."
+               ),
+               tags$p("7 Suwanagool S, Tieangrim S, Ratanasuwan W, Mekanantagosol S, Luengrojanakul P, Kunasol P. Seroprevalence of anti-HCV among HIV-infected persons and general population. Journal of the Medical Association of Thailand = Chotmaihet thangphaet. 1995;78(11):611-7."
+               ),
+               tags$p("8 Jatapai A, Nelson KE, Chuenchitra T, Kana K, Eiumtrakul S, Sunantarod E, et al. Prevalence and risk factors for hepatitis C virus infection among young Thai men. The American journal of tropical medicine and hygiene. 2010;83(2):433-9."
+               ),
+               tags$p("9 Phuangchoei P, Chotiyaputta W, Chayakulkeeree M. Clinical characteristics of hepatitis B and C virus infections in HIV-infected patients. J Med Assoc Thai. 2015;98(3):226-31.)"
+               ),
+               tags$p("10 Martin M, Vanichseni S, Leelawiwat W, Anekvorapong R, Raengsakulrach B, Cherdtrakulkiat T, et al. Hepatitis C virus infection among people who inject drugs in Bangkok, Thailand, 2005-2010. WHO South-East Asia journal of public health. 2019;8(1):50-5."
+               ),
+               tags$p("11 Thai Red CRoss AIDS Research Centre. 2019  [Available from: ",
+                      tags$a (href="http://en.trcarc.org/Homepage/?page_id=14","http://en.trcarc.org/Homepage/?page_id=14"), "]"
+               ),
+               tags$p("12 Luksamijarulkul P, Thammata N, Sujirarat D, Tiloklurs M. Hepatitis C virus infection among Thai blood donors: antibody prevalence, risk factors and development of risk screening form. The Southeast Asian journal of tropical medicine and public health. 2004;35(1):147-54."
+               ),
+               tags$p("13 Bureau AIDS, TB, and STI. Heppatitis C. Bureau AIDS, TB, and STI, Department of Disease control, Ministry of Public health 2019 [Available from: ",
+                      tags$a (href="https://ddc.moph.go.th/aidssti/","https://ddc.moph.go.th/aidssti/"), "]"
+               ),
+               tags$p("14 Jha V, Prasad N. CKD and Infectious Diseases in Asia Pacific: Challenges and Opportunities. American journal of kidney diseases : the official journal of the National Kidney Foundation. 2016;68(1):148-60."
+               ),
 
       ), 
       #tab4
       tabPanel("Diagnosis",
                tags$div(class = "sliderDisplay col-sm-12",
                         tags$div(class = "col-sm-6",
-                                 radioButtons("test1", "First test:",
-                                              c("HCV Antibody" = 1,
-                                                "Rapid HCV RNA" = 2))
+                                 radioButtons("Dia_Scr", "Screening:",
+                                              c("Rapid strip test ANT HCV" =1,
+                                                "HCV Antibody" = 2,
+                                                "Rapid HCV RNA" = 3))
                         ),
                         tags$div(id = "test2",class = "col-sm-6",
-                                 radioButtons("test2", "Second test:",
+                                 radioButtons("Dia_Con", "Confirming:",
                                               c("HCV RNA" = 1,
                                                 "CORE Antigen" = 2,
                                                 "Rapid HCV RNA" = 3))
                         ),
                         #imported excel file and now in r as "testdesc"
-                        tags$div(class = "testdesc col-sm-6 Mbottom",
-                                 fluidRow(
-                                   
-                                   br(),
-                                   column(width = 1),
-                                   tableHTML_output("testtbl"))
+                        tags$div(class = "col-sm-6 Mbottom",
+                          tags$table(
+                            tags$tr(
+                              tags$th("Test"),
+                              tags$th("Sensitivity/Specificity"),
+                              tags$th("Cost (USD)"),
+                            ),
+                            tags$tr(
+                              tags$td(colspan="3","Screening"),
+                            ),
+                            tags$tr(
+                              tags$td("Rapid strip test ANT HCV"),
+                              tags$td("94/98",tags$sup("[1]")),
+                              tags$td("10"),
+                            ),
+                            tags$tr(
+                              tags$td("Antibody HCV"),
+                              tags$td("99.5/99.8",tags$sup("[2]")),
+                              tags$td("10"),
+                            ),
+                            tags$tr(
+                              tags$td(colspan="3","Confirming"),
+                            ),
+                            tags$tr(
+                              tags$td("HCV RNA"),
+                              tags$td("81.2/96.15" ,tags$sup("[3]")),
+                              tags$td("50"),
+                            ),
+                            tags$tr(
+                              tags$td("Rapid HCV RNA test by Gene expert"),
+                              tags$td("100/100" ,tags$sup("[4]")),
+                              tags$td("10"),
+                            ),
+                            tags$tr(
+                              tags$td("HCV core antigen"),
+                              tags$td("94/98" ,tags$sup("[5]")),
+                              tags$td("30"),
+                            )
+                            
+                          )
                         ),
                         
                         tags$div(
@@ -648,7 +713,24 @@ shinyUI(fluidPage(
                           tags$img(src="image/hcv testing sequence identifying hcv infection.jpg" 
                                    ,alt="Study design of the transmission and disease progression model."),
                           tags$p("source : https://www.hepatitisc.uw.edu")
-                        ))),
+                        )),
+               tags$div(class = "col-sm-12",
+               tags$hr(),
+               ),
+               tags$h3("Reference"),
+               tags$p("1 Loei Provincial Health Office. Price lists of medical devices report. Loei Provincial Health Office, Ministry of Public health. 2018 [Available from: ",
+                      tags$a (href="https://www.lo.moph.go.th/moph/moph-judesue-all.php","https://www.lo.moph.go.th/moph/moph-judesue-all.php"), "]"
+               ),
+               tags$p("2 Cadieux G, Campbell J, Dendukuri N. Systematic review of the accuracy of antibody tests used to screen asymptomatic adults for hepatitis C infection. CMAJ Open. 2016;4(4):E737-E45."
+               ),
+               tags$p("3 Gao Q, Liu D, Zhang S, Tong L. [Analyses of anti-hCV detected by ELISA and HCV RNA detected by RT-nPCR in chronic hepatitis C virus infectors]. Wei sheng yan jiu = Journal of hygiene research. 2007;36(1):69-71."
+               ),
+               tags$p("4 World Health Organizatio.WHO PQ Public Report. 2017 [Available from: ",
+                      tags$a (href="https://www.who.int/diagnostics_laboratory/evaluations/pq-list/hcv/170404_final_pq_report_pqdx_0260-070-00.pdf","https://www.who.int/diagnostics_laboratory/evaluations/pq-list/hcv/170404_final_pq_report_pqdx_0260-070-00.pdf"), "]"
+               ),
+               tags$p("5 Lamoury FMJ, Soker A, Martinez D, Hajarizadeh B, Cunningham EB, Cunningham P, et al. Hepatitis C virus core antigen: A simplified treatment monitoring tool, including for post-treatment relapse. Journal of Clinical Virology. 2017;92:32-8."
+               ),
+               ),
       #tab5
     tabPanel("Treatment",
              

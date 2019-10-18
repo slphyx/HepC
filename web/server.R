@@ -30,6 +30,20 @@ shinyServer(function(input, output,session) {
   v <- reactiveValues(doPlot = FALSE)
   options(scipen=6)
   
+  #Diagnosis input 
+  Diagnosis <- reactiveValues(Sensitivity = 90,
+                              Cost = 10)
+  
+  observeEvent(input$Dia_Scr, {
+    if(!input$Dia_Scr == 3){
+      
+      enable("Dia_Con")
+    }
+    if(input$Dia_Scr == 3){
+      disable("Dia_Con")
+    }
+    
+  })
   #Treatment input checkbox
   Treatment <- reactiveValues(new_cureF0 = 0.1,
                               new_cureF1 = 0.1,
@@ -267,7 +281,6 @@ shinyServer(function(input, output,session) {
 
       }
   })
-  
   
   
   #button to reset changed values back to the default values (from ui)

@@ -69,15 +69,15 @@ shinyUI(fluidPage(
              tags$hr(),
              tags$h2(class = "center2","Collaborators"),
              tags$div(class = "col-sm-12 Mbottom",
-             tags$div(class = "col-sm-4",tags$a(href="https://mahidol.ac.th/",
+             tags$div(class = "col-sm-12 col-lg-4 center",tags$a(href="https://mahidol.ac.th/",
                                                 tags$img(class = "logo",src="image/mahidol.png",
                                                 alt="Mahidol University"))),
              
-             tags$div(class = "col-sm-4",tags$a(href="http://www.tropmedres.ac/home",
+             tags$div(class = "col-sm-12 col-lg-4 center",tags$a(href="http://www.tropmedres.ac/home",
                                                 tags$img(class = "logo2",src="image/Moru.webp",
                                                 alt="Mahidol Oxford Tropical Medicine Research Unit"))),
              
-             tags$div(class = "col-sm-4",tags$a(href="http://www.hitap.net/en/",
+             tags$div(class = "col-sm-12 col-lg-4 center",tags$a(href="http://www.hitap.net/en/",
                                                 tags$img(class = "logo3",src="image/Hitap.jpg", 
                                                 alt="Health Intervention and Technology Assessment Program")))
               ),
@@ -369,7 +369,7 @@ shinyUI(fluidPage(
                                        inline = T)
                         ),
                         
-                        tags$div(id = "Age_screen",class = "row",
+                        tags$div(
 
                                  radioButtons("age_s", "Age screening range (years):",
                                               c("40 to 50" = 1,
@@ -404,7 +404,7 @@ shinyUI(fluidPage(
                             tags$td("2.62"),
                           ),
                         ),
-                        tags$div(id = "Risk_group",class = "row",
+                        tags$div(id = "Risk_group",
                                  checkboxGroupInput("risk_g", "Risk groups:",
                                                     c("Human Immunodeficiency Virus (HIV)" = 1,
                                                       "Injection Drug User (IDU)" = 2,

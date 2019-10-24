@@ -1711,7 +1711,18 @@ shinyUI(fluidPage(
 
              ),
              tags$br()
-    )
+    ),
+    tabPanel("Supplementary",
+            tags$a("the 1st stakeholders' meeting",target="_blank",href="the 1st stakeholders' meeting.docx"),
+            tags$br(),
+            tags$a("the 2nd stakeholders' meeting",target="_blank",href="the 2nd stakeholders' meeting.docx"),
+            tags$br(),
+            tags$a("Estimating the Impact of Expanding Treatment Coverageand Allocation Strategies for Chronic Hepatitis C in a Direct Antiviral Agent Era"
+                   ,target="_blank",href="pone.0163095.pdf"),
+            tags$br(),
+            tags$a("Revisiting policy on chronic HCV treatment under the Thai Universal Health Coverage: An economic evaluation and budget impact analysis"
+                   ,target="_blank",href="pone.0193112.pdf"),
+             )
     )
   )
 )

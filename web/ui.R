@@ -372,9 +372,9 @@ shinyUI(fluidPage(
                         tags$div(
 
                                  radioButtons("age_s", "Age screening range (years):",
-                                              c("40 to 50" = 1,
-                                                "50 to 60" = 2,
-                                                "40 to 60" = 3))
+                                              c("41 to 50" = 1,
+                                                "51 to 60" = 2,
+                                                "41 to 60" = 3))
 
 
                                  ),

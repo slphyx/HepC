@@ -515,7 +515,7 @@ shinyServer(function(input, output,session) {
     #output 2
     output$distPlot2 <- renderPlot({
       if (v$doPlot == FALSE) return()
-      x <- out_df()[,c(1,15,16,17)]
+      x <- out_df()[,c(1,15,16,17,25)]
       
       if(input$showNewDeath){
         
@@ -540,7 +540,7 @@ shinyServer(function(input, output,session) {
     output$distPlot3 <- renderPlot({
       
       if (v$doPlot == FALSE) return()
-      x <- out_df()[,c(1,27)]
+      x <- out_df()[,c(1,24,27,29)]
       
       isolate({
         withProgress(message = 'Calculation in progress', {

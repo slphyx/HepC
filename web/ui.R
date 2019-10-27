@@ -361,7 +361,41 @@ shinyUI(fluidPage(
       tabPanel("Screening",
                tags$div(class = "sliderDisplay col-sm-12",
                         shinyjs::useShinyjs(),
-                        tags$div(class = " col-sm-6",
+                        tags$div(
+                          tags$div(
+                            
+                            tags$table(
+                              tags$tr(
+                                tags$th("Age to screen (yrs)"),
+                                tags$th("Total population"),
+                                tags$th("HCV screening positive rate"),
+                                tags$th("HCV confirming positive rate"),
+                              ),
+                              tags$tr(
+                                tags$td("41-50"),
+                                tags$td("11,169,018"),
+                                tags$td("2.72"),
+                                tags$td("1.69"),
+                              ),
+                              tags$tr(
+                                tags$td("51-60"),
+                                tags$td("10,371,593"),
+                                tags$td("1.46"),
+                                tags$td("0.93"),
+                              ),
+                              tags$tr(
+                                tags$td("41-60"),
+                                tags$td("21,540,611"),
+                                tags$td("4.18"),
+                                tags$td("2.62"),
+                              ),
+                            ),
+                            tags$p(class ="italic" ,"Sources:  Pyramid.net P. Population Pyramids of Thailand 2019. Available from:  ",
+                                   tags$a (href="https://www.populationpyramid.net/thailand/2019/","https://www.populationpyramid.net/thailand/2019/")
+                            ),
+                            tags$p(class ="italic" ,"Wasitthankasem R, Posuwan N, Vichaiwattana P, Theamboonlers A, Klinfueng S, Vuthitanachot V, et al. Decreasing Hepatitis C Virus Infection in Thailand in the Past Decade: Evidence from the 2014 National Survey. PloS one. 2016;11(2)")
+                            
+                          ),
                         tags$div(
                           radioButtons("screening", "Screening type:",
                                        c("By age" = 1,
@@ -417,10 +451,7 @@ shinyUI(fluidPage(
                         ),
 
                         ),
-                        tags$div(class = " col-sm-6",
-                                 tags$img(src="image/population2019.png" 
-                                          ,alt="Study design of the transmission and disease progression model."),
-                        ),
+
                         shinyjs::useShinyjs(),
                         
                         tags$table(id = "Scr_table",
@@ -792,7 +823,7 @@ shinyUI(fluidPage(
                       tags$a (href="https://bit.ly/2J2cMLT","https://r8way.moph.go.th/"), "]"
                ),
                tags$p("7 Alcorn K. Hepatitis C antigen testing could eliminate need for two-step HCV testing, reduce cost of access. 2016 [Available from: ",
-                      tags$a (href="ttps://www.aidsmap.com/news/jun-2016/hepatitis-c-antigen-testing-could-eliminate-need-two-step-hcv-testing-reduce-cost","ttps://www.aidsmap.com/news/jun-2016/hepatitis-c-antigen-testing-could-eliminate-need-two-step-hcv-testing-reduce-cost"), "]"
+                      tags$a (href="https://www.aidsmap.com/news/jun-2016/hepatitis-c-antigen-testing-could-eliminate-need-two-step-hcv-testing-reduce-cost","https://www.aidsmap.com/news/jun-2016/hepatitis-c-antigen-testing-could-eliminate-need-two-step-hcv-testing-reduce-cost"), "]"
                ),
                ),
       #tab5
@@ -833,7 +864,7 @@ shinyUI(fluidPage(
                                     tags$td("98 (96-99)"),
                                     tags$td("98 (96-99)"),
                                     tags$td("98"),
-                                    tags$td("800" ,tags$sup("[2]")),
+                                    tags$td("800" ,tags$sup("[2],[5]")),
                                     tags$td(
                                       sliderInput("Tre1_Cost",
                                                   "",
@@ -849,7 +880,7 @@ shinyUI(fluidPage(
                                     tags$td("64 (42 - 82)"),
                                     tags$td("95 (93 - 98)"),
                                     tags$td("82.6"),
-                                    tags$td("560" ,tags$sup("[3]")),
+                                    tags$td("560" ,tags$sup("[3],[5]")),
                                     tags$td(
                                       sliderInput("Tre2_Cost",
                                                   "",
@@ -903,6 +934,8 @@ shinyUI(fluidPage(
                     ),
              tags$p("4 Andrieux-Meyer I, Tan SS, Salvadori N, Simon F, Cressey TR, Said HRHM, et al. Safety and efficacy of ravidasvir plus sofosbuvir 12 weeks in noncirrhotic and 24 weeks in cirrhotic patients with hepatitis C virus genotypes 1, 2, 3 and 6: The STORM-C-1 phase II/III trial. Journal of Hepatology. 2018;68:S123-S4."
                     ),
+             tags$p("5 Meda A Mylan Company,Meda Pharma(Thailand) Co.,Ltd."
+             ),
     ),
     #tab6new
     tabPanel("Extra",

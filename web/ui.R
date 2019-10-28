@@ -362,40 +362,7 @@ shinyUI(fluidPage(
                tags$div(class = "sliderDisplay col-sm-12",
                         shinyjs::useShinyjs(),
                         tags$div(
-                          tags$div(
-                            
-                            tags$table(
-                              tags$tr(
-                                tags$th("Age to screen (yrs)"),
-                                tags$th("Total population"),
-                                tags$th("HCV screening positive rate"),
-                                tags$th("HCV confirming positive rate"),
-                              ),
-                              tags$tr(
-                                tags$td("41-50"),
-                                tags$td("11,169,018"),
-                                tags$td("2.72"),
-                                tags$td("1.69"),
-                              ),
-                              tags$tr(
-                                tags$td("51-60"),
-                                tags$td("10,371,593"),
-                                tags$td("1.46"),
-                                tags$td("0.93"),
-                              ),
-                              tags$tr(
-                                tags$td("41-60"),
-                                tags$td("21,540,611"),
-                                tags$td("4.18"),
-                                tags$td("2.62"),
-                              ),
-                            ),
-                            tags$p(class ="italic" ,"Sources:  Pyramid.net P. Population Pyramids of Thailand 2019. Available from:  ",
-                                   tags$a (href="https://www.populationpyramid.net/thailand/2019/","https://www.populationpyramid.net/thailand/2019/")
-                            ),
-                            tags$p(class ="italic" ,"Wasitthankasem R, Posuwan N, Vichaiwattana P, Theamboonlers A, Klinfueng S, Vuthitanachot V, et al. Decreasing Hepatitis C Virus Infection in Thailand in the Past Decade: Evidence from the 2014 National Survey. PloS one. 2016;11(2)")
-                            
-                          ),
+
                         tags$div(
                           radioButtons("screening", "Screening type:",
                                        c("By age" = 1,
@@ -412,32 +379,49 @@ shinyUI(fluidPage(
 
 
                                  ),
-                        tags$table(
-                          tags$tr(
-                                  tags$th("Screening option"),
-                                  tags$th("Age to screen (Years)"),
-                                  tags$th("HCV screening positive rate"),
-                                  tags$th("HCV confirming positive rate"),
+                        tags$div(
+                          
+                          tags$table(
+                            tags$tr(
+                              tags$th("Age to screen (yrs)"),
+                              tags$th("Total population"),
+                              tags$th("HCV screening positive rate"),
+                              tags$th("HCV confirming positive rate"),
+                            ),
+                            tags$tr(
+                              tags$td("41-50"),
+                              tags$td("11,169,018"),
+                              tags$td("2.72"),
+                              tags$td("1.69"),
+                            ),
+                            tags$tr(
+                              tags$td("51-60"),
+                              tags$td("10,371,593"),
+                              tags$td("1.46"),
+                              tags$td("0.93"),
+                            ),
+                            tags$tr(
+                              tags$td("41-60"),
+                              tags$td("21,540,611"),
+                              tags$td("4.18"),
+                              tags$td("2.62"),
+                            ),
                           ),
-                          tags$tr(
-                            tags$td("A"),
-                            tags$td("41-50"),
-                            tags$td("2.72"),
-                            tags$td("1.69"),
+                          tags$p(class ="italic" ,"Sources:  Pyramid.net P. Population Pyramids of Thailand 2019. Available from:  ",
+                                 tags$a (href="https://www.populationpyramid.net/thailand/2019/","https://www.populationpyramid.net/thailand/2019/")
                           ),
-                          tags$tr(
-                            tags$td("B"),
-                            tags$td("51-60"),
-                            tags$td("1.46"),
-                            tags$td("0.93"),
-                          ),
-                          tags$tr(
-                            tags$td("C"),
-                            tags$td("41-60"),
-                            tags$td("4.18"),
-                            tags$td("2.62"),
-                          ),
+                          tags$p(class ="italic" ,"Wasitthankasem R, Posuwan N, Vichaiwattana P, Theamboonlers A, Klinfueng S, Vuthitanachot V, et al. Decreasing Hepatitis C Virus Infection in Thailand in the Past Decade: Evidence from the 2014 National Survey. PloS one. 2016;11(2)")
+                          
                         ),
+                        tags$div(
+                          
+                          radioButtons("Sso", "Screening scheme option:",width = '100%',
+                                       c("1. 100% coverage of the target population are screened within the 1st year" = 1,
+                                         "2. 50% coverage of the target population are screened each year for 2 years" = 2,
+                                         "3. 25% coverage of the target population are screened each year for 4 years" = 3,
+                                         "4. 10% coverage of the target population are screened each year for 10 years" = 4)),
+                        ),
+                        
                         tags$div(id = "Risk_group",
                                  checkboxGroupInput("risk_g", "Risk groups:",
                                                     c("Human Immunodeficiency Virus (HIV)" = 1,

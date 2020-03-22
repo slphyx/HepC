@@ -26,6 +26,15 @@ shinyServer(function(input, output,session) {
 
   v <- reactiveValues(doPlot = FALSE)
   options(scipen=6)
+  observeEvent(input$go, {
+    # 0 will be coerced to FALSE
+    # 1+ will be coerced to TRUE
+    v$doPlot <- input$go
+  })
+  
+  observeEvent(input$reset, {
+    v$doPlot <- FALSE
+  })  
   
   #Diagnosis input 
   Diagnosis <- reactiveValues(Sensitivity = 90,
@@ -47,6 +56,411 @@ shinyServer(function(input, output,session) {
     }
     
   })
+  #parameter 
+  p_t <- reactiveValues(S_screening = 11169018,
+                        scr.yr =1,
+                        Pos = 0  #Positive True
+  )
+  
+  
+  #screening Table
+  observeEvent(input$screening, {
+    if(input$screening==1){
+      disable("risk_g")
+      enable("age_s")
+      shinyjs::hide("Scr_table")
+      # 41-50
+      if(input$age_s == 1){
+        p_t$S_screening <- 	11169018
+        p_t$Pos <- 	11169018*0.0272*0.0169
+        #51-60
+      }else if(input$age_s == 2){
+        p_t$S_screening <- 10371593
+        p_t$Pos <- 	10371593*0.0146*0.0093
+        #41-60
+      }else if(input$age_s == 3){
+        p_t$S_screening <- 	21540611
+        p_t$Pos <- 	21540611*0.0418*0.0262
+      }
+    }
+    else if(input$screening==2){
+      disable("age_s")
+      enable("risk_g")
+
+      x <- input$risk_g
+      if(!is.null(x)){
+        shinyjs::show("Scr_table")
+        shinyjs::show("Scr_th")
+
+        if(!length(which(x == 1)) == 0){
+          shinyjs::show("Scr_td1")
+          rg$hiv_people <- 444000
+          rg$hiv_pos <- 444000*(input$HIV_Scr/100)*(input$HIV_Con/100)
+        }else{
+          shinyjs::hide("Scr_td1")
+          rg$hiv_people <- 0
+          rg$hiv_pos <-0
+        }
+
+        if(!length(which(x == 2)) == 0){
+          shinyjs::show("Scr_td2")
+          rg$idu_people <-260305
+          rg$idu_pos <-260305*(input$IDU_Scr/100)*(input$IDU_Con/100)
+        }else{
+          shinyjs::hide("Scr_td2")
+          rg$idu_people <- 0
+          rg$idu_pos <- 0
+        }
+
+        if(!length(which(x == 3)) == 0){
+          shinyjs::show("Scr_td3")
+          rg$msm_people <- 590000
+          rg$msm_pos <- 590000*(input$MSM_Scr/100)*(input$MSM_Con/100)
+        }else{
+          shinyjs::hide("Scr_td3")
+          rg$msm_people <- 0
+          rg$msm_pos <- 0
+        }
+        if(!length(which(x == 4)) == 0){
+          shinyjs::show("Scr_td4")
+          rg$rb_people <- 390000
+          rg$rb_pos <- 390000*(input$Rb_Scr/100)*(input$Rb_Con/100)
+        }else{
+          shinyjs::hide("Scr_td4")
+          rg$rb_people <- 0
+          rg$rb_pos <- 0
+        }
+        if(!length(which(x == 5)) == 0){
+          shinyjs::show("Scr_td5")
+          rg$bd_people <- 89311
+          rg$bd_pos <- 89311*(input$Bd_Scr/100)*(input$Bd_Con/100)
+        }else{
+          shinyjs::hide("Scr_td5")
+          rg$bd_people <- 0
+          rg$bd_pos <- 0
+        }
+        if(!length(which(x == 6)) == 0){
+          shinyjs::show("Scr_td6")
+          rg$pri_people <- 372979
+          rg$pri_pos <- 372979*(input$Pri_Scr/100)*(input$Pri_Con/100)
+        }else{
+          shinyjs::hide("Scr_td6")
+          rg$pri_people <- 0
+          rg$pri_pos <- 0
+        }
+        if(!length(which(x == 7)) == 0){
+          shinyjs::show("Scr_td7")
+          rg$ckd_people <- 128338
+          rg$ckd_pos <- 128338*(input$CKD_Scr/100)*(input$CKD_Con/100)
+        }else{
+          shinyjs::hide("Scr_td7")
+          rg$ckd_people <- 0
+          rg$ckd_pos <- 0
+        }
+
+      }
+      else if(is.null(x)){
+        shinyjs::hide("Scr_table")
+        rg$hiv_people <- 0
+        rg$idu_people <- 0
+        rg$msm_people <- 0
+        rg$rb_people <- 0
+        rg$bd_people <- 0
+        rg$pri_people <- 0
+        rg$ckd_people <- 0
+        rg$hiv_pos <- 0
+        rg$idu_pos <- 0
+        rg$msm_pos <- 0
+        rg$rb_pos <- 0
+        rg$bd_pos <- 0
+        rg$pri_pos <- 0
+        rg$ckd_pos <- 0
+      }
+      p_t$S_screening <- rg$hiv_people + rg$idu_people + rg$msm_people + rg$rb_people + rg$bd_people + rg$pri_people + rg$ckd_people
+      p_t$Pos <- rg$hiv_pos + rg$idu_pos + rg$msm_pos + rg$rb_pos + rg$bd_pos + rg$pri_pos + rg$ckd_pos
+    }
+    
+    else if(input$screening==3){
+      disable("age_s")
+      disable("risk_g")
+      p_t$S_screening <- 0
+      p_t$Pos <- 0
+    }
+
+  })
+  
+
+  #do when checkbox of age_s change.
+  observeEvent(input$age_s, {
+      # 41-50
+    if(input$age_s == 1){
+      p_t$S_screening <- 	11169018
+      p_t$Pos <- 	11169018*0.0272*0.0169
+      #51-60
+    }else if(input$age_s == 2){
+      p_t$S_screening <- 10371593
+      p_t$Pos <- 	10371593*0.0146*0.0093
+      #41-60
+    }else if(input$age_s == 3){
+      p_t$S_screening <- 	21540611
+      p_t$Pos <- 	21540611*0.0418*0.0262
+    }
+    
+  })
+  
+  #do when checkbox of scr.yr change.
+  observeEvent(input$Sso, {
+      #1 year
+    if(input$Sso == 1){
+      p_t$scr.yr <- 1
+      #2 years
+    }else if(input$Sso == 2){
+      p_t$scr.yr <- 2
+      #4 years
+    }else if(input$Sso == 3){
+      p_t$scr.yr <- 4
+    } #10 years
+    else if(input$Sso == 4){
+      p_t$scr.yr <- 10
+    }
+    
+  })
+  
+
+  #Screening people Risk_group parameter
+  rg <- reactiveValues( hiv_people = 0,
+                        idu_people = 0,
+                        msm_people = 0 , 
+                        rb_people = 0 , 
+                        bd_people = 0 , 
+                        pri_people = 0 ,
+                        ckd_people = 0,
+                        hiv_pos = 0,
+                        idu_pos = 0,
+                        msm_pos = 0 , 
+                        rb_pos = 0 , 
+                        bd_pos = 0 , 
+                        pri_pos = 0 ,
+                        ckd_pos = 0 
+  )
+  
+  
+  #Screening Risk_group
+  observeEvent(input$risk_g, {
+    x <- input$risk_g
+    if(!is.null(x)){
+      shinyjs::show("Scr_table")
+      shinyjs::show("Scr_th")
+      
+      if(!length(which(x == 1)) == 0){
+        shinyjs::show("Scr_td1")
+        rg$hiv_people <- 444000
+        rg$hiv_pos <- 444000*(input$HIV_Scr/100)*(input$HIV_Con/100)
+      }else{
+        shinyjs::hide("Scr_td1")
+        rg$hiv_people <- 0
+        rg$hiv_pos <-0
+      }
+      
+      if(!length(which(x == 2)) == 0){
+        shinyjs::show("Scr_td2")
+        rg$idu_people <-260305
+        rg$idu_pos <-260305*(input$IDU_Scr/100)*(input$IDU_Con/100)
+      }else{
+        shinyjs::hide("Scr_td2")
+        rg$idu_people <- 0
+        rg$idu_pos <- 0
+      }
+      
+      if(!length(which(x == 3)) == 0){
+        shinyjs::show("Scr_td3")
+        rg$msm_people <- 590000
+        rg$msm_pos <- 590000*(input$MSM_Scr/100)*(input$MSM_Con/100)
+      }else{
+        shinyjs::hide("Scr_td3")
+        rg$msm_people <- 0
+        rg$msm_pos <- 0
+      }
+      if(!length(which(x == 4)) == 0){
+        shinyjs::show("Scr_td4")
+        rg$rb_people <- 390000
+        rg$rb_pos <- 390000*(input$Rb_Scr/100)*(input$Rb_Con/100)
+      }else{
+        shinyjs::hide("Scr_td4")
+        rg$rb_people <- 0
+        rg$rb_pos <- 0
+      }
+      if(!length(which(x == 5)) == 0){
+        shinyjs::show("Scr_td5")
+        rg$bd_people <- 89311
+        rg$bd_pos <- 89311*(input$Bd_Scr/100)*(input$Bd_Con/100)
+      }else{
+        shinyjs::hide("Scr_td5")
+        rg$bd_people <- 0
+        rg$bd_pos <- 0
+      }
+      if(!length(which(x == 6)) == 0){
+        shinyjs::show("Scr_td6")
+        rg$pri_people <- 372979
+        rg$pri_pos <- 372979*(input$Pri_Scr/100)*(input$Pri_Con/100)
+      }else{
+        shinyjs::hide("Scr_td6")
+        rg$pri_people <- 0
+        rg$pri_pos <- 0
+      }
+      if(!length(which(x == 7)) == 0){
+        shinyjs::show("Scr_td7")
+        rg$ckd_people <- 128338
+        rg$ckd_pos <- 128338*(input$CKD_Scr/100)*(input$CKD_Con/100)
+      }else{
+        shinyjs::hide("Scr_td7")
+        rg$ckd_people <- 0
+        rg$ckd_pos <- 0
+      }
+      
+    }
+    else if(is.null(x)){
+      shinyjs::hide("Scr_table")
+      rg$hiv_people <- 0
+      rg$idu_people <- 0
+      rg$msm_people <- 0
+      rg$rb_people <- 0
+      rg$bd_people <- 0
+      rg$pri_people <- 0
+      rg$ckd_people <- 0
+      rg$hiv_pos <- 0
+      rg$idu_pos <- 0
+      rg$msm_pos <- 0
+      rg$rb_pos <- 0
+      rg$bd_pos <- 0
+      rg$pri_pos <- 0
+      rg$ckd_pos <- 0    
+    }
+    p_t$S_screening <- rg$hiv_people + rg$idu_people + rg$msm_people + rg$rb_people + rg$bd_people + rg$pri_people + rg$ckd_people
+    p_t$Pos <- rg$hiv_pos + rg$idu_pos + rg$msm_pos + rg$rb_pos + rg$bd_pos + rg$pri_pos + rg$ckd_pos
+  })
+  
+  #Diagnosis input
+  dia <-  reactiveValues(screening_name = "",
+                         screening_sens = 0,
+                         screening_spec = 0,
+                         screening_cost = 0,
+                         confirming_name = "",
+                         confirming_sens = 0,
+                         confirming_spec = 0,
+                         confirming_cost = 0
+                          )
+  #Diagnosis Screening
+  observe({
+     # Rapid strip test ANT HCV
+    if(input$Dia_Scr == 1){
+      dia$screening_name <- "Rapid strip test ANT HCV"
+      dia$screening_sens <- 94
+      dia$screening_spec <- 98
+      dia$screening_cost <- input$Scr1_Dia_Cost #THB
+      # HCV Antibody
+    }else if(input$Dia_Scr == 2){
+      dia$screening_name <- "HCV Antibody"
+      dia$screening_sens <- 99.5
+      dia$screening_spec <- 99.8
+      dia$screening_cost <- input$Scr2_Dia_Cost #THB
+      #Rapid HCV RNA
+    }else if(input$Dia_Scr == 3){
+      dia$screening_name <- "Rapid HCV RNA"
+      dia$screening_sens <- 100
+      dia$screening_spec <- 100
+      dia$screening_cost <- input$Con3_Dia_Cost #THB
+      #Other test
+    }else if(input$Dia_Scr == 4){
+      dia$screening_name <- "Other test"
+      dia$screening_sens <- input$Input_Dia_Sens
+      dia$screening_spec <- input$Input_Dia_Spec
+      dia$screening_cost <- input$Input_Dia_Cost 
+      
+      dia$confirming_name <- "Other test"
+      dia$confirming_sens <- input$Input_Dia_Sens
+      dia$confirming_spec <- input$Input_Dia_Spec
+      dia$confirming_cost <- input$Input_Dia_Cost 
+    }
+    
+  })
+  
+  observeEvent(input$Comfirm_dia, {
+    dia$screening_sens <- input$Input_Dia_Sens
+    dia$screening_spec <- input$Input_Dia_Spec
+    dia$screening_cost <- input$Input_Dia_Cost #THB
+  })
+  
+  output$dia_scr_name_p <- renderText({
+    paste("Test :" , dia$screening_name )
+  })
+  
+  output$dia_scr_sens_p <- renderText({
+    paste("sensitivity :" , dia$screening_sens ," %" )
+  })
+  
+  output$dia_scr_spec_p <- renderText({
+    paste("specificity :" , dia$screening_spec ," %")
+  })
+  
+  output$dia_scr_cost_thb_p <- renderText({
+    paste("specificity :" , dia$screening_cost ," THB")
+  })
+  output$dia_scr_cost_usd_p <- renderText({
+    paste("Total cost :" , round(dia$screening_cost/30.41,2) , " USD")
+  })
+  
+  #Diagnosis Confirming
+  observe({
+      # HCV RNA
+    if(input$Dia_Con == 1){
+      dia$confirming_name <- "HCV RNA"
+      dia$confirming_sens <- 81.2
+      dia$confirming_spec <- 96.15
+      dia$confirming_cost <- input$Con1_Dia_Cost #THB
+      # CORE Antigen
+    }else if(input$Dia_Con == 2){
+      dia$confirming_name <- "CORE Antigen"
+      dia$confirming_sens <- 94
+      dia$confirming_spec <- 98
+      dia$confirming_cost <- input$Con2_Dia_Cost #THB
+      # Rapid HCV RNA
+    }else if(input$Dia_Con == 3){
+      dia$confirming_name <- "Rapid HCV RNA"
+      dia$confirming_sens <- 100
+      dia$confirming_spec <- 100
+      dia$confirming_cost <- input$Con3_Dia_Cost #THB
+    }
+    
+  })
+  
+  #Diagnosis box input Confirm button
+  observeEvent(input$Comfirm_dia, {
+    dia$screening_sens <- input$Input_Dia_Sens
+    dia$screening_spec <- input$Input_Dia_Spec
+    dia$screening_cost <- input$Input_Dia_Cost #THB
+  })
+  
+  output$dia_con_name_p <- renderText({
+    paste("Test :" , dia$confirming_name )
+  })
+  
+  output$dia_con_sens_p <- renderText({
+    paste("sensitivity :" , dia$confirming_sens ," %" )
+  })
+  
+  output$dia_con_spec_p <- renderText({
+    paste("specificity :" , dia$confirming_spec ," %")
+  })
+  
+  output$dia_con_cost_thb_p <- renderText({
+    paste("Total cost :" , dia$confirming_cost ," THB")
+  })
+  output$dia_con_cost_usd_p <-renderText({
+    paste("Total cost :" , round(dia$confirming_cost/30.41,2) , " USD")
+  })
+
+  
   #Treatment input checkbox
   Treatment <- reactiveValues(new_cureF0 = 0.1,
                               new_cureF1 = 0.1,
@@ -57,6 +471,7 @@ shinyServer(function(input, output,session) {
                               new_cureC3 = 0.1,
                               new_cureC4 = 0.1,
                               cost = 10)
+  
   #do when checkbox of Treatment change.
   observeEvent(input$Treatment, {
     #drug 1
@@ -117,6 +532,7 @@ shinyServer(function(input, output,session) {
     }
     
   })
+  
   observeEvent(input$Tre1_Cost, {
     if(input$Treatment == 1){
     Treatment$cost <- input$Tre1_Cost
@@ -195,79 +611,109 @@ shinyServer(function(input, output,session) {
     }
   })
   
-  observeEvent(input$go, {
-    # 0 will be coerced to FALSE
-    # 1+ will be coerced to TRUE
-    v$doPlot <- input$go
+
+  #textoutput
+  output$text1 <- renderText({
+    paste("Treatment efficacy :" , round(mean(c(Treatment$new_cureF0
+                                                ,Treatment$new_cureF2
+                                                ,Treatment$new_cureF3
+                                                ,Treatment$new_cureF4
+                                                ,Treatment$new_cureC1
+                                                ,Treatment$new_cureC2
+                                                ,Treatment$new_cureC3
+                                                ,Treatment$new_cureC4)),4)*100, "%"
+    )
+    
+    
+  })
+  output$text2 <-renderText({
+    paste("Treatment cost :" , Treatment$cost , " THB")
   })
   
-  observeEvent(input$reset, {
-    v$doPlot <- FALSE
-  })  
-    
-  observeEvent(input$screening, {
-    if(input$screening==1){
-      disable("risk_g")
-      enable("age_s")
-      shinyjs::hide("Scr_table")
-    }
-    if(input$screening==2){
-      disable("age_s")
-      enable("risk_g")
-      shinyjs::show("Scr_table")
-    }
+  output$text3 <-renderText({
+    paste("Treatment cost :" , round(Treatment$cost/30.41,2) , " USD")
   })
+  
+  #Extra
+  extra <-  reactiveValues( hcv_cost = 0,
+                            fst_cost = 0,
+                            rsl_cost = 0,
+                            other_cost = 0,
+                            total_cost = 0,
+                            name = c("HCV genotype testing",
+                                     "Fibroscan stiffness testing",
+                                     "Relevant and safety lab",
+                                     "Others"),
+                            name_check = c(F,F,F,F)
+                            )
+
   
   observe({
-    x <- input$risk_g
+    x <- input$care
     if(!is.null(x)){
-      shinyjs::show("Scr_table")
-      shinyjs::show("Scr_th")
 
+      
       if(!length(which(x == 1)) == 0){
-        shinyjs::show("Scr_td1")
+        extra$hcv_cost <- input$Extra1_Cost
+        extra$name_check[1] <- T 
       }else{
-        shinyjs::hide("Scr_td1")
+        extra$hcv_cost <- 0
+        extra$name_check[1] <- F
       }
-
+      
       if(!length(which(x == 2)) == 0){
-        shinyjs::show("Scr_td2")
+        extra$fst_cost <-input$Extra2_Cost
+        extra$name_check[2] <- T 
       }else{
-        shinyjs::hide("Scr_td2")
+        extra$fst_cost <- 0
+        extra$name_check[2] <- F
       }
-
+      
       if(!length(which(x == 3)) == 0){
-        shinyjs::show("Scr_td3")
+        extra$rsl_cost <-input$Extra3_Cost
+        extra$name_check[3] <- T 
       }else{
-        shinyjs::hide("Scr_td3")
+        extra$rsl_cost <-0
+        extra$name_check[3] <- F
       }
       if(!length(which(x == 4)) == 0){
-        shinyjs::show("Scr_td4")
+        extra$other_cost <-input$Extra4_Cost
+        extra$name_check[4] <- T 
       }else{
-        shinyjs::hide("Scr_td4")
+        extra$other_cost <-0
+        extra$name_check[4] <- F
       }
-      if(!length(which(x == 5)) == 0){
-        shinyjs::show("Scr_td5")
-      }else{
-        shinyjs::hide("Scr_td5")
-      }
-      if(!length(which(x == 6)) == 0){
-        shinyjs::show("Scr_td6")
-      }else{
-        shinyjs::hide("Scr_td6")
-      }
-      if(!length(which(x == 7)) == 0){
-        shinyjs::show("Scr_td7")
-      }else{
-        shinyjs::hide("Scr_td7")
-      }
-
+     
+    }else{
+      extra$hcv_cost <- 0
+      extra$fst_cost <- 0
+      extra$rsl_cost <- 0
+      extra$other_cost <- 0
+      extra$name_check <- c(F,F,F,F)
     }
-    else if(is.null(x)){
-      shinyjs::hide("Scr_table")
-
-      }
+    
+    extra$total_cost <- extra$hcv_cost+extra$fst_cost++extra$rsl_cost+extra$other_cost
   })
+  
+  
+  output$extra_name_p <-renderText({
+    x <- input$care
+    if(!is.null(x)){
+      test <- paste(extra$name[extra$name_check], collapse = ", ")
+      paste("Diagnostic Test : " , test )
+    }else{
+      paste("Diagnostic Test : Nothing")
+    }
+  })
+  output$extra_thb_p <-renderText({
+    paste("Total cost :" , extra$total_cost , " THB")
+  })
+  
+  output$extra_usd_p <-renderText({
+    paste("Total cost :" , round(extra$total_cost/30.41,2) , " USD")
+  })
+  
+
   
   
   #button to reset changed values back to the default values (from ui)
@@ -457,13 +903,7 @@ shinyServer(function(input, output,session) {
       )
     })
     
-    #parameter 
-    p_t <- reactiveValues(S_screening = 0,
-                          Pos_T = 0 , #Positive True
-                          Pos_F = 0 , #Positive False
-                          Neg_T = 0 , #Negative True
-                          Neg_T = 0   #Negative False
-    )
+
     
     out_df <- reactive({
       
@@ -577,33 +1017,30 @@ shinyServer(function(input, output,session) {
       })
     })
     
-    #textoutput
-    output$text1 <- renderText({
-        paste("Treatment efficacy :" , round(mean(c(Treatment$new_cureF0
-                                               ,Treatment$new_cureF2
-                                               ,Treatment$new_cureF3
-                                               ,Treatment$new_cureF4
-                                               ,Treatment$new_cureC1
-                                               ,Treatment$new_cureC2
-                                               ,Treatment$new_cureC3
-                                               ,Treatment$new_cureC4)),4)*100, "%"
-              )
-      
 
-    })
-    output$text2 <-renderText({
-      paste("Treatment cost :" , Treatment$cost , " THB")
-    })
-    
-    output$text3 <-renderText({
-      paste("Treatment cost :" , round(Treatment$cost/30.41,2) , " USD")
-    })
     
     
     
     output$screening_p <- renderText({
-      paste("screening people :" , (p_t$S_screening) )
+      paste("screening people :" , round(p_t$S_screening) )
     })
+    
+    output$scr.yr_p <- renderText({
+      paste("screening year :" , round(p_t$scr.yr) )
+    })
+    
+    output$scr.cov_p <- renderText({
+      paste("screening people per year :" , round(p_t$S_screening/p_t$scr.yr) )
+    })
+    
+    output$scr.cov_p <- renderText({
+      paste("screening people per year :" , round(p_t$S_screening/p_t$scr.yr) )
+    })
+    output$scr.pos_p <- renderText({
+      paste("positive people :" , round(p_t$Pos) )
+    })
+    
+
     
     output$downloadData <- downloadHandler(
       filename = function() {

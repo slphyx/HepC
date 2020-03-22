@@ -366,7 +366,8 @@ shinyUI(fluidPage(
                         tags$div(
                           radioButtons("screening", "Screening type:",
                                        c("By age" = 1,
-                                         "By risk groups" = 2),
+                                         "By risk groups" = 2,
+                                         "No new screening scheme" = 3 ),
                                        inline = T)
                         ),
                         
@@ -416,10 +417,10 @@ shinyUI(fluidPage(
                         tags$div(
                           
                           radioButtons("Sso", "Screening scheme option:",width = '100%',
-                                       c("1. 100% coverage of the target population are screened within the 1st year" = 1,
-                                         "2. 50% coverage of the target population are screened each year for 2 years" = 2,
-                                         "3. 25% coverage of the target population are screened each year for 4 years" = 3,
-                                         "4. 10% coverage of the target population are screened each year for 10 years" = 4)),
+                                       c("100% coverage of the target population are screened within a 1 year" = 1,
+                                         "50% coverage of the target population are screened each year for 2 years" = 2,
+                                         "25% coverage of the target population are screened each year for 4 years" = 3,
+                                         "10% coverage of the target population are screened each year for 10 years" = 4)),
                         ),
                         
                         tags$div(id = "Risk_group",
@@ -552,7 +553,7 @@ shinyUI(fluidPage(
                             tags$td("89,311 (2009)" ,tags$sup("[4]")),
                             tags$td("2.9 (2004)" ,tags$sup("[12]")),
                             #slider
-                            tags$td(sliderInput("Rd_Scr",
+                            tags$td(sliderInput("Bd_Scr",
                                                 "",
                                                 min = 1,
                                                 max = 5,
@@ -561,7 +562,7 @@ shinyUI(fluidPage(
                             )
                             
                             ),
-                            tags$td(sliderInput("Rd_Con",
+                            tags$td(sliderInput("Bd_Con",
                                                 "",
                                                 min = 50,
                                                 max = 100,
@@ -621,10 +622,19 @@ shinyUI(fluidPage(
                         )
                         ),
                         
-                        textOutput("screening_p")
+                        tags$div(class = "row",
+                                 tags$div(class = "boxOutput col-sm-11",
+                                          textOutput("screening_p"),
+                                          textOutput("scr.yr_p"),
+                                          textOutput("scr.cov_p"),
+                                          textOutput("scr.pos_p"),
+                                          
+                                 )
+                        ),
                         
-                        
+
                ) ,
+               
                tags$div(class = "col-sm-12",
                         tags$hr(),
                ),
@@ -677,7 +687,8 @@ shinyUI(fluidPage(
                                                 "Other test" = 4)),
                                  hidden(
                                    tags$div(id="NewDiagnosis",
-                                            numericInput("Input_Dia_Sen", "Sensitivity", 50, min = 0, max = 100,step =0.1),
+                                            numericInput("Input_Dia_Sens", "Sensitivity", 50, min = 0, max = 100,step =0.1),
+                                            numericInput("Input_Dia_Spec", "Specificity", 50, min = 0, max = 100,step =0.1),
                                             numericInput("Input_Dia_Cost", "Cost (THB)", 6000),
                                             actionButton("Comfirm_dia", "Comfirm"),
                                    )       
@@ -710,10 +721,10 @@ shinyUI(fluidPage(
                               tags$td(
                                 sliderInput("Scr1_Dia_Cost",
                                                   "",
-                                                  min = 50,
-                                                  max = 1000,
-                                                  step = 10,
-                                                  value = 70
+                                                  min = 100,
+                                                  max = 4000,
+                                                  step = 100,
+                                                  value = 1800
                                            )
                                 
                               ),
@@ -726,8 +737,8 @@ shinyUI(fluidPage(
                                 sliderInput("Scr2_Dia_Cost",
                                             "",
                                             min = 200,
-                                            max = 500,
-                                            step = 10,
+                                            max = 600,
+                                            step = 100,
                                             value = 300
                                 )
                               ),
@@ -742,24 +753,10 @@ shinyUI(fluidPage(
                               tags$td(
                                 sliderInput("Con1_Dia_Cost",
                                             "",
-                                            min = 300,
+                                            min = 100,
                                             max = 4000,
-                                            step = 10,
+                                            step = 100,
                                             value = 1500
-                                )
-                              ),
-                            ),
-                            tags$tr(
-                              tags$td("Rapid HCV RNA test by Gene expert"),
-                              tags$td("100/100" ,tags$sup("[4]")),
-                              tags$td("10"),
-                              tags$td(
-                                sliderInput("Con1_Dia_Cost",
-                                            "",
-                                            min = 200,
-                                            max = 500,
-                                            step = 10,
-                                            value = 300
                                 )
                               ),
                             ),
@@ -768,15 +765,30 @@ shinyUI(fluidPage(
                               tags$td("94/98" ,tags$sup("[5]")),
                               tags$td("30",tags$sup("[7]")),
                               tags$td(
-                                sliderInput("Con1_Dia_Cost",
+                                sliderInput("Con2_Dia_Cost",
                                             "",
                                             min = 200,
-                                            max = 500,
-                                            step = 10,
+                                            max = 1800,
+                                            step = 100,
+                                            value = 900
+                                )
+                              ),
+                            ),
+                            tags$tr(
+                              tags$td("Rapid HCV RNA test by Gene expert"),
+                              tags$td("100/100" ,tags$sup("[4]")),
+                              tags$td("10"),
+                              tags$td(
+                                sliderInput("Con3_Dia_Cost",
+                                            "",
+                                            min = 200,
+                                            max = 600,
+                                            step = 100,
                                             value = 300
                                 )
                               ),
-                            )
+                            ),
+
                             
                           ),
                         ),
@@ -786,7 +798,25 @@ shinyUI(fluidPage(
                           tags$img(src="image/hcv testing sequence identifying hcv infection.jpg" 
                                    ,alt="Study design of the transmission and disease progression model."),
                           tags$p("source : https://www.hepatitisc.uw.edu")
-                        )),
+                        ),
+                        tags$div(class = "row",
+                                 tags$div(class = "boxOutput col-sm-11",
+                                          tags$h4("Diagnosis screening"),
+                                          textOutput("dia_scr_name_p"),
+                                          textOutput("dia_scr_sens_p"),
+                                          textOutput("dia_scr_spec_p"),
+                                          textOutput("dia_scr_cost_thb_p"),
+                                          textOutput("dia_scr_cost_usd_p"),
+                                          tags$h4("Diagnosis confirming"),
+                                          textOutput("dia_con_name_p"),
+                                          textOutput("dia_con_sens_p"),
+                                          textOutput("dia_con_spec_p"),
+                                          textOutput("dia_con_cost_thb_p"),
+                                          textOutput("dia_con_cost_usd_p"),
+                                          
+                                 )
+                        ),
+                        ),
                tags$div(class = "col-sm-12",
                tags$hr(),
                ),
@@ -896,7 +926,7 @@ shinyUI(fluidPage(
                       ),
                       
                       tags$div(class = "row",
-                               tags$div(class = "col-sm-11",id ="TreatmentOutput",
+                               tags$div(class = "boxOutput col-sm-11",
                                         textOutput("text1"),
                                         textOutput("text2"),
                                         textOutput("text3"),
@@ -932,16 +962,19 @@ shinyUI(fluidPage(
                                                     "Others" = 4
                                                   ))
                       ),
-                      tags$table(
+                      tags$table(class = "col-sm-11",
                         tags$tr(
                           tags$th("Diagnostic Test"),
                           tags$th("Test Description"),
+                          tags$th("Cost (USD)"),
                           tags$th("Cost (THB)"),
                         ),
                         tags$tr(
                           tags$td("HCV genotype testing"
                                   ),
                           tags$td("HCV genotype testing is recommended to guide selection of the most appropriate antiviral regimen."
+                                  ),
+                          tags$td("133"
                                   ),
                           tags$td(
                             sliderInput("Extra1_Cost",
@@ -959,6 +992,8 @@ shinyUI(fluidPage(
                           ),
                           tags$td("FibroScan scores can be used to validate advanced fibrosis/cirrhosis for insurance companies, health care plans, or medical centers that require a significant amount of fibrosis before approving or allowing the start of HCV treatment."
                           ),
+                          tags$td("83"
+                          ),
                           tags$td(
                             sliderInput("Extra2_Cost",
                                         "",
@@ -973,6 +1008,8 @@ shinyUI(fluidPage(
                           tags$td("Relevant and safety lab"
                           ),
                           tags$td("Relevant and safety lab involves the monitoring of CBC, LFT, and Creatinine levels. APRI, FIB-4 can then be calculated."
+                          ),
+                          tags$td("50"
                           ),
                           tags$td(
                             sliderInput("Extra3_Cost",
@@ -989,6 +1026,8 @@ shinyUI(fluidPage(
                           ),
                           tags$td("Others"
                           ),
+                          tags$td("-"
+                          ),
                           tags$td(
                             sliderInput("Extra4_Cost",
                                         "",
@@ -999,7 +1038,14 @@ shinyUI(fluidPage(
                             )
                           ),
                         ),
-                      )
+                      ),
+                      tags$div(class = "row",
+                               tags$div(class = "boxOutput col-sm-11",
+                               textOutput("extra_name_p"),
+                               textOutput("extra_thb_p"),
+                               textOutput("extra_usd_p"),
+                               )
+                      ),
 
                 ),
                   tags$div(class = "col-sm-12",

@@ -848,6 +848,12 @@ shinyServer(function(input, output,session) {
         tranbA=0.0015, #Transplantation rate in HCC_BCLC_A
         tranbB=0.0015, #Transplantation rate in HCC_BCLC_B
         
+        std_start <- 5, #2004
+        new_start <- 20, #2019 put 20
+        nscr  <- 0.05,
+        scr.yr <- 10,
+        scr.cov <- (23590+143320)/scr.yr,#age41to60_23590/scr.yr#risk_rapidscr143320/scr.yr#risk_stdscr127584/scr.yr #sum up the people who get screening
+        
         #Treatment efficacy
         #Standard treatment response based on genotype (weighted average)
         std_cureF0=0.72,
@@ -907,7 +913,7 @@ shinyServer(function(input, output,session) {
     
     out_df <- reactive({
       
-      times <- seq(1999, 2040,by=1)
+      times <- seq(1999, 2060,by=1)
       
       out <- ode( y = inits(),times =  times, func = PanHepC, parms = parms())
       
@@ -930,6 +936,169 @@ shinyServer(function(input, output,session) {
       cost_plot
     })
     
+    ############################Baseline############################################################
+    
+    
+    parms_base <- reactive({ 
+      list(
+        P0= 61623143,       #popstat(YEAR=1999)
+        K= 68508515,        #Maximum population (carrying capacity)
+        r = 0.16,        #Population growth rate (logistic growth curve)
+        flowin = 1.15*(10^-8),
+        caset0 =  input$P0*0.03,      #0.03*P0,
+        standard_start = 5,
+        new_start = 20,
+        nscr = 0.05,
+        scr_yr = 0,
+        scr_cov = 0,      #0.9/scr.yr,
+        sens = 0.985,
+        pF0scr = 0.1439,
+        pF1scr = 0.2969,
+        pF2scr=0.1098,
+        pF3scr=0.1466,
+        pC1scr=0.1998,
+        pC2scr=0.0819,
+        pC3scr=0.0096,
+        pC4scr=0.0011,
+        
+        #Natural rate of death
+        natdeath=0.04, #Unrelated to cirrhosis and hepatitis C
+        
+        beta= 0.02,              #Transmission coefficient
+        
+        #standard treatment allocation
+        F0std = 0.05,
+        F1std = 0.05,
+        F2std = 0.3,
+        F3std = 0.3,
+        C1std = 0.3,
+        
+        std_cureF0=0.7,
+        std_cureF1=0.7,
+        std_cureF2=0.7,
+        std_cureF3=0.7,
+        std_cureC1=0.7,
+        new_cureF0=0.985,
+        new_cureF1=0.985,
+        new_cureF2=0.985,
+        new_cureF3=0.985,
+        new_cureC1=0.985,
+        new_cureC2=0.985,
+        new_cureC3=0.985,
+        new_cureC4=0.985,
+        
+        #Progression of fibrosis
+        f0f1= 0.117,       #Fibrosis stage F0 to F1
+        f1f2= 0.085,       #Fibrosis stage F1 to F2
+        f2f3= 0.12,        #Fibrosis stage F2 to F3
+        f3c1= 0.116,       #Fibrosis stage F3 to C1
+        
+        #Progression of cirrhosis
+        c1c2=0.044,       #Fibrosis stage C1 to C2
+        c2c3=0.044,       #Fibrosis stage C2 to C3
+        c3c4=0.076,       #Fibrosis stage C3 to C4
+        
+        #Incidence of developing HCC
+        c1bA= 0.0068,      #Fibrosis stage C1 to bA
+        c1bB= 0.0099,      #Fibrosis stage C1 to bB
+        c1bC= 0.0029,      #Fibrosis stage C1 to bC
+        c1bD= 0.0068,      #Fibrosis stage C1 to bD
+        
+        c2bA= 0.0068,      #Fibrosis stage C2 to bA
+        c2bB= 0.0099,      #Fibrosis stage C2 to bB
+        c2bC= 0.0029,      #Fibrosis stage C2 to bC
+        c2bD= 0.0068,      #Fibrosis stage C2 to bD
+        
+        c3bD= 0.0664,      #Fibrosis stage C3 to bD
+        c4bD= 0.0664,      #Fibrosis stage C4 to bD
+        
+        #Death rate from cirrhosis and HCC
+        deathc1=0.01,         #Death rate for Cirrhosis Child-Pugh class A
+        deathc2=0.01,         #Death rate for Cirrhosis Child-Pugh class B
+        deathc3=0.2,          #Death rate for Cirrhosis Child-Pugh class C
+        deathc4=0.57,         #Death rate for Cirrhosis Child-Pugh class D
+        
+        deathbA=1/(36/12),    #Death rate for HCC_BCLC_A
+        deathbB=1/(16/12),    #Death rate for HCC_BCLC_B
+        deathbC=1/(6/12),     #Death rate for HCC_BCLC_C
+        deathbD=1/(3/12),     #Death rate for HCC_BCLC_D
+        
+        deathtran=1/(240/12),
+        
+        #Transplantation
+        tranc4=0.0015, #Transplantation rate in cirrhosis stage C4
+        tranbA=0.0015, #Transplantation rate in HCC_BCLC_A
+        tranbB=0.0015, #Transplantation rate in HCC_BCLC_B
+        
+        std_start <- 5, #2004
+        new_start <- 20, #2019 put 20
+        nscr  <- 0.05,
+        scr.yr <- 10,
+        scr.cov <- (23590+143320)/scr.yr,#age41to60_23590/scr.yr#risk_rapidscr143320/scr.yr#risk_stdscr127584/scr.yr #sum up the people who get screening
+        
+        #Treatment efficacy
+        #Standard treatment response based on genotype (weighted average)
+        std_cureF0=0.7,
+        std_cureF1 =0.7,
+        std_cureF2 =0.7,
+        std_cureF3 =0.7,
+        std_cureC1 =0.7,
+        std_cureC2=0.7,
+        #Novel treatment response based on genotype (weighted average)
+        new_cureF0= 0.98,
+        new_cureF1= 0.98,
+        new_cureF2  = 0.98,
+        new_cureF3 = 0.98,
+        new_cureC1 = 0.98,
+        new_cureC2 = 0.98,
+        new_cureC3 = 0.98,
+        new_cureC4 = 0.98
+        
+      )
+      })
+    
+    
+    P0_base <- 61623143
+    caset0_base <- 0.03*P0_base
+    inits_base <-  reactive({ 
+      c(S= 1*(P0_base - caset0_base),
+              F0=0.2825*caset0_base,
+              F1=0.2825*caset0_base,
+              F2=0.184*caset0_base,
+              F3=0.124*caset0_base,
+              C1=0.03175*caset0_base,
+              C2=0.03175*caset0_base,
+              C3=0.03175*caset0_base,
+              C4=0.03174*caset0_base,
+              HCC_A=0,
+              HCC_B=0,
+              HCC_C=0,
+              HCC_D=0,
+              D=0,
+              dthC14=0,
+              dthHCC=0,
+              C1std_cured=0,
+              C1new_cured=0,
+              C2new_cured=0,
+              C3new_cured=0,
+              C4new_cured=0)
+    })
+    
+    out_df_base <- reactive({
+      
+      times_base <- seq(1999, 2060,by=1)
+      
+      out_base <- ode( y = inits_base(),times =  times_base, func = PanHepC, parms = parms_base())
+      
+      out_df_base <- as.data.frame(out_base)
+      out_df_base
+    })
+
+    
+    ############################Baseline############################################################
+    
+    
+    
     #output 1
     output$distPlot <- renderPlot({
       if (v$doPlot == FALSE) return()
@@ -937,12 +1106,14 @@ shinyServer(function(input, output,session) {
       isolate({
         withProgress(message = 'Calculation in progress', {
       x <- out_df()[,c(1,23)]
-      
+      x_base <- out_df_base()[,c(1,23)]
     
       x_melt <- reshape2::melt(x, id="time")
+      x_melt_base <- reshape2::melt(x_base, id="time")
       ggplot(data = x_melt) + 
         labs( x = "Year", y = "Prevalence")+
-        geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)+ 
+        geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)+
+        geom_line(data=x_melt_base , mapping = aes(x = time, y = value,color = variable),size = 1.5,linetype = "dashed")+
         theme(axis.title = element_text(size = 20))+
         theme(axis.text = element_text(size = 15, colour="black"))+ 
         theme(legend.title = element_text(size = 20),
@@ -956,18 +1127,22 @@ shinyServer(function(input, output,session) {
     output$distPlot2 <- renderPlot({
       if (v$doPlot == FALSE) return()
       x <- out_df()[,c(1,15,16,17,25)]
+      x_base <- out_df_base()[,c(1,15,16,17,25)]
       
       if(input$showNewDeath){
         
         x <- out_df()[,c(1,15,16,17,26)]
+        x_base <- out_df_base()[,c(1,15,16,17,26)]
       }
       isolate({
         withProgress(message = 'Calculation in progress', {
         x_melt <- reshape2::melt(x, id="time")
+        x_melt_base <- reshape2::melt(x_base, id="time")
 
         ggplot(data = x_melt) + 
           labs( x = "Year")+
           geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)+ 
+          geom_line(data=x_melt_base , mapping = aes(x = time, y = value,color = variable),size = 1.5,linetype = "dashed")+
           theme(axis.title = element_text(size = 20))+
           theme(axis.text = element_text(size = 15, colour="black"))+ 
           theme(legend.title = element_text(size = 20),
@@ -981,15 +1156,18 @@ shinyServer(function(input, output,session) {
       
       if (v$doPlot == FALSE) return()
       x <- out_df()[,c(1,24,27,29)]
+      x_base <- out_df_base()[,c(1,24,27,29)]
       
       isolate({
         withProgress(message = 'Calculation in progress', {
   
       x_melt <- reshape2::melt(x, id="time")
+      x_melt_base <- reshape2::melt(x_base, id="time")
       
       ggplot(data = x_melt) + 
         labs( x = "Year")+
-        geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)+ 
+        geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)+
+        geom_line(data=x_melt_base , mapping = aes(x = time, y = value,color = variable),size = 1.5,linetype = "dashed")+
         theme(axis.title = element_text(size = 20))+
         theme(axis.text = element_text(size = 15, colour="black"))+ 
         theme(legend.title = element_text(size = 20),

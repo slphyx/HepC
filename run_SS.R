@@ -1,9 +1,10 @@
 setwd("H:/OTHERS/MawYim/HepC_model")
 setwd("D:/Data-Work/Pan/HepC/7Oct19")
-setwd("C:/Hep-c")
+setwd("D:/HepC-Betaweb_2/HepC-Betaweb_2")
 
 library(deSolve)
 library(Rcpp)
+library(reshape2)
 sourceCpp('p1_scr_SS.cpp')
 
 
@@ -86,31 +87,31 @@ sourceCpp('p1_scr_SS.cpp')
 # double new_cureC3 = parms["new_cureC3"];
 # double new_cureC4 = parms["new_cureC4"];
 
-
+scr_yr = 10
 parms <-
   list(
     P0=61623143,       #popstat(YEAR=1999)
-    K= 66785001,        #Maximum population (carrying capacity)
-    r = 0.5,        #Population growth rate (logistic growth curve)
-    flowin = 0.01,
-    caset0 =  1848694,      #0.03*P0,
+    K= 68508515,        #Maximum population (carrying capacity)
+    r = 0.16,        #Population growth rate (logistic growth curve)
+    flowin = 1.15*(10^-8),
+    caset0 =  0.03*61623143,      #0.03*P0,
     standard_start = 5,
     new_start = 20,
     nscr = 0.05,
     scr_yr = 10,
-    scr_cov = 0.09,      #0.9/scr.yr,
+    scr_cov = (23590+143320)/scr_yr,      #0.9/scr.yr,
     sens = 0.985,
-    pF0scr = 0.07,
-    pF1scr = 0.03,
-    pF2scr=0.49,
-    pF3scr=0.12,
-    pC1scr=0.0012,
-    pC2scr=0.0012,
-    pC3scr=0.0099,
-    pC4scr=0.15,
+    pF0scr = 0.1439,
+    pF1scr = 0.2969,
+    pF2scr=0.1098,
+    pF3scr=0.1466,
+    pC1scr=0.1998,
+    pC2scr=0.0819,
+    pC3scr=0.0096,
+    pC4scr=0.0011,
     
     #Natural rate of death
-    natdeath=0.0424, #Unrelated to cirrhosis and hepatitis C
+    natdeath=0.04, #Unrelated to cirrhosis and hepatitis C
     
     beta= 0.02,              #Transmission coefficient
     
@@ -121,19 +122,6 @@ parms <-
     F3std = 0.3,
     C1std = 0.3,
     
-    std_cureF0=0.7,
-    std_cureF1=0.7,
-    std_cureF2=0.7,
-    std_cureF3=0.7,
-    std_cureC1=0.7,
-    new_cureF0=0.985,
-    new_cureF1=0.985,
-    new_cureF2=0.985,
-    new_cureF3=0.985,
-    new_cureC1=0.985,
-    new_cureC2=0.985,
-    new_cureC3=0.985,
-    new_cureC4=0.985,
     
     #Progression of fibrosis
     f0f1=0.117,       #Fibrosis stage F0 to F1
@@ -180,21 +168,21 @@ parms <-
     
     #Treatment efficacy
     #Standard treatment response based on genotype (weighted average)
-    std_cureF0=0.72,
-    std_cureF1 =0.72,
-    std_cureF2 =0.72,
-    std_cureF3 =0.72,
-    std_cureC1 =0.72,
-    std_cureC2=0.72,
+    std_cureF0=0.7,
+    std_cureF1 =0.7,
+    std_cureF2 =0.7,
+    std_cureF3 =0.7,
+    std_cureC1 =0.7,
+    std_cureC2=0.7,
     #Novel treatment response based on genotype (weighted average)
-    new_cureF0= 0.985,
-    new_cureF1= 0.985,
-    new_cureF2  = 0.985,
-    new_cureF3 = 0.985,
-    new_cureC1 = 0.985,
-    new_cureC2 = 0.985,
-    new_cureC3 = 0.985,
-    new_cureC4 = 0.985
+    new_cureF0= 0.98,
+    new_cureF1= 0.98,
+    new_cureF2  = 0.98,
+    new_cureF3 = 0.98,
+    new_cureC1 = 0.98,
+    new_cureC2 = 0.98,
+    new_cureC3 = 0.98,
+    new_cureC4 = 0.98
     
   )
 
@@ -230,7 +218,8 @@ parms <-
   initDHCC <- 0
   initDC14 <- 0
   
-
+  initS<- 1*(P0-caset0)
+  
 #set up initial  
 init <- c(S=initS,
           F0=initF0,
@@ -255,10 +244,11 @@ init <- c(S=initS,
           C4new_cured=initC4new_cured)
 
 #set up time
-simu.time <- seq(0, 40,by=1) 
-
+simu.time <- seq(0, 60,by=1) 
+setwd("D:/PAN/")
 # solve ode
 out <- ode(y = init, times = simu.time, func=PanHepC, parms = parms)
+write.csv(out,"output_cpp_2.csv")
 
 #plotting
 plot(out, select=c("prevalence","incidenceHCC"))
@@ -285,7 +275,7 @@ x_melt <-melt(x, id="time")
 ggplot(data = x_melt) + 
   geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)
 
-times <- seq(1999, 2020, by = 0.01)
+times <- seq(0, 60,by=1) 
 
 out <- ode( y = inits(),times =  times, func = PanHepC, parms = parms(), method = "rk4")
 
@@ -294,3 +284,11 @@ out_df <- as.data.frame(out)
 out_df
 
 x <- out_df[,c(1,23)]
+
+outSS <- as.data.frame(ode(y = init, times = times, func=PanHepC, parms = parms))
+
+
+library(ggplot2)
+A = data.frame(x = rnorm(10),y=rnorm(10))
+B = data.frame(x = rnorm(10),y=rnorm(10))
+ggplot(A,aes(x,y)) +geom_line() +geom_line(data=B,colour='red',linetype = "dashed") + xlim(0, 3) 

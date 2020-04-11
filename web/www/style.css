@@ -70,7 +70,7 @@ a.italic{
     color: #333;
 
 }
-#TreatmentOutput{
+.boxOutput{
  margin: 15px 0px 20px 20px; 
  background:  #fff;
  border-radius: 5px;

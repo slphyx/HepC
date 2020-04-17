@@ -248,7 +248,21 @@ simu.time <- seq(0, 60,by=1)
 setwd("D:/PAN/")
 # solve ode
 out <- ode(y = init, times = simu.time, func=PanHepC, parms = parms)
-write.csv(out,"output_cpp_2.csv")
+write.csv(out,"output_cpp_4.csv")
+
+#plotting
+out6 <- ode(y = init, times = simu.time, func=PanHepC, parms = parms)
+write.csv(out6,"scrAgRiskXpert10yr_DAA.csv")
+out6[41,c("D","dthC14","dthHCC")]-out6[16,c("D","dthC14","dthHCC")]
+write.csv(out1,"scrRiskStd1yr_DAA.csv")
+
+#Scenario G
+setwd("D:/PAN/")
+write.csv(out6,"Scenario G.csv")
+tail(out6)
+out6[21,3:14]/sum(out6[21,3:14])
+sum(out6[20,3:14])/out6[20,"population"]*100
+plot(out6)
 
 #plotting
 plot(out, select=c("prevalence","incidenceHCC"))

@@ -1080,9 +1080,17 @@ shinyUI(fluidPage(
                              plotOutput("distPlot3")
                             ),
                     #output 4
+                    tabPanel("DAA Treatment",
+                             plotOutput("distPlot4")
+                    ),
+                    #output 5
+                    tabPanel("Screening",
+                             plotOutput("distPlot5")
+                    ),
+                    #output 6
                     tabPanel("Estimated cost",
                       
-                             plotOutput("distPlot4")
+                             plotOutput("distPlot6")
                     )
                   )
                ),

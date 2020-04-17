@@ -1193,6 +1193,56 @@ shinyServer(function(input, output,session) {
     output$distPlot4 <- renderPlot({
       
       if (v$doPlot == FALSE) return()
+      x <- out_df()[,c(1,32)]
+      x_base <- out_df_base()[,c(1,32)]
+      
+      isolate({
+        withProgress(message = 'Calculation in progress', {
+          
+          x_melt <- reshape2::melt(x, id="time")
+          x_melt_base <- reshape2::melt(x_base, id="time")
+          
+          ggplot(data = x_melt) + 
+            labs( x = "Year")+
+            geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)+
+            geom_line(data=x_melt_base , mapping = aes(x = time, y = value,color = variable),size = 1.5,linetype = "dashed")+
+            theme(axis.title = element_text(size = 20))+
+            theme(axis.text = element_text(size = 15, colour="black"))+ 
+            theme(legend.title = element_text(size = 20),
+                  legend.text = element_text(size = 15))
+        })
+      })
+    })
+    
+    #output 5
+    output$distPlot5 <- renderPlot({
+      
+      if (v$doPlot == FALSE) return()
+      x <- out_df()[,c(1,33)]
+      x_base <- out_df_base()[,c(1,33)]
+      
+      isolate({
+        withProgress(message = 'Calculation in progress', {
+          
+          x_melt <- reshape2::melt(x, id="time")
+          x_melt_base <- reshape2::melt(x_base, id="time")
+          
+          ggplot(data = x_melt) + 
+            labs( x = "Year")+
+            geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)+
+            geom_line(data=x_melt_base , mapping = aes(x = time, y = value,color = variable),size = 1.5,linetype = "dashed")+
+            theme(axis.title = element_text(size = 20))+
+            theme(axis.text = element_text(size = 15, colour="black"))+ 
+            theme(legend.title = element_text(size = 20),
+                  legend.text = element_text(size = 15))
+        })
+      })
+    })
+    
+    #output 6
+    output$distPlot6 <- renderPlot({
+      
+      if (v$doPlot == FALSE) return()
       x <- cost_plot()
       isolate({
         withProgress(message = 'Calculation in progress', {  

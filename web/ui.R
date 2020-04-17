@@ -147,19 +147,19 @@ shinyUI(fluidPage(
                         tags$div(class = "col-sm-4",
                                  sliderInput("beta",
                                              "Transmission coefficient",
-                                             min = 0.2,
-                                             max = 0.6,
+                                             min = 0.01,
+                                             max = 0.2,
                                              step = 0.01,
-                                             value = 0.32
+                                             value = 0.02
                                  )
                         ),
                         tags$div(class = "col-sm-8",
                                  sliderInput("Fi",
-                                             "Influx rate of the population to become susceptible per year",
-                                             min = 0.001,
-                                             max = 1,
-                                             step = 0.001,
-                                             value = 0.001
+                                             "Influx rate of the population to become susceptible per year (10^-8)",
+                                             min = 0,
+                                             max = 2,
+                                             step = 0.01,
+                                             value = 1.15
                                  )
                         ),
                         

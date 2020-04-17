@@ -68,6 +68,10 @@ shinyServer(function(input, output,session) {
     if(input$screening==1){
       disable("risk_g")
       enable("age_s")
+      enable("Dia_Con")
+      enable("Dia_Scr")
+      enable("Treatment")
+      enable("care")
       shinyjs::hide("Scr_table")
       # 41-50
       if(input$age_s == 1){
@@ -86,6 +90,10 @@ shinyServer(function(input, output,session) {
     else if(input$screening==2){
       disable("age_s")
       enable("risk_g")
+      enable("Dia_Con")
+      enable("Dia_Scr")
+      enable("Treatment")
+      enable("care")
 
       x <- input$risk_g
       if(!is.null(x)){
@@ -183,12 +191,17 @@ shinyServer(function(input, output,session) {
     else if(input$screening==3){
       disable("age_s")
       disable("risk_g")
+      disable("Dia_Con")
+      disable("Dia_Scr")
+      disable("Treatment")
+      disable("care")
       p_t$S_screening <- 0
       p_t$Pos <- 0
     }
 
   })
   
+
 
   #do when checkbox of age_s change.
   observeEvent(input$age_s, {
@@ -724,7 +737,7 @@ shinyServer(function(input, output,session) {
     updateSliderInput(session, inputId = "K", value = 70000000)
     updateSliderInput(session, inputId = "r", value = 0.16)
     updateSliderInput(session, inputId = "beta", value = 0.32)
-    updateSliderInput(session, inputId = "Fi", value = 0.0001)
+    updateSliderInput(session, inputId = "Fi", value = 1.15)
   })
   
   #section 2
@@ -762,7 +775,7 @@ shinyServer(function(input, output,session) {
         P0=input$P0,       #popstat(YEAR=1999)
         K= input$K,        #Maximum population (carrying capacity)
         r = input$r,        #Population growth rate (logistic growth curve)
-        flowin = input$Fi,
+        flowin = input$Fi*(10^-8),
         caset0 =  input$P0*0.03,      #0.03*P0,
         standard_start = 5,
         new_start = 20,
@@ -1126,13 +1139,13 @@ shinyServer(function(input, output,session) {
     #output 2
     output$distPlot2 <- renderPlot({
       if (v$doPlot == FALSE) return()
-      x <- out_df()[,c(1,15,16,17,25)]
-      x_base <- out_df_base()[,c(1,15,16,17,25)]
+      x <- out_df()[,c(1,15,16,17)]
+      x_base <- out_df_base()[,c(1,15,16,17)]
       
       if(input$showNewDeath){
         
-        x <- out_df()[,c(1,15,16,17,26)]
-        x_base <- out_df_base()[,c(1,15,16,17,26)]
+        x <- out_df()[,c(1,15,16,17,28)]
+        x_base <- out_df_base()[,c(1,15,16,17,28)]
       }
       isolate({
         withProgress(message = 'Calculation in progress', {

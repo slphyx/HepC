@@ -1115,51 +1115,94 @@ shinyServer(function(input, output,session) {
     #output 1
     output$distPlot <- renderPlot({
       if (v$doPlot == FALSE) return()
-
+      
       isolate({
-        withProgress(message = 'Calculation in progress', {
-      x <- out_df()[,c(1,23)]
-      x_base <- out_df_base()[,c(1,23)]
-    
-      x_melt <- reshape2::melt(x, id="time")
-      x_melt_base <- reshape2::melt(x_base, id="time")
-      ggplot(data = x_melt) + 
-        labs( x = "Year", y = "Prevalence")+
-        geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)+
-        geom_line(data=x_melt_base , mapping = aes(x = time, y = value,color = variable),size = 1.5,linetype = "dashed")+
-        theme(axis.title = element_text(size = 20))+
-        theme(axis.text = element_text(size = 15, colour="black"))+ 
-        theme(legend.title = element_text(size = 20),
-              legend.text = element_text(size = 15))
-        
-        })
+            withProgress(message = 'Calculation in progress', {
+              if(input$screening == 3){
+                x_base <- out_df_base()[,c(1,23)]
+                x_melt_base <- reshape2::melt(x_base, id="time")
+                ggplot(data = x_melt_base) + 
+                  labs( x = "Year", y = "Prevalence")+
+                  geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)+
+                  theme(axis.title = element_text(size = 20))+
+                  theme(axis.text = element_text(size = 15, colour="black"))+ 
+                  theme(legend.title = element_text(size = 20),
+                        legend.text = element_text(size = 15))+
+                  ggtitle("baseline") + 
+                  theme(plot.title = element_text(size=30, face="bold"))
+                
+              }
+              else{
+                x <- out_df()[,c(1,23)]
+                x_base <- out_df_base()[,c(1,23)]
+              
+                x_melt <- reshape2::melt(x, id="time")
+                x_melt_base <- reshape2::melt(x_base, id="time")
+                ggplot(data = x_melt) + 
+                  labs( x = "Year", y = "Prevalence")+
+                  geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)+
+                  geom_line(data=x_melt_base , mapping = aes(x = time, y = value,color = variable),size = 1.5,linetype = "dashed")+
+                  theme(axis.title = element_text(size = 20))+
+                  theme(axis.text = element_text(size = 15, colour="black"))+ 
+                  theme(legend.title = element_text(size = 20),
+                        legend.text = element_text(size = 15))
+              }
+            
+            })
       })
     })
     
     #output 2
     output$distPlot2 <- renderPlot({
       if (v$doPlot == FALSE) return()
-      x <- out_df()[,c(1,15,16,17)]
-      x_base <- out_df_base()[,c(1,15,16,17)]
       
-      if(input$showNewDeath){
-        
-        x <- out_df()[,c(1,15,16,17,28)]
-        x_base <- out_df_base()[,c(1,15,16,17,28)]
-      }
       isolate({
         withProgress(message = 'Calculation in progress', {
-        x_melt <- reshape2::melt(x, id="time")
-        x_melt_base <- reshape2::melt(x_base, id="time")
-
-        ggplot(data = x_melt) + 
-          labs( x = "Year")+
-          geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)+ 
-          geom_line(data=x_melt_base , mapping = aes(x = time, y = value,color = variable),size = 1.5,linetype = "dashed")+
-          theme(axis.title = element_text(size = 20))+
-          theme(axis.text = element_text(size = 15, colour="black"))+ 
-          theme(legend.title = element_text(size = 20),
-                legend.text = element_text(size = 15))
+          
+            if(input$screening == 3){
+              x_base <- out_df_base()[,c(1,15,16,17)]
+              
+              if(input$showNewDeath){
+                
+                x_base <- out_df_base()[,c(1,15,16,17,28)]
+                
+              }
+              x_melt_base <- reshape2::melt(x_base, id="time")
+              ggplot(data = x_melt_base) + 
+                labs( x = "Year")+
+                geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)+
+                theme(axis.title = element_text(size = 20))+
+                theme(axis.text = element_text(size = 15, colour="black"))+ 
+                theme(legend.title = element_text(size = 20),
+                      legend.text = element_text(size = 15))+
+                ggtitle("baseline") + 
+                theme(plot.title = element_text(size=30, face="bold"))
+              
+            }
+                
+            else{
+            
+            x <- out_df()[,c(1,15,16,17)]
+            x_base <- out_df_base()[,c(1,15,16,17)]
+            
+            if(input$showNewDeath){
+              
+              x <- out_df()[,c(1,15,16,17,28)]
+              x_base <- out_df_base()[,c(1,15,16,17,28)]
+            }
+      
+              x_melt <- reshape2::melt(x, id="time")
+              x_melt_base <- reshape2::melt(x_base, id="time")
+      
+              ggplot(data = x_melt) + 
+                labs( x = "Year")+
+                geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)+ 
+                geom_line(data=x_melt_base , mapping = aes(x = time, y = value,color = variable),size = 1.5,linetype = "dashed")+
+                theme(axis.title = element_text(size = 20))+
+                theme(axis.text = element_text(size = 15, colour="black"))+ 
+                theme(legend.title = element_text(size = 20),
+                      legend.text = element_text(size = 15))
+            }
         })
       })
     })
@@ -1168,23 +1211,44 @@ shinyServer(function(input, output,session) {
     output$distPlot3 <- renderPlot({
       
       if (v$doPlot == FALSE) return()
-      x <- out_df()[,c(1,24,27,29)]
-      x_base <- out_df_base()[,c(1,24,27,29)]
       
       isolate({
         withProgress(message = 'Calculation in progress', {
-  
-      x_melt <- reshape2::melt(x, id="time")
-      x_melt_base <- reshape2::melt(x_base, id="time")
       
-      ggplot(data = x_melt) + 
-        labs( x = "Year")+
-        geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)+
-        geom_line(data=x_melt_base , mapping = aes(x = time, y = value,color = variable),size = 1.5,linetype = "dashed")+
-        theme(axis.title = element_text(size = 20))+
-        theme(axis.text = element_text(size = 15, colour="black"))+ 
-        theme(legend.title = element_text(size = 20),
-              legend.text = element_text(size = 15))
+            if(input$screening == 3){
+              x_base <- out_df_base()[,c(1,24,27,29)]
+              
+              x_melt_base <- reshape2::melt(x_base, id="time")
+              ggplot(data = x_melt_base) + 
+                labs( x = "Year")+
+                geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)+
+                theme(axis.title = element_text(size = 20))+
+                theme(axis.text = element_text(size = 15, colour="black"))+ 
+                theme(legend.title = element_text(size = 20),
+                      legend.text = element_text(size = 15))+
+                ggtitle("baseline") + 
+                theme(plot.title = element_text(size=30, face="bold"))
+              
+            }
+      
+            else {
+              x <- out_df()[,c(1,24,27,29)]
+              x_base <- out_df_base()[,c(1,24,27,29)]
+              
+        
+          
+              x_melt <- reshape2::melt(x, id="time")
+              x_melt_base <- reshape2::melt(x_base, id="time")
+              
+              ggplot(data = x_melt) + 
+                labs( x = "Year")+
+                geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)+
+                geom_line(data=x_melt_base , mapping = aes(x = time, y = value,color = variable),size = 1.5,linetype = "dashed")+
+                theme(axis.title = element_text(size = 20))+
+                theme(axis.text = element_text(size = 15, colour="black"))+ 
+                theme(legend.title = element_text(size = 20),
+                      legend.text = element_text(size = 15))
+            }
         })
       })
     })
@@ -1193,23 +1257,43 @@ shinyServer(function(input, output,session) {
     output$distPlot4 <- renderPlot({
       
       if (v$doPlot == FALSE) return()
-      x <- out_df()[,c(1,32)]
-      x_base <- out_df_base()[,c(1,32)]
       
       isolate({
         withProgress(message = 'Calculation in progress', {
           
-          x_melt <- reshape2::melt(x, id="time")
-          x_melt_base <- reshape2::melt(x_base, id="time")
-          
-          ggplot(data = x_melt) + 
-            labs( x = "Year")+
-            geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)+
-            geom_line(data=x_melt_base , mapping = aes(x = time, y = value,color = variable),size = 1.5,linetype = "dashed")+
-            theme(axis.title = element_text(size = 20))+
-            theme(axis.text = element_text(size = 15, colour="black"))+ 
-            theme(legend.title = element_text(size = 20),
-                  legend.text = element_text(size = 15))
+            if(input$screening == 3){
+              x_base <- out_df_base()[,c(1,32)]
+              
+              x_melt_base <- reshape2::melt(x_base, id="time")
+              ggplot(data = x_melt_base) + 
+                labs( x = "Year")+
+                geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)+
+                theme(axis.title = element_text(size = 20))+
+                theme(axis.text = element_text(size = 15, colour="black"))+ 
+                theme(legend.title = element_text(size = 20),
+                      legend.text = element_text(size = 15))+
+                ggtitle("baseline") + 
+                theme(plot.title = element_text(size=30, face="bold"))
+              
+            }
+            
+            else{
+            x <- out_df()[,c(1,32)]
+            x_base <- out_df_base()[,c(1,32)]
+      
+                
+                x_melt <- reshape2::melt(x, id="time")
+                x_melt_base <- reshape2::melt(x_base, id="time")
+                
+                ggplot(data = x_melt) + 
+                  labs( x = "Year")+
+                  geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)+
+                  geom_line(data=x_melt_base , mapping = aes(x = time, y = value,color = variable),size = 1.5,linetype = "dashed")+
+                  theme(axis.title = element_text(size = 20))+
+                  theme(axis.text = element_text(size = 15, colour="black"))+ 
+                  theme(legend.title = element_text(size = 20),
+                        legend.text = element_text(size = 15))
+            }
         })
       })
     })
@@ -1218,23 +1302,43 @@ shinyServer(function(input, output,session) {
     output$distPlot5 <- renderPlot({
       
       if (v$doPlot == FALSE) return()
-      x <- out_df()[,c(1,33)]
-      x_base <- out_df_base()[,c(1,33)]
-      
       isolate({
         withProgress(message = 'Calculation in progress', {
           
-          x_melt <- reshape2::melt(x, id="time")
-          x_melt_base <- reshape2::melt(x_base, id="time")
-          
-          ggplot(data = x_melt) + 
-            labs( x = "Year")+
-            geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)+
-            geom_line(data=x_melt_base , mapping = aes(x = time, y = value,color = variable),size = 1.5,linetype = "dashed")+
-            theme(axis.title = element_text(size = 20))+
-            theme(axis.text = element_text(size = 15, colour="black"))+ 
-            theme(legend.title = element_text(size = 20),
-                  legend.text = element_text(size = 15))
+            if(input$screening == 3){
+              x_base <- out_df_base()[,c(1,33)]
+              
+              x_melt_base <- reshape2::melt(x_base, id="time")
+              ggplot(data = x_melt_base) + 
+                labs( x = "Year")+
+                geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)+
+                theme(axis.title = element_text(size = 20))+
+                theme(axis.text = element_text(size = 15, colour="black"))+ 
+                theme(legend.title = element_text(size = 20),
+                      legend.text = element_text(size = 15))+
+                ggtitle("baseline") + 
+                theme(plot.title = element_text(size=30, face="bold"))
+              
+            }
+            
+            else {
+            x <- out_df()[,c(1,33)]
+            x_base <- out_df_base()[,c(1,33)]
+            
+      
+                
+                x_melt <- reshape2::melt(x, id="time")
+                x_melt_base <- reshape2::melt(x_base, id="time")
+                
+                ggplot(data = x_melt) + 
+                  labs( x = "Year")+
+                  geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)+
+                  geom_line(data=x_melt_base , mapping = aes(x = time, y = value,color = variable),size = 1.5,linetype = "dashed")+
+                  theme(axis.title = element_text(size = 20))+
+                  theme(axis.text = element_text(size = 15, colour="black"))+ 
+                  theme(legend.title = element_text(size = 20),
+                        legend.text = element_text(size = 15))
+                }
         })
       })
     })

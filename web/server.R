@@ -11,6 +11,7 @@
 library(shiny)
 library(Rcpp)
 library(deSolve)
+library(plotly)
 library(reshape2)
 library(ggplot2)
 library(tidyverse)
@@ -19,6 +20,7 @@ library(erer)
 library(scales)
 library(plyr) 
 library(shinyjs)
+
 
 # Define server logic required to draw a histogram
 shinyServer(function(input, output,session) {
@@ -58,10 +60,31 @@ shinyServer(function(input, output,session) {
   })
   #parameter 
   p_t <- reactiveValues(S_screening = 11169018,
-                        scr.yr =1,
+                        scr_yr =1,
                         Pos = 0  #Positive True
   )
   
+  observe({
+    if(input$screening!=3){
+      if(v$doPlot == F){
+        shinyjs::hide("Lineplot")
+        shinyjs::hide("Lineplot2")
+        shinyjs::hide("Lineplot3")
+        shinyjs::hide("Lineplot4")
+      }else{
+        shinyjs::show("Lineplot")
+        shinyjs::show("Lineplot2")
+        shinyjs::show("Lineplot3")
+        shinyjs::show("Lineplot4")
+      }
+    }else{
+      shinyjs::hide("Lineplot")
+      shinyjs::hide("Lineplot2")
+      shinyjs::hide("Lineplot3")
+      shinyjs::hide("Lineplot4")
+    }
+
+  })
   
   #screening Table
   observeEvent(input$screening, {
@@ -221,20 +244,20 @@ shinyServer(function(input, output,session) {
     
   })
   
-  #do when checkbox of scr.yr change.
+  #do when checkbox of scr_yr change.
   observeEvent(input$Sso, {
       #1 year
     if(input$Sso == 1){
-      p_t$scr.yr <- 1
+      p_t$scr_yr <- 1
       #2 years
     }else if(input$Sso == 2){
-      p_t$scr.yr <- 2
+      p_t$scr_yr <- 2
       #4 years
     }else if(input$Sso == 3){
-      p_t$scr.yr <- 4
+      p_t$scr_yr <- 4
     } #10 years
     else if(input$Sso == 4){
-      p_t$scr.yr <- 10
+      p_t$scr_yr <- 10
     }
     
   })
@@ -781,7 +804,7 @@ shinyServer(function(input, output,session) {
         new_start = 20,
         nscr = 0.05,
         scr_yr = 10,
-        scr_cov = 0.09,      #0.9/scr.yr,
+        scr_cov = 0.09,      #0.9/scr_yr,
         sens = 0.985,
         pF0scr = 0.07,
         pF1scr = 0.03,
@@ -864,8 +887,8 @@ shinyServer(function(input, output,session) {
         std_start <- 5, #2004
         new_start <- 20, #2019 put 20
         nscr  <- 0.05,
-        scr.yr <- 10,
-        scr.cov <- (23590+143320)/scr.yr,#age41to60_23590/scr.yr#risk_rapidscr143320/scr.yr#risk_stdscr127584/scr.yr #sum up the people who get screening
+        scr_yr <- 10,
+        scr_cov <- (23590+143320)/scr_yr,#age41to60_23590/scr_yr#risk_rapidscr143320/scr_yr#risk_stdscr127584/scr_yr #sum up the people who get screening
         
         #Treatment efficacy
         #Standard treatment response based on genotype (weighted average)
@@ -934,19 +957,37 @@ shinyServer(function(input, output,session) {
       out_df
     })
     
-    
-    #cost plot
-    cost_plot <- reactive({
-      cost_times <- seq(1999, 2020, by = 1)
+    #Screening cost
+    cost_screening_plot <- reactive({
+
+      people <- p_t$S_screening
+      year <- p_t$scr_yr
+      times <- seq(2019, 2019+year, by = 1)
+      cost <- dia$screening_cost
       cost_per_year <- 0
-      cost_func <- function(time,state,parms){
+      cost_screening_func <- function(time,state,parms){
+        list(parms)
+      }
+      cost <- as.numeric((people/year)*cost)
+      out <- ode( y = cost_per_year,times =  times, func = cost_screening_func, parms = cost, method = "rk4")
+      cost_screening_plot <- as.data.frame(out)
+      colnames(cost_screening_plot)[2] <- "Total_Cost"
+      cost_screening_plot
+    })
+    
+    
+    #treatment cost 
+    cost_treatment_plot <- reactive({
+      cost_times <- seq(2019, 2060, by = 1)
+      cost_per_year <- 0
+      cost_treatment_func <- function(time,state,parms){
         list(parms)
       }
       cost <- as.numeric(Treatment$cost)
-      out <- ode( y = cost_per_year,times =  cost_times, func = cost_func, parms = cost, method = "rk4")
-      cost_plot <- as.data.frame(out)
-      colnames(cost_plot)[2] <- "Total_Cost"
-      cost_plot
+      out <- ode( y = cost_per_year,times =  cost_times, func = cost_treatment_func, parms = cost, method = "rk4")
+      cost_treatment_plot <- as.data.frame(out)
+      colnames(cost_treatment_plot)[2] <- "Total_Cost"
+      cost_treatment_plot
     })
     
     ############################Baseline############################################################
@@ -963,7 +1004,7 @@ shinyServer(function(input, output,session) {
         new_start = 20,
         nscr = 0.05,
         scr_yr = 0,
-        scr_cov = 0,      #0.9/scr.yr,
+        scr_cov = 0,      #0.9/scr_yr,
         sens = 0.985,
         pF0scr = 0.1439,
         pF1scr = 0.2969,
@@ -1046,8 +1087,8 @@ shinyServer(function(input, output,session) {
         std_start <- 5, #2004
         new_start <- 20, #2019 put 20
         nscr  <- 0.05,
-        scr.yr <- 10,
-        scr.cov <- (23590+143320)/scr.yr,#age41to60_23590/scr.yr#risk_rapidscr143320/scr.yr#risk_stdscr127584/scr.yr #sum up the people who get screening
+        scr_yr <- 10,
+        scr_cov <- (23590+143320)/scr_yr,#age41to60_23590/scr_yr#risk_rapidscr143320/scr_yr#risk_stdscr127584/scr_yr #sum up the people who get screening
         
         #Treatment efficacy
         #Standard treatment response based on genotype (weighted average)
@@ -1113,7 +1154,7 @@ shinyServer(function(input, output,session) {
     
     
     #output 1
-    output$distPlot <- renderPlot({
+    output$distPlot <- renderPlotly({
       if (v$doPlot == FALSE) return()
       
       x <- out_df()[,c(1,23)]
@@ -1123,30 +1164,41 @@ shinyServer(function(input, output,session) {
             withProgress(message = 'Calculation in progress', {
               if(input$screening == 3){
                 x_melt_base <- reshape2::melt(x_base, id="time")
-                ggplot(data = x_melt_base) + 
-                  labs( x = "Year", y = "Prevalence")+
+                p <-ggplot(data = x_melt_base) + 
+                  labs( x = "Year", y = "Prevalence (%)")+
                   geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)+
                   theme(axis.title = element_text(size = 20))+
                   theme(axis.text = element_text(size = 15, colour="black"))+ 
-                  theme(legend.title = element_text(size = 20),
-                        legend.text = element_text(size = 15))+
+                  theme(legend.title = element_blank(),
+                        legend.text = element_blank(),
+                        legend.position = c(.95, .95),
+                        legend.justification = c("right", "top"),)+
                   ggtitle("baseline") + 
                   theme(plot.title = element_text(size=30, face="bold"))
+                ggplotly(p)%>%
+                  add_trace(
+                    marker = list(color='green')
+                  ) 
                 
               }
               else{
 
               
-                x_melt <- reshape2::melt(x, id="time")
-                x_melt_base <- reshape2::melt(x_base, id="time")
-                ggplot(data = x_melt) + 
+                x2 <- as.data.frame(rbind(x,x_base))
+                x2_melt <- reshape2::melt(x2, id="time")
+                name_type <- c(rep("New Screening Scheme",length(out_df()[,1])),rep("Baseline",length(out_df()[,1])))
+                x2_melt_named <- data.frame(x2_melt,type=name_type)
+
+                p <-ggplot(data = x2_melt_named) + 
                   labs( x = "Year", y = "Prevalence")+
-                  geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)+
-                  geom_line(data=x_melt_base , mapping = aes(x = time, y = value,color = variable),size = 1.5,linetype = "dashed")+
+                  geom_line(mapping = aes(x = time, y = value,linetype = type),size = 1.5)+
+                  scale_linetype_manual(values=c( "dotted","solid"))+
                   theme(axis.title = element_text(size = 20))+
                   theme(axis.text = element_text(size = 15, colour="black"))+ 
-                  theme(legend.title = element_text(size = 20),
-                        legend.text = element_text(size = 15))
+                  theme(legend.title = element_blank())
+                ggplotly(p)%>%
+                  layout(legend = list(x = 0.75, y = 0.9 ,font = list(size = 15) ))
+
               }
             
             })
@@ -1154,7 +1206,7 @@ shinyServer(function(input, output,session) {
     })
     
     #output 2
-    output$distPlot2 <- renderPlot({
+    output$distPlot2 <- renderPlotly({
       if (v$doPlot == FALSE) return()
       
       x <- out_df()[,c(1,15,16,17)]
@@ -1185,29 +1237,33 @@ shinyServer(function(input, output,session) {
             }
                 
             else{
-      
+              type <- c(rep("New Screening Scheme",length(out_df()[,1])),rep("Baseline",length(out_df()[,1])))
               x_melt <- reshape2::melt(x, id="time")
               x_melt_base <- reshape2::melt(x_base, id="time")
+              x2 <- as.data.frame(rbind(x,x_base))
+              x2_melt <-melt(x2, id="time")
+              x2_melt_named <- data.frame(x2_melt,type=type)
       
-              ggplot(data = x_melt) + 
+              p <-ggplot(data = x2_melt_named) + 
                 labs( x = "Year")+
-                geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)+ 
-                geom_line(data=x_melt_base , mapping = aes(x = time, y = value,color = variable),size = 1.5,linetype = "dashed")+
+                geom_line(mapping = aes(x = time, y = value,color = variable,linetype = type),size = 1.5)+
+                scale_linetype_manual(values=c( "dotted","solid"))+
                 theme(axis.title = element_text(size = 20))+
                 theme(axis.text = element_text(size = 15, colour="black"))+ 
-                theme(legend.title = element_text(size = 20),
-                      legend.text = element_text(size = 15))
+                theme(legend.title = element_blank())
+              ggplotly(p)%>%
+                layout(legend = list(font = list(size = 15) ))
             }
         })
       })
     })
     
     #output 3
-    output$distPlot3 <- renderPlot({
+    output$distPlot3 <- renderPlotly({
       
       if (v$doPlot == FALSE) return()
-      x <- out_df()[,c(1,24,27,29)]
-      x_base <- out_df_base()[,c(1,24,27,29)]
+      x <- out_df()[,c(1,26,27)]
+      x_base <- out_df_base()[,c(1,26,27)]
       
       isolate({
         withProgress(message = 'Calculation in progress', {
@@ -1232,24 +1288,79 @@ shinyServer(function(input, output,session) {
               
         
           
+              type <- c(rep("New Screening Scheme",length(out_df()[,1])),rep("Baseline",length(out_df()[,1])))
               x_melt <- reshape2::melt(x, id="time")
               x_melt_base <- reshape2::melt(x_base, id="time")
+              x2 <- as.data.frame(rbind(x,x_base))
+              x2_melt <-melt(x2, id="time")
+              x2_melt_named <- data.frame(x2_melt,type=type)
               
-              ggplot(data = x_melt) + 
+              p <-ggplot(data = x2_melt_named) + 
                 labs( x = "Year")+
-                geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)+
-                geom_line(data=x_melt_base , mapping = aes(x = time, y = value,color = variable),size = 1.5,linetype = "dashed")+
+                geom_line(mapping = aes(x = time, y = value,color = variable,linetype = type),size = 1.5)+
+                scale_linetype_manual(values=c( "dotted","solid"))+
                 theme(axis.title = element_text(size = 20))+
                 theme(axis.text = element_text(size = 15, colour="black"))+ 
-                theme(legend.title = element_text(size = 20),
-                      legend.text = element_text(size = 15))
+                theme(legend.title = element_blank())
+              ggplotly(p)%>%
+                layout(legend = list(font = list(size = 15) ))
             }
         })
       })
     })
     
+    output$distPlot8 <- renderPlotly({
+      
+      if (v$doPlot == FALSE) return()
+      x <- out_df()[,c(1,29)]
+      x_base <- out_df_base()[,c(1,29)]
+      
+      isolate({
+        withProgress(message = 'Calculation in progress', {
+          
+          if(input$screening == 3){
+            
+            x_melt_base <- reshape2::melt(x_base, id="time")
+            ggplot(data = x_melt_base) + 
+              labs( x = "Year")+
+              geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)+
+              theme(axis.title = element_text(size = 20))+
+              theme(axis.text = element_text(size = 15, colour="black"))+ 
+              theme(legend.title = element_text(size = 20),
+                    legend.text = element_text(size = 15))+
+              ggtitle("baseline") + 
+              theme(plot.title = element_text(size=30, face="bold"))
+            
+          }
+          
+          else {
+            
+            
+            
+            
+            type <- c(rep("New Screening Scheme",length(out_df()[,1])),rep("Baseline",length(out_df()[,1])))
+            x_melt <- reshape2::melt(x, id="time")
+            x_melt_base <- reshape2::melt(x_base, id="time")
+            x2 <- as.data.frame(rbind(x,x_base))
+            x2_melt <-melt(x2, id="time")
+            x2_melt_named <- data.frame(x2_melt,type=type)
+            
+            p <-ggplot(data = x2_melt_named) + 
+              labs( x = "Year")+
+              geom_line(mapping = aes(x = time, y = value,color = variable,linetype = type),size = 1.5)+
+              scale_linetype_manual(values=c( "dotted","solid"))+
+              theme(axis.title = element_text(size = 20))+
+              theme(axis.text = element_text(size = 15, colour="black"))+ 
+              theme(legend.title = element_blank())
+            ggplotly(p)%>%
+              layout(legend = list(font = list(size = 15) ))
+          }
+        })
+      })
+    })
+    
     #output 4
-    output$distPlot4 <- renderPlot({
+    output$distPlot4 <- renderPlotly({
       
       if (v$doPlot == FALSE) return()
       x <- out_df()[,c(1,32)]
@@ -1277,24 +1388,29 @@ shinyServer(function(input, output,session) {
 
       
                 
-                x_melt <- reshape2::melt(x, id="time")
-                x_melt_base <- reshape2::melt(x_base, id="time")
-                
-                ggplot(data = x_melt) + 
-                  labs( x = "Year")+
-                  geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)+
-                  geom_line(data=x_melt_base , mapping = aes(x = time, y = value,color = variable),size = 1.5,linetype = "dashed")+
-                  theme(axis.title = element_text(size = 20))+
-                  theme(axis.text = element_text(size = 15, colour="black"))+ 
-                  theme(legend.title = element_text(size = 20),
-                        legend.text = element_text(size = 15))
+              type <- c(rep("New Screening Scheme",length(out_df()[,1])),rep("Baseline",length(out_df()[,1])))
+              x_melt <- reshape2::melt(x, id="time")
+              x_melt_base <- reshape2::melt(x_base, id="time")
+              x2 <- as.data.frame(rbind(x,x_base))
+              x2_melt <-melt(x2, id="time")
+              x2_melt_named <- data.frame(x2_melt,type=type)
+              
+              p <-ggplot(data = x2_melt_named) + 
+                labs( x = "Year")+
+                geom_line(mapping = aes(x = time, y = value,color = variable,linetype = type),size = 1.5)+
+                scale_linetype_manual(values=c( "dotted","solid"))+
+                theme(axis.title = element_text(size = 20))+
+                theme(axis.text = element_text(size = 15, colour="black"))+ 
+                theme(legend.title = element_blank())
+              ggplotly(p)%>%
+                layout(legend = list(font = list(size = 15) ))
             }
         })
       })
     })
     
     #output 5
-    output$distPlot5 <- renderPlot({
+    output$distPlot5 <- renderPlotly({
       
       if (v$doPlot == FALSE) return()
       x <- out_df()[,c(1,33)]
@@ -1336,10 +1452,10 @@ shinyServer(function(input, output,session) {
     })
     
     #output 6
-    output$distPlot6 <- renderPlot({
+    output$distPlot6 <- renderPlotly({
       
       if (v$doPlot == FALSE) return()
-      x <- cost_plot()
+      x <- cost_treatment_plot()
       isolate({
         withProgress(message = 'Calculation in progress', {  
       
@@ -1354,6 +1470,26 @@ shinyServer(function(input, output,session) {
       })
     })
     
+    #output 7
+    output$distPlot7 <- renderPlotly({
+      
+      if (v$doPlot == FALSE) return()
+      x <- cost_screening_plot()
+      isolate({
+        withProgress(message = 'Calculation in progress', {  
+          
+          ggplot(data = x) + 
+            labs( x = "Year")+
+            geom_line(mapping = aes(x = time, y =Total_Cost ),size = 1.5)+ 
+            theme(axis.title = element_text(size = 20))+
+            theme(axis.text = element_text(size = 15, colour="black"))+ 
+            theme(legend.title = element_text(size = 20),
+                  legend.text = element_text(size = 15))
+        })
+      })
+    })
+    
+    
 
     
     
@@ -1362,18 +1498,18 @@ shinyServer(function(input, output,session) {
       paste("screening people :" , round(p_t$S_screening) )
     })
     
-    output$scr.yr_p <- renderText({
-      paste("screening year :" , round(p_t$scr.yr) )
+    output$scr_yr_p <- renderText({
+      paste("screening year :" , round(p_t$scr_yr) )
     })
     
-    output$scr.cov_p <- renderText({
-      paste("screening people per year :" , round(p_t$S_screening/p_t$scr.yr) )
+    output$scr_cov_p <- renderText({
+      paste("screening people per year :" , round(p_t$S_screening/p_t$scr_yr) )
     })
     
-    output$scr.cov_p <- renderText({
-      paste("screening people per year :" , round(p_t$S_screening/p_t$scr.yr) )
+    output$scr_cov_p <- renderText({
+      paste("screening people per year :" , round(p_t$S_screening/p_t$scr_yr) )
     })
-    output$scr.pos_p <- renderText({
+    output$scr_pos_p <- renderText({
       paste("positive people :" , round(p_t$Pos) )
     })
     

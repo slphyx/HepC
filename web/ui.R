@@ -10,6 +10,7 @@
 library(shiny)
 library(shinyBS)
 library(shinyjs)
+library(plotly)
 library(tableHTML)
 
 
@@ -22,7 +23,7 @@ shinyUI(fluidPage(
   
   # Application title
   tags$div(class="header bg-primary",
-  tags$h1(class="text-center","Hepatitis C Virus Modelling")
+  tags$h1(class="text-center","Modelling optimal strategies to screen and treat chronic Hepatitis C Virus infections")
             ),
   tabsetPanel(
       #tab1
@@ -625,9 +626,9 @@ shinyUI(fluidPage(
                         tags$div(class = "row",
                                  tags$div(class = "boxOutput col-sm-11",
                                           textOutput("screening_p"),
-                                          textOutput("scr.yr_p"),
-                                          textOutput("scr.cov_p"),
-                                          textOutput("scr.pos_p"),
+                                          textOutput("scr_yr_p"),
+                                          textOutput("scr_cov_p"),
+                                          textOutput("scr_pos_p"),
                                           
                                  )
                         ),
@@ -1065,49 +1066,56 @@ shinyUI(fluidPage(
                   downloadButton("downloadData2", "Download Result Table"),
                  tabsetPanel(
                     #output 1
-                    tabPanel("Prevalence Of CHC",
-                             plotOutput("distPlot")
+                    tabPanel("Prevalence Of HCV",
+                             shinyjs::useShinyjs(),
+                           tags$br(),
+                           tags$br(),
+                           tags$br(),
+                           tags$div(
+                              plotlyOutput("distPlot")
+                           ),
+                           tags$h4("Estimated prevalence of CHC patients."),
+                           tags$p("Estimated prevalence of patients with CHC based on previous data and transmission and progression of CHC using current standard treatments in Thailand. 
+                           The model was created by fitting reported 1994-2014 CHC prevalence data. The reported prevalence of chronic HCV infection in the general population was 1.4%-4.2% in 1994-2005, 2.15% in 2004, 2.2% in 2005-2008, and 0.97% in 2014. Circles represent the observed data, and the black line represents prediction of the model.
+                           The right Y-axis represents the estimated population of Thailand derived by the model.")
+
                              ),
                     #output 2
                     tabPanel("Cumulative Death",
                              checkboxInput("showNewDeath", "New death", FALSE),
 
-                             plotOutput("distPlot2")
+                             plotlyOutput("distPlot2"),
+                             tags$h4("Estimated cumulative death related to HCV."),
+                             tags$p("Estimated cumulative total death related to HCV (A) and cumulative death from liver decompensation and HCC related to HCV (B) based on current and extensive treatment coverage over the next 20 years.")
+                             
                              
                              ),
                     #output 3
                     tabPanel("Annual Incidence",
-                             plotOutput("distPlot3")
-                            ),
+                             plotlyOutput("distPlot3"),
+
+                    tabPanel("Incidence HCC",
+                             plotlyOutput("distPlot8"),
+                             tags$h4("Estimated annual incidence of HCC related to HCV."),
+                             tags$p("Estimated annual incidence of HCV-related HCC based on 
+                                    current treatment coverage using standard and novel antiviral treatments, 
+                                    estimating current and extensive treatment coverage over the next 20 years. 
+                                    a: prioritized treatment scenario, b: generalized treatment scenario.")
+                    ),
+                    ),
                     #output 4
                     tabPanel("DAA Treatment",
-                             plotOutput("distPlot4")
+                             plotlyOutput("distPlot4")
                     ),
                     #output 5
                     tabPanel("Screening",
-                             plotOutput("distPlot5")
-                    ),
-                    #output 6
-                    tabPanel("Estimated cost",
-                      
-                             plotOutput("distPlot6")
+                             
+                             plotlyOutput("distPlot5")
                     )
                   )
                ),
     #tab8
-    tabPanel("Appendix",
-             div(
-               tags$p("1. progress 2nd _ 2018 10 03"),
-               tags$a(
-                 #link
-                 href= "https://docs.google.com/presentation/d/1iHAfhqpBh5MpYjf4Sethcq5E3OhoYcyK_nugy2QXnik/edit?usp=sharing"
-                 ,"Google Drive" #text
-               )
-             )
-             
-    ),
-    #tab9
-    tabPanel("Cost & Untility",
+    tabPanel("Cost",
              div(
                tags$p("Cost"),
                tags$table(
@@ -1525,6 +1533,26 @@ shinyUI(fluidPage(
                    tags$td(),
                  ),
                ),
+                 tags$div(
+                   tags$h1("Screening"),
+                   plotlyOutput("distPlot7")
+                   
+                   
+                 ),
+                 tags$div(
+                   tags$h1("Treatment"),
+                   plotlyOutput("distPlot6")
+                            
+                   
+                 ),
+
+               
+             )
+             
+    ),
+    #tab9
+    tabPanel("Untility",
+             div(
                
                tags$br(),
                tags$p("Untility"),

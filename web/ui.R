@@ -12,6 +12,7 @@ library(shinyBS)
 library(shinyjs)
 library(plotly)
 library(tableHTML)
+library(DT)
 
 
 # Define UI for application that draws a histogram
@@ -1093,19 +1094,18 @@ shinyUI(fluidPage(
                     #output 3
                     tabPanel("Annual Incidence",
                              plotlyOutput("distPlot3"),
-
+                             tags$h4("Estimated annual incidence of HCC related to HCV."),
+                             tags$p("Estimated annual incidence of HCV-related HCC based on current treatment coverage using standard and novel antiviral treatments, estimating current and extensive treatment coverage over the next 20 years. a: prioritized treatment scenario, b: generalized treatment scenari"),
+                             
+                    ),
                     tabPanel("Incidence HCC",
                              plotlyOutput("distPlot8"),
-                             tags$h4("Estimated annual incidence of HCC related to HCV."),
-                             tags$p("Estimated annual incidence of HCV-related HCC based on 
-                                    current treatment coverage using standard and novel antiviral treatments, 
-                                    estimating current and extensive treatment coverage over the next 20 years. 
-                                    a: prioritized treatment scenario, b: generalized treatment scenario.")
-                    ),
+                            
                     ),
                     #output 4
                     tabPanel("DAA Treatment",
                              plotlyOutput("distPlot4")
+                             
                     ),
                     #output 5
                     tabPanel("Screening",
@@ -1821,7 +1821,41 @@ shinyUI(fluidPage(
             tags$br(),
             tags$a("Revisiting policy on chronic HCV treatment under the Thai Universal Health Coverage: An economic evaluation and budget impact analysis"
                    ,target="_blank",href="pone.0193112.pdf"),
-             )
+             ),
+    tabPanel("Table",
+             
+             tags$h1("Screening cost"),
+             DT::dataTableOutput("table_screening"),
+             tags$h1("Direct Treatment cost"),
+             DT::dataTableOutput("table_Treatment"),
+             ),
+    tabPanel("new",
+             tags$div(
+               tags$h1("HCC case reduction compared to no screening"),
+               plotlyOutput("dif_TotalHCC"),
+             ),
+             tags$div(
+               tags$h1("Prevalence reduction compared to no screening"),
+               plotlyOutput("dif_Prevalence"),
+             ),
+             tags$div(
+               tags$h1("incidenceHCC reduction compared to no screening"),
+               plotlyOutput("dif_incidenceHCC"),
+             ),
+             tags$div(
+               tags$h1("deathHCC reduction compared to no screening"),
+               plotlyOutput("dif_deathHCC"),
+             ),
+             tags$div(
+               tags$h1("totaldeath reduction compared to no screening"),
+               plotlyOutput("dif_totaldeath"),
+             ),
+             tags$div(
+               tags$h1("Treatment reduction compared to no screening"),
+               plotlyOutput("dif_Treatment"),
+             ),
+             
+    )
     )
   )
 )

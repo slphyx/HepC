@@ -20,7 +20,7 @@ library(erer)
 library(scales)
 library(plyr) 
 library(shinyjs)
-
+library(DT)
 
 # Define server logic required to draw a histogram
 shinyServer(function(input, output,session) {
@@ -800,11 +800,11 @@ shinyServer(function(input, output,session) {
         r = input$r,        #Population growth rate (logistic growth curve)
         flowin = input$Fi*(10^-8),
         caset0 =  input$P0*0.03,      #0.03*P0,
-        standard_start = 5,
-        new_start = 20,
+        standard_start = 2004,
+        new_start = 2019,
         nscr = 0.05,
         scr_yr = 10,
-        scr_cov = 0.09,      #0.9/scr_yr,
+        scr_cov = (23590+143320)/10,      #0.9/scr_yr,
         sens = 0.985,
         pF0scr = 0.07,
         pF1scr = 0.03,
@@ -883,12 +883,7 @@ shinyServer(function(input, output,session) {
         tranc4=0.0015, #Transplantation rate in cirrhosis stage C4
         tranbA=0.0015, #Transplantation rate in HCC_BCLC_A
         tranbB=0.0015, #Transplantation rate in HCC_BCLC_B
-        
-        std_start <- 5, #2004
-        new_start <- 20, #2019 put 20
-        nscr  <- 0.05,
-        scr_yr <- 10,
-        scr_cov <- (23590+143320)/scr_yr,#age41to60_23590/scr_yr#risk_rapidscr143320/scr_yr#risk_stdscr127584/scr_yr #sum up the people who get screening
+      
         
         #Treatment efficacy
         #Standard treatment response based on genotype (weighted average)
@@ -950,7 +945,7 @@ shinyServer(function(input, output,session) {
     out_df <- reactive({
       
       times <- seq(1999, 2060,by=1)
-      
+
       out <- ode( y = inits(),times =  times, func = PanHepC, parms = parms())
       
       out_df <- as.data.frame(out)
@@ -1000,8 +995,8 @@ shinyServer(function(input, output,session) {
         r = 0.16,        #Population growth rate (logistic growth curve)
         flowin = 1.15*(10^-8),
         caset0 =  input$P0*0.03,      #0.03*P0,
-        standard_start = 5,
-        new_start = 20,
+        standard_start = 2004,
+        new_start = 2019,
         nscr = 0.05,
         scr_yr = 0,
         scr_cov = 0,      #0.9/scr_yr,
@@ -1084,11 +1079,7 @@ shinyServer(function(input, output,session) {
         tranbA=0.0015, #Transplantation rate in HCC_BCLC_A
         tranbB=0.0015, #Transplantation rate in HCC_BCLC_B
         
-        std_start <- 5, #2004
-        new_start <- 20, #2019 put 20
-        nscr  <- 0.05,
-        scr_yr <- 10,
-        scr_cov <- (23590+143320)/scr_yr,#age41to60_23590/scr_yr#risk_rapidscr143320/scr_yr#risk_stdscr127584/scr_yr #sum up the people who get screening
+ 
         
         #Treatment efficacy
         #Standard treatment response based on genotype (weighted average)
@@ -1190,7 +1181,7 @@ shinyServer(function(input, output,session) {
                 x2_melt_named <- data.frame(x2_melt,type=name_type)
 
                 p <-ggplot(data = x2_melt_named) + 
-                  labs( x = "Year", y = "Prevalence")+
+                  labs( x = "Year", y = "Prevalence (%)")+
                   geom_line(mapping = aes(x = time, y = value,linetype = type),size = 1.5)+
                   scale_linetype_manual(values=c( "dotted","solid"))+
                   theme(axis.title = element_text(size = 20))+
@@ -1225,7 +1216,7 @@ shinyServer(function(input, output,session) {
 
               x_melt_base <- reshape2::melt(x_base, id="time")
               ggplot(data = x_melt_base) + 
-                labs( x = "Year")+
+                labs( x = "Year", y = "Number")+
                 geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)+
                 theme(axis.title = element_text(size = 20))+
                 theme(axis.text = element_text(size = 15, colour="black"))+ 
@@ -1245,7 +1236,7 @@ shinyServer(function(input, output,session) {
               x2_melt_named <- data.frame(x2_melt,type=type)
       
               p <-ggplot(data = x2_melt_named) + 
-                labs( x = "Year")+
+                labs( x = "Year", y = "Number")+
                 geom_line(mapping = aes(x = time, y = value,color = variable,linetype = type),size = 1.5)+
                 scale_linetype_manual(values=c( "dotted","solid"))+
                 theme(axis.title = element_text(size = 20))+
@@ -1271,7 +1262,7 @@ shinyServer(function(input, output,session) {
             if(input$screening == 3){
               
               x_melt_base <- reshape2::melt(x_base, id="time")
-              ggplot(data = x_melt_base) + 
+              ggplot(data = x_melt_base, y = "Number") + 
                 labs( x = "Year")+
                 geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)+
                 theme(axis.title = element_text(size = 20))+
@@ -1288,22 +1279,41 @@ shinyServer(function(input, output,session) {
               
         
           
-              type <- c(rep("New Screening Scheme",length(out_df()[,1])),rep("Baseline",length(out_df()[,1])))
-              x_melt <- reshape2::melt(x, id="time")
-              x_melt_base <- reshape2::melt(x_base, id="time")
-              x2 <- as.data.frame(rbind(x,x_base))
-              x2_melt <-melt(x2, id="time")
-              x2_melt_named <- data.frame(x2_melt,type=type)
+              # type <- c(rep("New Screening Scheme",length(out_df()[,1])),rep("Baseline",length(out_df()[,1])))
+              # x_melt <- reshape2::melt(x, id="time")
+              # x_melt_base <- reshape2::melt(x_base, id="time")
+              # x2 <- as.data.frame(rbind(x,x_base))
+              # x2_melt <-melt(x2, id="time")
+              # x2_melt_named <- data.frame(x2_melt,type=type)
+              # 
+              # p <-ggplot(data = x2_melt_named) + 
+              #   labs( x = "Year", y = "Number")+
+              #   geom_line(mapping = aes(x = time, y = value,color = variable,linetype = type),size = 1.5)+
+              #   scale_linetype_manual(values=c( "dotted","solid"))+
+              #   theme(axis.title = element_text(size = 20))+
+              #   theme(axis.text = element_text(size = 15, colour="black"))+ 
+              #   theme(legend.title = element_blank())
+              # ggplotly(p)%>%
+              #   layout(legend = list(font = list(size = 15) ))
               
-              p <-ggplot(data = x2_melt_named) + 
-                labs( x = "Year")+
-                geom_line(mapping = aes(x = time, y = value,color = variable,linetype = type),size = 1.5)+
-                scale_linetype_manual(values=c( "dotted","solid"))+
-                theme(axis.title = element_text(size = 20))+
-                theme(axis.text = element_text(size = 15, colour="black"))+ 
-                theme(legend.title = element_blank())
-              ggplotly(p)%>%
-                layout(legend = list(font = list(size = 15) ))
+              ay <- list(
+                tickfont = list(color = "red"),
+                overlaying = "y",
+                side = "right"
+              )
+              fig <- plot_ly()
+              fig <- fig %>% add_lines(x = x[,1], y = x[,3], name =  "New Screening Scheme - Total HCV",line = list(color = 'rgb(0, 0, 0)'))
+              fig <- fig %>% add_lines(x = x_base[,1], y = x_base[,3], name =  "Baselineal - Total HCV", line = list(color = 'rgb(0, 0, 0)', dash = 'dash'))
+              fig <- fig %>% add_lines(x = x[,1], y = x[,2], name =  "New Screening Scheme - Total HCC", yaxis = "y2",line = list(color = 'rgb(255, 0, 0)'))
+              fig <- fig %>% add_lines(x = x_base[,1], y = x_base[,2], name =  "Baselineal - Total HCC", yaxis = "y2",line = list(color = 'rgb(255, 0, 0)', dash = 'dash'))
+              fig <- fig %>% layout(
+                title = "Double Y Axis", yaxis2 = ay,
+                xaxis = list(title="Year"),
+                yaxis = list (title = "Number"), 
+                legend = list(font = list(size = 15))
+              )
+              fig
+              
             }
         })
       })
@@ -1321,7 +1331,7 @@ shinyServer(function(input, output,session) {
           if(input$screening == 3){
             
             x_melt_base <- reshape2::melt(x_base, id="time")
-            ggplot(data = x_melt_base) + 
+            ggplot(data = x_melt_base, y = "Number") + 
               labs( x = "Year")+
               geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)+
               theme(axis.title = element_text(size = 20))+
@@ -1346,7 +1356,7 @@ shinyServer(function(input, output,session) {
             x2_melt_named <- data.frame(x2_melt,type=type)
             
             p <-ggplot(data = x2_melt_named) + 
-              labs( x = "Year")+
+              labs( x = "Year", y = "Number")+
               geom_line(mapping = aes(x = time, y = value,color = variable,linetype = type),size = 1.5)+
               scale_linetype_manual(values=c( "dotted","solid"))+
               theme(axis.title = element_text(size = 20))+
@@ -1373,7 +1383,7 @@ shinyServer(function(input, output,session) {
               
               x_melt_base <- reshape2::melt(x_base, id="time")
               ggplot(data = x_melt_base) + 
-                labs( x = "Year")+
+                labs( x = "Year", y = "Number")+
                 geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)+
                 theme(axis.title = element_text(size = 20))+
                 theme(axis.text = element_text(size = 15, colour="black"))+ 
@@ -1396,7 +1406,7 @@ shinyServer(function(input, output,session) {
               x2_melt_named <- data.frame(x2_melt,type=type)
               
               p <-ggplot(data = x2_melt_named) + 
-                labs( x = "Year")+
+                labs( x = "Year", y = "Number")+
                 geom_line(mapping = aes(x = time, y = value,color = variable,linetype = type),size = 1.5)+
                 scale_linetype_manual(values=c( "dotted","solid"))+
                 theme(axis.title = element_text(size = 20))+
@@ -1422,7 +1432,7 @@ shinyServer(function(input, output,session) {
 
               x_melt_base <- reshape2::melt(x_base, id="time")
               ggplot(data = x_melt_base) + 
-                labs( x = "Year")+
+                labs( x = "Year", y = "Number")+
                 geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)+
                 theme(axis.title = element_text(size = 20))+
                 theme(axis.text = element_text(size = 15, colour="black"))+ 
@@ -1439,7 +1449,7 @@ shinyServer(function(input, output,session) {
                 x_melt_base <- reshape2::melt(x_base, id="time")
                 
                 ggplot(data = x_melt) + 
-                  labs( x = "Year")+
+                  labs( x = "Year", y = "Number")+
                   geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)+
                   geom_line(data=x_melt_base , mapping = aes(x = time, y = value,color = variable),size = 1.5,linetype = "dashed")+
                   theme(axis.title = element_text(size = 20))+
@@ -1489,7 +1499,122 @@ shinyServer(function(input, output,session) {
       })
     })
     
+    output$table_screening <- DT::renderDataTable({
+      if (v$doPlot == FALSE) return()
+      screening_cost <- dia$screening_cost
+      screening_table <-data.frame(out_df()[c(21:62),c(1,33)], screening_cost= out_df()[c(21:62),33]*screening_cost)
+      
+      withProgress(message = 'Calculation in progress', {  
+        DT::datatable(screening_table,
+                      options = list( pageLength = length(out_df()[c(21:62),1]),paging = FALSE
+                                      )
+                      )
+        
+      })
+    })
     
+    # dia <-  reactiveValues(screening_name = "",
+    #                        screening_sens = 0,
+    #                        screening_spec = 0,
+    #                        screening_cost = 0,
+    #                        confirming_name = "",
+    #                        confirming_sens = 0,
+    #                        confirming_spec = 0,
+    #                        confirming_cost = 0
+    # )
+    
+    output$table_Treatment <- DT::renderDataTable({
+      if (v$doPlot == FALSE) return()
+      dia_mutiply <- dia$screening_sens/100*dia$screening_spec/100*dia$confirming_sens/100*dia$confirming_spec/100
+      Treatment_people <-data.frame(round(out_df()[c(21:62),33]*dia_mutiply))
+      Treatment_cost <- Treatment$cost
+      Treatmen_table <- data.frame(out_df()[c(21:62),1],Treatment_people,Treatment_people*Treatment_cost)
+      names(Treatmen_table)[1] <- "Times"
+      names(Treatmen_table)[2] <- "Treatment people"
+      names(Treatmen_table)[3] <- "Treatment cost"
+      
+      withProgress(message = 'Calculation in progress', {  
+        DT::datatable(Treatmen_table,
+                      options = list( pageLength = length(out_df()[c(21:62),1]),paging = FALSE
+                      )
+        )
+        
+      })
+    })
+    
+    
+    output$dif_TotalHCC <- renderPlotly({
+      if (v$doPlot == FALSE) return()
+          dif_TotalHCC_graph <- data.frame(out_df()[c(21:62),1], ((out_df_base()[c(21:62),26]-out_df()[c(21:62),26])/out_df_base()[c(21:62),26]*100))
+          names(dif_TotalHCC_graph)[1] <- "Times"
+          names(dif_TotalHCC_graph)[2] <- "Dif_TotalHCC"
+          p <-ggplot(data = dif_TotalHCC_graph) + 
+            labs( x = "Year", y = "Percent (%)")+
+            geom_line(mapping = aes(x = Times, y = Dif_TotalHCC),size = 1.5)+
+            theme(legend.title = element_blank())
+    })
+    
+    output$dif_Prevalence <- renderPlotly({
+      if (v$doPlot == FALSE) return()
+      dif_TotalHCC_graph <- data.frame(out_df()[c(21:62),1], ((out_df_base()[c(21:62),23]-out_df()[c(21:62),23])/out_df_base()[c(21:62),23]*100))
+      names(dif_TotalHCC_graph)[1] <- "Times"
+      names(dif_TotalHCC_graph)[2] <- "Dif_Prevalence"
+      p <-ggplot(data = dif_TotalHCC_graph) + 
+        labs( x = "Year", y = "Percent (%)")+
+        geom_line(mapping = aes(x = Times, y = Dif_Prevalence),size = 1.5)+
+        theme(legend.title = element_blank())
+    })
+    
+    output$dif_incidenceHCC <- renderPlotly({
+      if (v$doPlot == FALSE) return()
+      dif_incidenceHCC_graph <- data.frame(out_df()[c(21:62),1], ((out_df_base()[c(21:62),29]-out_df()[c(21:62),29])/out_df_base()[c(21:62),29]*100))
+      names(dif_incidenceHCC_graph)[1] <- "Times"
+      names(dif_incidenceHCC_graph)[2] <- "Dif_incidenceHCC"
+      p <-ggplot(data = dif_incidenceHCC_graph) + 
+        labs( x = "Year", y = "Percent (%)")+
+        geom_line(mapping = aes(x = Times, y = Dif_incidenceHCC),size = 1.5)+
+        theme(legend.title = element_blank())
+    })
+    output$dif_deathHCC <- renderPlotly({
+      if (v$doPlot == FALSE) return()
+      dif_deathHCC_graph <- data.frame(out_df()[c(21:62),1], ((out_df_base()[c(21:62),17]-out_df()[c(21:62),17])/out_df_base()[c(21:62),17]*100))
+      names(dif_deathHCC_graph)[1] <- "Times"
+      names(dif_deathHCC_graph)[2] <- "Dif_deathHCC"
+      p <-ggplot(data = dif_deathHCC_graph) + 
+        labs( x = "Year", y = "Percent (%)")+
+        geom_line(mapping = aes(x = Times, y = Dif_deathHCC),size = 1.5)+
+        theme(legend.title = element_blank())
+    })
+    output$dif_totaldeath <- renderPlotly({
+      if (v$doPlot == FALSE) return()
+      dif_totaldeath_graph <- data.frame(out_df()[c(21:62),1], ((out_df_base()[c(21:62),15]-out_df()[c(21:62),15])/out_df_base()[c(21:62),15]*100))
+      names(dif_totaldeath_graph)[1] <- "Times"
+      names(dif_totaldeath_graph)[2] <- "Dif_totaldeath"
+      p <-ggplot(data = dif_totaldeath_graph) + 
+        labs( x = "Year", y = "Percent (%)")+
+        geom_line(mapping = aes(x = Times, y = Dif_totaldeath),size = 1.5)+
+        theme(legend.title = element_blank())
+    })
+    output$dif_Treatment <- renderPlotly({
+      if (v$doPlot == FALSE) return()
+      dif_Treatment_graph <- data.frame(out_df()[c(21:62),1], ((out_df_base()[c(21:62),32]-out_df()[c(21:62),32])/out_df_base()[c(21:62),32]*100))
+      names(dif_Treatment_graph)[1] <- "Times"
+      names(dif_Treatment_graph)[2] <- "Dif_Treatment"
+      p <-ggplot(data = dif_Treatment_graph) + 
+        labs( x = "Year", y = "Percent (%)")+
+        geom_line(mapping = aes(x = Times, y = Dif_Treatment),size = 1.5)+
+        theme(legend.title = element_blank())
+    })
+    output$dif_totaldeath <- renderPlotly({
+      if (v$doPlot == FALSE) return()
+      dif_totaldeath_graph <- data.frame(out_df()[c(21:62),1], ((out_df_base()[c(21:62),15]-out_df()[c(21:62),15])/out_df_base()[c(21:62),15]*100))
+      names(dif_totaldeath_graph)[1] <- "Times"
+      names(dif_totaldeath_graph)[2] <- "Dif_totaldeath"
+      p <-ggplot(data = dif_totaldeath_graph) + 
+        labs( x = "Year", y = "Percent (%)")+
+        geom_line(mapping = aes(x = Times, y = Dif_totaldeath),size = 1.5)+
+        theme(legend.title = element_blank())
+    })
 
     
     

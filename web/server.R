@@ -1202,11 +1202,20 @@ shinyServer(function(input, output,session) {
       
       x <- out_df()[,c(1,15,16,17)]
       x_base <- out_df_base()[,c(1,15,16,17)]
+      names(x)[2] <- "Total"
+      names(x)[3] <- "From Cirrhosis "
+      names(x)[4] <- "from HCC"
+      
+      names(x_base)[2] <- "Total"
+      names(x_base)[3] <- "From Cirrhosis "
+      names(x_base)[4] <- "from HCC"
       
       if(input$showNewDeath){
         
         x <- out_df()[,c(1,15,16,17,28)]
         x_base <- out_df_base()[,c(1,15,16,17,28)]
+        
+        
       }
       
       isolate({
@@ -1234,7 +1243,7 @@ shinyServer(function(input, output,session) {
               x2 <- as.data.frame(rbind(x,x_base))
               x2_melt <-melt(x2, id="time")
               x2_melt_named <- data.frame(x2_melt,type=type)
-      
+              
               p <-ggplot(data = x2_melt_named) + 
                 labs( x = "Year", y = "Number")+
                 geom_line(mapping = aes(x = time, y = value,color = variable,linetype = type),size = 1.5)+
@@ -1299,7 +1308,8 @@ shinyServer(function(input, output,session) {
               ay <- list(
                 tickfont = list(color = "red"),
                 overlaying = "y",
-                side = "right"
+                side = "right",
+                title = "Number"
               )
               fig <- plot_ly()
               fig <- fig %>% add_lines(x = x[,1], y = x[,3], name =  "New Screening Scheme - Total HCV",line = list(color = 'rgb(0, 0, 0)'))
@@ -1307,7 +1317,7 @@ shinyServer(function(input, output,session) {
               fig <- fig %>% add_lines(x = x[,1], y = x[,2], name =  "New Screening Scheme - Total HCC", yaxis = "y2",line = list(color = 'rgb(255, 0, 0)'))
               fig <- fig %>% add_lines(x = x_base[,1], y = x_base[,2], name =  "Baselineal - Total HCC", yaxis = "y2",line = list(color = 'rgb(255, 0, 0)', dash = 'dash'))
               fig <- fig %>% layout(
-                title = "Double Y Axis", yaxis2 = ay,
+                yaxis2 = ay,
                 xaxis = list(title="Year"),
                 yaxis = list (title = "Number"), 
                 legend = list(font = list(size = 15))
@@ -1322,8 +1332,8 @@ shinyServer(function(input, output,session) {
     output$distPlot8 <- renderPlotly({
       
       if (v$doPlot == FALSE) return()
-      x <- out_df()[,c(1,29)]
-      x_base <- out_df_base()[,c(1,29)]
+      x <- out_df()[c(21:62),c(1,29)]
+      x_base <- out_df_base()[c(21:62),c(1,29)]
       
       isolate({
         withProgress(message = 'Calculation in progress', {
@@ -1348,7 +1358,7 @@ shinyServer(function(input, output,session) {
             
             
             
-            type <- c(rep("New Screening Scheme",length(out_df()[,1])),rep("Baseline",length(out_df()[,1])))
+            type <- c(rep("New Screening Scheme",length(out_df()[c(21:62),1])),rep("Baseline",length(out_df()[c(21:62),1])))
             x_melt <- reshape2::melt(x, id="time")
             x_melt_base <- reshape2::melt(x_base, id="time")
             x2 <- as.data.frame(rbind(x,x_base))
@@ -1513,6 +1523,26 @@ shinyServer(function(input, output,session) {
       })
     })
     
+    output$table_cost <- DT::renderDataTable({
+      if (v$doPlot == FALSE) return()
+      screening_cost <- dia$screening_cost
+      Treatment_people <-data.frame(round(out_df()[c(21:62),32]))
+      Treatment_cost <- Treatment$cost
+      Treatmen_Cost_table <- data.frame(out_df()[c(21:62),c(1,33)],out_df()[c(21:62),33]*screening_cost,Treatment_people,Treatment_people*Treatment_cost)
+      names(Treatmen_Cost_table)[1] <- "Times"
+      names(Treatmen_Cost_table)[3] <- "screening cost"
+      names(Treatmen_Cost_table)[4] <- "Treatment people"
+      names(Treatmen_Cost_table)[5] <- "Treatment cost"
+      
+      withProgress(message = 'Calculation in progress', {  
+        DT::datatable(Treatmen_Cost_table,
+                      options = list( pageLength = length(out_df()[c(21:62),1]),paging = FALSE
+                      )
+        )
+        
+      })
+    })
+    
     # dia <-  reactiveValues(screening_name = "",
     #                        screening_sens = 0,
     #                        screening_spec = 0,
@@ -1577,7 +1607,9 @@ shinyServer(function(input, output,session) {
     })
     output$dif_deathHCC <- renderPlotly({
       if (v$doPlot == FALSE) return()
-      dif_deathHCC_graph <- data.frame(out_df()[c(21:62),1], ((out_df_base()[c(21:62),17]-out_df()[c(21:62),17])/out_df_base()[c(21:62),17]*100))
+      deathHCC_new <- out_df()[c(22:62),17] - out_df()[c(21:61),17]
+      deathHCC_base <- out_df_base()[c(22:62),17] - out_df_base()[c(21:61),17]
+      dif_deathHCC_graph <- data.frame(out_df()[c(22:62),1], ((deathHCC_base - deathHCC_new)/deathHCC_base*100))
       names(dif_deathHCC_graph)[1] <- "Times"
       names(dif_deathHCC_graph)[2] <- "Dif_deathHCC"
       p <-ggplot(data = dif_deathHCC_graph) + 
@@ -1587,27 +1619,9 @@ shinyServer(function(input, output,session) {
     })
     output$dif_totaldeath <- renderPlotly({
       if (v$doPlot == FALSE) return()
-      dif_totaldeath_graph <- data.frame(out_df()[c(21:62),1], ((out_df_base()[c(21:62),15]-out_df()[c(21:62),15])/out_df_base()[c(21:62),15]*100))
-      names(dif_totaldeath_graph)[1] <- "Times"
-      names(dif_totaldeath_graph)[2] <- "Dif_totaldeath"
-      p <-ggplot(data = dif_totaldeath_graph) + 
-        labs( x = "Year", y = "Percent (%)")+
-        geom_line(mapping = aes(x = Times, y = Dif_totaldeath),size = 1.5)+
-        theme(legend.title = element_blank())
-    })
-    output$dif_Treatment <- renderPlotly({
-      if (v$doPlot == FALSE) return()
-      dif_Treatment_graph <- data.frame(out_df()[c(21:62),1], ((out_df_base()[c(21:62),32]-out_df()[c(21:62),32])/out_df_base()[c(21:62),32]*100))
-      names(dif_Treatment_graph)[1] <- "Times"
-      names(dif_Treatment_graph)[2] <- "Dif_Treatment"
-      p <-ggplot(data = dif_Treatment_graph) + 
-        labs( x = "Year", y = "Percent (%)")+
-        geom_line(mapping = aes(x = Times, y = Dif_Treatment),size = 1.5)+
-        theme(legend.title = element_blank())
-    })
-    output$dif_totaldeath <- renderPlotly({
-      if (v$doPlot == FALSE) return()
-      dif_totaldeath_graph <- data.frame(out_df()[c(21:62),1], ((out_df_base()[c(21:62),15]-out_df()[c(21:62),15])/out_df_base()[c(21:62),15]*100))
+      totaldeath_new <- out_df()[c(22:62),15] - out_df()[c(21:61),15]
+      totaldeath_base <- out_df_base()[c(22:62),15] - out_df_base()[c(21:61),15]
+      dif_totaldeath_graph <- data.frame(out_df()[c(22:62),1], ((totaldeath_base-totaldeath_new)/totaldeath_base*100))
       names(dif_totaldeath_graph)[1] <- "Times"
       names(dif_totaldeath_graph)[2] <- "Dif_totaldeath"
       p <-ggplot(data = dif_totaldeath_graph) + 
@@ -1616,6 +1630,24 @@ shinyServer(function(input, output,session) {
         theme(legend.title = element_blank())
     })
 
+    output$daa_cost <- renderPlotly({
+      if (v$doPlot == FALSE) return()
+      cost_daa_new <- Treatment$cost/30
+      daa_graph <- data.frame(out_df()[c(21:62),1], out_df()[c(21:62),32]*cost_daa_new,out_df_base()[c(21:62),32]*800)
+      names(daa_graph)[1] <- "Times"
+      names(daa_graph)[2] <- "DAA_cost_New"
+      names(daa_graph)[3] <- "DAA_cost_Baseline"
+      daa_graph_melt <-melt(daa_graph, id="Times")
+      p <-ggplot(data = daa_graph_melt) + 
+        labs( x = "Year", y = "Cost (USD)")+
+        geom_line(mapping = aes(x = Times, y = value,linetype = variable),size = 1.5)+
+        scale_linetype_manual(values=c( "dotted","solid"))+
+        theme(axis.title = element_text(size = 20))+
+        theme(axis.text = element_text(size = 15, colour="black"))+ 
+        theme(legend.title = element_blank())
+      ggplotly(p)%>%
+        layout(legend = list(x = 0.75, y = 0.9 ,font = list(size = 15) ))
+    })
     
     
     

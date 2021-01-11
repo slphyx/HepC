@@ -27,11 +27,13 @@ shinyServer(function(input, output,session) {
   
 
   v <- reactiveValues(doPlot = FALSE)
-  options(scipen=6)
+  options(scipen=8)
   observeEvent(input$go, {
     # 0 will be coerced to FALSE
     # 1+ will be coerced to TRUE
     v$doPlot <- input$go
+    flie_download$parms <- parms()
+    flie_download$table <- out_df()
   })
   
   observeEvent(input$reset, {
@@ -64,6 +66,15 @@ shinyServer(function(input, output,session) {
                         Pos = 0  #Positive True
   )
   
+  Info <-reactiveValues( screening = "By age",
+                         treatment = "No novel treatment"
+    
+  )
+  
+  flie_download <- reactiveValues( parms = 0,
+                                   table =0
+  )
+  
   observe({
     if(input$screening!=3){
       if(v$doPlot == F){
@@ -71,11 +82,13 @@ shinyServer(function(input, output,session) {
         shinyjs::hide("Lineplot2")
         shinyjs::hide("Lineplot3")
         shinyjs::hide("Lineplot4")
+
       }else{
         shinyjs::show("Lineplot")
         shinyjs::show("Lineplot2")
         shinyjs::show("Lineplot3")
         shinyjs::show("Lineplot4")
+
       }
     }else{
       shinyjs::hide("Lineplot")
@@ -96,6 +109,7 @@ shinyServer(function(input, output,session) {
       enable("Treatment")
       enable("care")
       shinyjs::hide("Scr_table")
+      Info$screening <- "By age"
       # 41-50
       if(input$age_s == 1){
         p_t$S_screening <- 	11169018
@@ -109,6 +123,8 @@ shinyServer(function(input, output,session) {
         p_t$S_screening <- 	21540611
         p_t$Pos <- 	21540611*0.0418*0.0262
       }
+      flie_download$parms <- parms()
+      flie_download$table <- out_df()
     }
     else if(input$screening==2){
       disable("age_s")
@@ -122,6 +138,7 @@ shinyServer(function(input, output,session) {
       if(!is.null(x)){
         shinyjs::show("Scr_table")
         shinyjs::show("Scr_th")
+        Info$screening <- "By risk group"
 
         if(!length(which(x == 1)) == 0){
           shinyjs::show("Scr_td1")
@@ -209,6 +226,9 @@ shinyServer(function(input, output,session) {
       }
       p_t$S_screening <- rg$hiv_people + rg$idu_people + rg$msm_people + rg$rb_people + rg$bd_people + rg$pri_people + rg$ckd_people
       p_t$Pos <- rg$hiv_pos + rg$idu_pos + rg$msm_pos + rg$rb_pos + rg$bd_pos + rg$pri_pos + rg$ckd_pos
+      
+      flie_download$parms <- parms()
+      flie_download$table <- out_df()
     }
     
     else if(input$screening==3){
@@ -220,6 +240,8 @@ shinyServer(function(input, output,session) {
       disable("care")
       p_t$S_screening <- 0
       p_t$Pos <- 0
+      flie_download$parms <- parms_base()
+      flie_download$table <- out_df_base()
     }
 
   })
@@ -521,6 +543,7 @@ shinyServer(function(input, output,session) {
       Treatment$new_cureC3 <- 0.6
       Treatment$new_cureC4 <- 0.4
       Treatment$cost <- 0
+      Info$treatment <- "No novel treatment"
       #drug 2
     }else if(input$Treatment == 1){
       Treatment$new_cureF0 <- 0.98
@@ -532,6 +555,7 @@ shinyServer(function(input, output,session) {
       Treatment$new_cureC3 <- 0.98
       Treatment$new_cureC4 <- 0.98
       Treatment$cost <- input$Tre1_Cost
+      Info$treatment <- "Sofosbuvir with Velpatasvir"
       #drug 3
     }else if(input$Treatment == 2){
       Treatment$new_cureF0 <- 0.826
@@ -543,6 +567,7 @@ shinyServer(function(input, output,session) {
       Treatment$new_cureC3 <- 0.826
       Treatment$new_cureC4 <- 0.826
       Treatment$cost <- input$Tre2_Cost
+      Info$treatment <- "Sofosbuvir with Ledipasvir"
       #drug 4
     }else if(input$Treatment == 3){
       Treatment$new_cureF0 <- 0.874
@@ -554,6 +579,7 @@ shinyServer(function(input, output,session) {
       Treatment$new_cureC3 <- 0.874
       Treatment$new_cureC4 <- 0.874
       Treatment$cost <- input$Tre3_Cost
+      Info$treatment <- "Sofosbuvir with Ravidasvir"
       #Another drug
     }else{
       Treatment$new_cureF0 <- input$Input_Tre_Eff
@@ -565,6 +591,7 @@ shinyServer(function(input, output,session) {
       Treatment$new_cureC3 <- input$Input_Tre_Eff
       Treatment$new_cureC4 <- input$Input_Tre_Eff
       Treatment$cost <- input$Input_Tre_Cost
+      Info$treatment <- "Another durg"
     }
     
   })
@@ -756,10 +783,10 @@ shinyServer(function(input, output,session) {
   #section 1
   observeEvent(input$resetSect1, {
     #reset("P0")
-    updateSliderInput(session, inputId = "P0",value = 60000000)
-    updateSliderInput(session, inputId = "K", value = 70000000)
+    updateSliderInput(session, inputId = "P0",value = 61600000)
+    updateSliderInput(session, inputId = "K", value = 68500000)
     updateSliderInput(session, inputId = "r", value = 0.16)
-    updateSliderInput(session, inputId = "beta", value = 0.32)
+    updateSliderInput(session, inputId = "beta", value = 0.02)
     updateSliderInput(session, inputId = "Fi", value = 1.15)
   })
   
@@ -793,32 +820,33 @@ shinyServer(function(input, output,session) {
 
     sourceCpp('p1_scr_SS.cpp')
     
+    
     parms <- reactive({
       list(
-        P0=input$P0,       #popstat(YEAR=1999)
-        K= input$K,        #Maximum population (carrying capacity)
+        P0= input$P0,       #popstat(YEAR=1999)
+        K=  input$K,         #Maximum population (carrying capacity)
         r = input$r,        #Population growth rate (logistic growth curve)
         flowin = input$Fi*(10^-8),
         caset0 =  input$P0*0.03,      #0.03*P0,
         standard_start = 2004,
         new_start = 2019,
         nscr = 0.05,
-        scr_yr = 10,
-        scr_cov = (23590+143320)/10,      #0.9/scr_yr,
+        scr_yr = p_t$scr_yr,
+        scr_cov = round(p_t$Pos/p_t$scr_yr),      #0.9/scr_yr,
         sens = 0.985,
-        pF0scr = 0.07,
-        pF1scr = 0.03,
-        pF2scr=0.49,
-        pF3scr=0.12,
-        pC1scr=0.0012,
-        pC2scr=0.0012,
-        pC3scr=0.0099,
-        pC4scr=0.15,
+        pF0scr = 0.1439,
+        pF1scr = 0.2969,
+        pF2scr=0.1098,
+        pF3scr=0.1466,
+        pC1scr=0.1998,
+        pC2scr=0.0819,
+        pC3scr=0.0096,
+        pC4scr=0.0011,
         
         #Natural rate of death
-        natdeath=0.0424, #Unrelated to cirrhosis and hepatitis C
+        natdeath=0.04, #Unrelated to cirrhosis and hepatitis C
         
-        beta= 0.02,              #Transmission coefficient
+        beta= input$beta,              #Transmission coefficient
         
         #standard treatment allocation
         F0std = 0.05,
@@ -832,14 +860,14 @@ shinyServer(function(input, output,session) {
         std_cureF2=0.7,
         std_cureF3=0.7,
         std_cureC1=0.7,
-        new_cureF0=0.985,
-        new_cureF1=0.985,
-        new_cureF2=0.985,
-        new_cureF3=0.985,
-        new_cureC1=0.985,
-        new_cureC2=0.985,
-        new_cureC3=0.985,
-        new_cureC4=0.985,
+        new_cureF0=0.98,
+        new_cureF1=0.98,
+        new_cureF2=0.98,
+        new_cureF3=0.98,
+        new_cureC1=0.98,
+        new_cureC2=0.98,
+        new_cureC3=0.98,
+        new_cureC4=0.98,
         
         #Progression of fibrosis
         f0f1=input$f0f1,       #Fibrosis stage F0 to F1
@@ -882,36 +910,17 @@ shinyServer(function(input, output,session) {
         #Transplantation
         tranc4=0.0015, #Transplantation rate in cirrhosis stage C4
         tranbA=0.0015, #Transplantation rate in HCC_BCLC_A
-        tranbB=0.0015, #Transplantation rate in HCC_BCLC_B
-      
-        
-        #Treatment efficacy
-        #Standard treatment response based on genotype (weighted average)
-        std_cureF0=0.72,
-        std_cureF1 =0.72,
-        std_cureF2 =0.72,
-        std_cureF3 =0.72,
-        std_cureC1 =0.72,
-        std_cureC2=0.72,
-        #Novel treatment response based on genotype (weighted average)
-        new_cureF0= 0.985,
-        new_cureF1= 0.985,
-        new_cureF2  = 0.985,
-        new_cureF3 = 0.985,
-        new_cureC1 = 0.985,
-        new_cureC2 = 0.985,
-        new_cureC3 = 0.985,
-        new_cureC4 = 0.985
+        tranbB=0.0015
         
       )
     })
     
     S <-reactive({
-      1*(parms()$P0 - parms()$caset0) 
+      1*(parms()$P0 - parms()$caset0)
     })
     
     
-    inits <- reactive({ 
+    inits <- reactive({
       c(
         S=S(),
         F0=0.2825*parms()$caset0,
@@ -947,6 +956,7 @@ shinyServer(function(input, output,session) {
       times <- seq(1999, 2060,by=1)
 
       out <- ode( y = inits(),times =  times, func = PanHepC, parms = parms())
+      # out <- ode( y = inits(),times =  times, func = PanHepC, parms = parms(), maxsteps = 5000, rtol = 1, atol = 1)
       
       out_df <- as.data.frame(out)
       out_df
@@ -994,7 +1004,7 @@ shinyServer(function(input, output,session) {
         K= 68508515,        #Maximum population (carrying capacity)
         r = 0.16,        #Population growth rate (logistic growth curve)
         flowin = 1.15*(10^-8),
-        caset0 =  input$P0*0.03,      #0.03*P0,
+        caset0 =  61623143*0.03,      #0.03*P0,
         standard_start = 2004,
         new_start = 2019,
         nscr = 0.05,
@@ -1027,14 +1037,14 @@ shinyServer(function(input, output,session) {
         std_cureF2=0.7,
         std_cureF3=0.7,
         std_cureC1=0.7,
-        new_cureF0=0.985,
-        new_cureF1=0.985,
-        new_cureF2=0.985,
-        new_cureF3=0.985,
-        new_cureC1=0.985,
-        new_cureC2=0.985,
-        new_cureC3=0.985,
-        new_cureC4=0.985,
+        new_cureF0=0.98,
+        new_cureF1=0.98,
+        new_cureF2=0.98,
+        new_cureF3=0.98,
+        new_cureC1=0.98,
+        new_cureC2=0.98,
+        new_cureC3=0.98,
+        new_cureC4=0.98,
         
         #Progression of fibrosis
         f0f1= 0.117,       #Fibrosis stage F0 to F1
@@ -1077,27 +1087,9 @@ shinyServer(function(input, output,session) {
         #Transplantation
         tranc4=0.0015, #Transplantation rate in cirrhosis stage C4
         tranbA=0.0015, #Transplantation rate in HCC_BCLC_A
-        tranbB=0.0015, #Transplantation rate in HCC_BCLC_B
+        tranbB=0.0015 #Transplantation rate in HCC_BCLC_B
         
  
-        
-        #Treatment efficacy
-        #Standard treatment response based on genotype (weighted average)
-        std_cureF0=0.7,
-        std_cureF1 =0.7,
-        std_cureF2 =0.7,
-        std_cureF3 =0.7,
-        std_cureC1 =0.7,
-        std_cureC2=0.7,
-        #Novel treatment response based on genotype (weighted average)
-        new_cureF0= 0.98,
-        new_cureF1= 0.98,
-        new_cureF2  = 0.98,
-        new_cureF3 = 0.98,
-        new_cureC1 = 0.98,
-        new_cureC2 = 0.98,
-        new_cureC3 = 0.98,
-        new_cureC4 = 0.98
         
       )
       })
@@ -1157,7 +1149,7 @@ shinyServer(function(input, output,session) {
                 x_melt_base <- reshape2::melt(x_base, id="time")
                 p <-ggplot(data = x_melt_base) + 
                   labs( x = "Year", y = "Prevalence (%)")+
-                  geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)+
+                  geom_line(mapping = aes(x = time, y = value,color = variable),size = 1)+
                   theme(axis.title = element_text(size = 20))+
                   theme(axis.text = element_text(size = 15, colour="black"))+ 
                   theme(legend.title = element_blank(),
@@ -1182,7 +1174,7 @@ shinyServer(function(input, output,session) {
 
                 p <-ggplot(data = x2_melt_named) + 
                   labs( x = "Year", y = "Prevalence (%)")+
-                  geom_line(mapping = aes(x = time, y = value,linetype = type),size = 1.5)+
+                  geom_line(mapping = aes(x = time, y = value,linetype = type),size = 1)+
                   scale_linetype_manual(values=c( "dotted","solid"))+
                   theme(axis.title = element_text(size = 20))+
                   theme(axis.text = element_text(size = 15, colour="black"))+ 
@@ -1226,7 +1218,7 @@ shinyServer(function(input, output,session) {
               x_melt_base <- reshape2::melt(x_base, id="time")
               ggplot(data = x_melt_base) + 
                 labs( x = "Year", y = "Number")+
-                geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)+
+                geom_line(mapping = aes(x = time, y = value,color = variable),size = 1)+
                 theme(axis.title = element_text(size = 20))+
                 theme(axis.text = element_text(size = 15, colour="black"))+ 
                 theme(legend.title = element_text(size = 20),
@@ -1246,7 +1238,7 @@ shinyServer(function(input, output,session) {
               
               p <-ggplot(data = x2_melt_named) + 
                 labs( x = "Year", y = "Number")+
-                geom_line(mapping = aes(x = time, y = value,color = variable,linetype = type),size = 1.5)+
+                geom_line(mapping = aes(x = time, y = value,color = variable,linetype = type),size = 1)+
                 scale_linetype_manual(values=c( "dotted","solid"))+
                 theme(axis.title = element_text(size = 20))+
                 theme(axis.text = element_text(size = 15, colour="black"))+ 
@@ -1273,7 +1265,7 @@ shinyServer(function(input, output,session) {
               x_melt_base <- reshape2::melt(x_base, id="time")
               ggplot(data = x_melt_base, y = "Number") + 
                 labs( x = "Year")+
-                geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)+
+                geom_line(mapping = aes(x = time, y = value,color = variable),size = 1)+
                 theme(axis.title = element_text(size = 20))+
                 theme(axis.text = element_text(size = 15, colour="black"))+ 
                 theme(legend.title = element_text(size = 20),
@@ -1297,7 +1289,7 @@ shinyServer(function(input, output,session) {
               # 
               # p <-ggplot(data = x2_melt_named) + 
               #   labs( x = "Year", y = "Number")+
-              #   geom_line(mapping = aes(x = time, y = value,color = variable,linetype = type),size = 1.5)+
+              #   geom_line(mapping = aes(x = time, y = value,color = variable,linetype = type),size = 1)+
               #   scale_linetype_manual(values=c( "dotted","solid"))+
               #   theme(axis.title = element_text(size = 20))+
               #   theme(axis.text = element_text(size = 15, colour="black"))+ 
@@ -1313,9 +1305,9 @@ shinyServer(function(input, output,session) {
               )
               fig <- plot_ly()
               fig <- fig %>% add_lines(x = x[,1], y = x[,3], name =  "New Screening Scheme - Total HCV",line = list(color = 'rgb(0, 0, 0)'))
-              fig <- fig %>% add_lines(x = x_base[,1], y = x_base[,3], name =  "Baselineal - Total HCV", line = list(color = 'rgb(0, 0, 0)', dash = 'dash'))
+              fig <- fig %>% add_lines(x = x_base[,1], y = x_base[,3], name =  "Baseline - Total HCV", line = list(color = 'rgb(0, 0, 0)', dash = 'dash'))
               fig <- fig %>% add_lines(x = x[,1], y = x[,2], name =  "New Screening Scheme - Total HCC", yaxis = "y2",line = list(color = 'rgb(255, 0, 0)'))
-              fig <- fig %>% add_lines(x = x_base[,1], y = x_base[,2], name =  "Baselineal - Total HCC", yaxis = "y2",line = list(color = 'rgb(255, 0, 0)', dash = 'dash'))
+              fig <- fig %>% add_lines(x = x_base[,1], y = x_base[,2], name =  "Baseline - Total HCC", yaxis = "y2",line = list(color = 'rgb(255, 0, 0)', dash = 'dash'))
               fig <- fig %>% layout(
                 yaxis2 = ay,
                 xaxis = list(title="Year"),
@@ -1343,7 +1335,7 @@ shinyServer(function(input, output,session) {
             x_melt_base <- reshape2::melt(x_base, id="time")
             ggplot(data = x_melt_base, y = "Number") + 
               labs( x = "Year")+
-              geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)+
+              geom_line(mapping = aes(x = time, y = value,color = variable),size = 1)+
               theme(axis.title = element_text(size = 20))+
               theme(axis.text = element_text(size = 15, colour="black"))+ 
               theme(legend.title = element_text(size = 20),
@@ -1367,7 +1359,7 @@ shinyServer(function(input, output,session) {
             
             p <-ggplot(data = x2_melt_named) + 
               labs( x = "Year", y = "Number")+
-              geom_line(mapping = aes(x = time, y = value,color = variable,linetype = type),size = 1.5)+
+              geom_line(mapping = aes(x = time, y = value,color = variable,linetype = type),size = 1)+
               scale_linetype_manual(values=c( "dotted","solid"))+
               theme(axis.title = element_text(size = 20))+
               theme(axis.text = element_text(size = 15, colour="black"))+ 
@@ -1394,7 +1386,7 @@ shinyServer(function(input, output,session) {
               x_melt_base <- reshape2::melt(x_base, id="time")
               ggplot(data = x_melt_base) + 
                 labs( x = "Year", y = "Number")+
-                geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)+
+                geom_line(mapping = aes(x = time, y = value,color = variable),size = 1)+
                 theme(axis.title = element_text(size = 20))+
                 theme(axis.text = element_text(size = 15, colour="black"))+ 
                 theme(legend.title = element_text(size = 20),
@@ -1417,7 +1409,7 @@ shinyServer(function(input, output,session) {
               
               p <-ggplot(data = x2_melt_named) + 
                 labs( x = "Year", y = "Number")+
-                geom_line(mapping = aes(x = time, y = value,color = variable,linetype = type),size = 1.5)+
+                geom_line(mapping = aes(x = time, y = value,color = variable,linetype = type),size = 1)+
                 scale_linetype_manual(values=c( "dotted","solid"))+
                 theme(axis.title = element_text(size = 20))+
                 theme(axis.text = element_text(size = 15, colour="black"))+ 
@@ -1443,7 +1435,7 @@ shinyServer(function(input, output,session) {
               x_melt_base <- reshape2::melt(x_base, id="time")
               ggplot(data = x_melt_base) + 
                 labs( x = "Year", y = "Number")+
-                geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)+
+                geom_line(mapping = aes(x = time, y = value,color = variable),size = 1)+
                 theme(axis.title = element_text(size = 20))+
                 theme(axis.text = element_text(size = 15, colour="black"))+ 
                 theme(legend.title = element_text(size = 20),
@@ -1455,17 +1447,22 @@ shinyServer(function(input, output,session) {
             
             else {
 
-                x_melt <- reshape2::melt(x, id="time")
-                x_melt_base <- reshape2::melt(x_base, id="time")
+              type <- c(rep("New Screening Scheme",length(out_df()[,1])),rep("Baseline",length(out_df()[,1])))
+              x_melt <- reshape2::melt(x, id="time")
+              x_melt_base <- reshape2::melt(x_base, id="time")
+              x2 <- as.data.frame(rbind(x,x_base))
+              x2_melt <-melt(x2, id="time")
+              x2_melt_named <- data.frame(x2_melt,type=type)
                 
-                ggplot(data = x_melt) + 
-                  labs( x = "Year", y = "Number")+
-                  geom_line(mapping = aes(x = time, y = value,color = variable),size = 1.5)+
-                  geom_line(data=x_melt_base , mapping = aes(x = time, y = value,color = variable),size = 1.5,linetype = "dashed")+
-                  theme(axis.title = element_text(size = 20))+
-                  theme(axis.text = element_text(size = 15, colour="black"))+ 
-                  theme(legend.title = element_text(size = 20),
-                        legend.text = element_text(size = 15))
+              p <-ggplot(data = x2_melt_named) + 
+                labs( x = "Year", y = "Number")+
+                geom_line(mapping = aes(x = time, y = value,color = variable,linetype = type),size = 1)+
+                scale_linetype_manual(values=c( "dotted","solid"))+
+                theme(axis.title = element_text(size = 20))+
+                theme(axis.text = element_text(size = 15, colour="black"))+ 
+                theme(legend.title = element_blank())
+              ggplotly(p)%>%
+                layout(legend = list(font = list(size = 15) ))
                 }
         })
       })
@@ -1481,7 +1478,7 @@ shinyServer(function(input, output,session) {
       
       ggplot(data = x) + 
           labs( x = "Year")+
-        geom_line(mapping = aes(x = time, y =Total_Cost ),size = 1.5)+ 
+        geom_line(mapping = aes(x = time, y =Total_Cost ),size = 1)+ 
           theme(axis.title = element_text(size = 20))+
           theme(axis.text = element_text(size = 15, colour="black"))+ 
           theme(legend.title = element_text(size = 20),
@@ -1500,7 +1497,7 @@ shinyServer(function(input, output,session) {
           
           ggplot(data = x) + 
             labs( x = "Year")+
-            geom_line(mapping = aes(x = time, y =Total_Cost ),size = 1.5)+ 
+            geom_line(mapping = aes(x = time, y =Total_Cost ),size = 1)+ 
             theme(axis.title = element_text(size = 20))+
             theme(axis.text = element_text(size = 15, colour="black"))+ 
             theme(legend.title = element_text(size = 20),
@@ -1516,6 +1513,7 @@ shinyServer(function(input, output,session) {
       
       withProgress(message = 'Calculation in progress', {  
         DT::datatable(screening_table,
+                      rownames = FALSE,
                       options = list( pageLength = length(out_df()[c(21:62),1]),paging = FALSE
                                       )
                       )
@@ -1525,17 +1523,21 @@ shinyServer(function(input, output,session) {
     
     output$table_cost <- DT::renderDataTable({
       if (v$doPlot == FALSE) return()
-      screening_cost <- dia$screening_cost
+      screening_cost <- out_df()[c(21:62),33]*dia$screening_cost
       Treatment_people <-data.frame(round(out_df()[c(21:62),32]))
-      Treatment_cost <- Treatment$cost
-      Treatmen_Cost_table <- data.frame(out_df()[c(21:62),c(1,33)],out_df()[c(21:62),33]*screening_cost,Treatment_people,Treatment_people*Treatment_cost)
+      Treatment_cost <- Treatment_people*Treatment$cost
+      Total_cost <- screening_cost + Treatment_cost
+      Total_cost_dis <- Total_cost*0.97
+      Treatmen_Cost_table <- data.frame(out_df()[c(21:62),1],screening_cost,Treatment_cost,Total_cost,Total_cost_dis)
       names(Treatmen_Cost_table)[1] <- "Times"
-      names(Treatmen_Cost_table)[3] <- "screening cost"
-      names(Treatmen_Cost_table)[4] <- "Treatment people"
-      names(Treatmen_Cost_table)[5] <- "Treatment cost"
+      names(Treatmen_Cost_table)[2] <- "screening cost"
+      names(Treatmen_Cost_table)[3] <- "Treatment cost"
+      names(Treatmen_Cost_table)[4] <- "Total cost"
+      names(Treatmen_Cost_table)[5] <- "Total cost with discount(3%)"
       
       withProgress(message = 'Calculation in progress', {  
         DT::datatable(Treatmen_Cost_table,
+                      rownames = FALSE,
                       options = list( pageLength = length(out_df()[c(21:62),1]),paging = FALSE
                       )
         )
@@ -1565,6 +1567,7 @@ shinyServer(function(input, output,session) {
       
       withProgress(message = 'Calculation in progress', {  
         DT::datatable(Treatmen_table,
+                      rownames = FALSE,
                       options = list( pageLength = length(out_df()[c(21:62),1]),paging = FALSE
                       )
         )
@@ -1572,6 +1575,122 @@ shinyServer(function(input, output,session) {
       })
     })
     
+    #utility
+    #fibrosis[20:61]*0.73+compensate[20:61]*0.7+
+    #decompensate[20:61]*0.58+totalHCC[20:61]*0.58+
+    # diff(death_cir)[19:60]*27+diff(death_HCC)[19:60]*17
+    
+    output$table_Untility <- DT::renderDataTable({
+      if (v$doPlot == FALSE) return()
+      df_base <- out_df_base()
+      df_new <- out_df()
+      
+      attach(df_base)
+      #cost of screening using GeneEXpert
+      screen_base <- screen*10*30.41
+      #cost of treatment using Sof-Vel
+      treat_base <- treat_new*800*30.41
+      #cost of extra lab per treatment
+      extra_base <- -c((diff(fibrosis )+diff(compensate)+diff(decompensate)+diff(total_HCC)))*4000
+      #cost per visit
+      indirect_base <- fibrosis*4470+compensate*4380 + decompensate*6060 + total_HCC*9900
+      #cost per visit
+      complicate_base <-  compensate*86236 + decompensate*157755 + total_HCC*197961
+      #total cost from 2019 onwards
+      total_base <- screen_base[20:61]+treat_base[20:61]+
+        extra_base[19:60] +indirect_base[20:61] + complicate_base[20:61]
+      #total cost with 3% discount
+      total_base_dis<-total_base*(1/(1+0.03)^(0:41))
+      #total utility from 2019 (quality of life loss due to infection and death)
+      utility_base <- fibrosis[20:61]*0.73+compensate[20:61]*0.7+
+        decompensate[20:61]*0.58+total_HCC[20:61]*0.58+
+        diff(dthC14)[19:60]*27+diff(dthHCC)[19:60]*17
+      #total untility with 3% discount
+      utility_base_dis <- utility_base*(1/(1+0.03)^(0:41))
+      
+      detach()
+      attach(df_new)
+      
+      #cost of screening using GeneEXpert
+      screen_new <- c(rep(0,20),rep(2274933/1,1),rep(0,40)) *10*30.41
+      #cost of treatment using Sof-Vel
+      treat_new <- treat_new*800*30.41
+      #cost of extra lab per treatment
+      extra_new <- -c((diff(fibrosis)+diff(compensate)+diff(decompensate)+diff(total_HCC)))*4000
+      #cost per visit
+      indirect_new <- fibrosis*4470+compensate*4380 + decompensate*6060 + total_HCC*9900
+      #cost per visit
+      complicate_new <-  compensate*86236 + decompensate*157755 + total_HCC*197961
+      #total cost from 2019 onwards
+      total_new <- screen_new[20:61]+treat_new[20:61]+
+        extra_new[19:60] +indirect_new[20:61] + complicate_new[20:61]
+      #total cost with 3% discount
+      total_new_dis<-total_new*(1/(1+0.03)^(0:41))
+      #total utility from 2019 (quality of life loss due to infection and death)
+      utility_new <- fibrosis[20:61]*0.73+compensate[20:61]*0.7+
+        decompensate[20:61]*0.58+total_HCC[20:61]*0.58+
+        diff(dthC14)[19:60]*27+diff(dthHCC)[19:60]*17
+      #total untility with 3% discount
+      utility_new_dis <- utility_new*(1/(1+0.03)^(0:41))
+      
+      detach()
+      
+      
+      df <- out_df()
+      
+        if (v$doPlot == FALSE) return()
+      Untility <- data.frame(df[c(21:62),1],round(df[c(21:62),34]*0.73),
+                             round(df[c(21:62),35]*0.7),
+                             round(df[c(21:62),36]*0.58),
+                             round(df[c(21:62),c(26)]*0.58),
+                             round(df[c(21:62),c(15)]*27),
+                             round(df[c(21:62),c(17)]*17),
+                             round(utility_new),
+                             round(utility_new_dis)
+                             )
+      
+      names(Untility)[1] <- "Times"
+      names(Untility)[2] <- "Fibrosis"
+      names(Untility)[3] <- "Compensate"
+      names(Untility)[4] <- "Decompensate"
+      names(Untility)[5] <- "Total HCC"
+      names(Untility)[6] <- "Death"
+      names(Untility)[7] <- "Death HCC"
+      names(Untility)[8] <- "Untility"
+      names(Untility)[9] <- "Untility With discount"
+      
+      withProgress(message = 'Calculation in progress', {  
+        DT::datatable(Untility,
+                      rownames = FALSE,
+                      options = list( pageLength = length(out_df()[c(21:62),1]),paging = FALSE
+                      ) 
+        )
+        
+      })
+    })
+    
+    #utility plot
+    output$utility_plot <- renderPlotly({
+      if (v$doPlot == FALSE) return()
+      df <- out_df()
+      utility <- data.frame(df[c(21:62),1],df[c(21:62),34]*0.73,df[c(21:62),35]*0.7,df[c(21:62),36]*0.58,df[c(21:62),c(26)]*0.58)
+      
+      names(utility)[1] <- "Times"
+      names(utility)[2] <- "Fibrosis"
+      names(utility)[3] <- "Compensate"
+      names(utility)[4] <- "Decompensate"
+      names(utility)[5] <- "Total HCC"
+      
+      utility_melt <- reshape2::melt(utility, id="Times")
+      
+      ggplot(data = utility_melt) + 
+        labs( x = "Year", y = "Number")+
+        geom_line(mapping = aes(x = Times, y = value,color = variable),size = 1)+
+        theme(axis.title = element_text(size = 20))+
+        theme(axis.text = element_text(size = 15, colour="black"))+ 
+        theme(legend.title = element_text(size = 20),
+              legend.text = element_text(size = 15))
+    })
     
     output$dif_TotalHCC <- renderPlotly({
       if (v$doPlot == FALSE) return()
@@ -1580,7 +1699,7 @@ shinyServer(function(input, output,session) {
           names(dif_TotalHCC_graph)[2] <- "Dif_TotalHCC"
           p <-ggplot(data = dif_TotalHCC_graph) + 
             labs( x = "Year", y = "Percent (%)")+
-            geom_line(mapping = aes(x = Times, y = Dif_TotalHCC),size = 1.5)+
+            geom_line(mapping = aes(x = Times, y = Dif_TotalHCC),size = 1)+
             theme(legend.title = element_blank())
     })
     
@@ -1591,7 +1710,7 @@ shinyServer(function(input, output,session) {
       names(dif_TotalHCC_graph)[2] <- "Dif_Prevalence"
       p <-ggplot(data = dif_TotalHCC_graph) + 
         labs( x = "Year", y = "Percent (%)")+
-        geom_line(mapping = aes(x = Times, y = Dif_Prevalence),size = 1.5)+
+        geom_line(mapping = aes(x = Times, y = Dif_Prevalence),size = 1)+
         theme(legend.title = element_blank())
     })
     
@@ -1602,7 +1721,7 @@ shinyServer(function(input, output,session) {
       names(dif_incidenceHCC_graph)[2] <- "Dif_incidenceHCC"
       p <-ggplot(data = dif_incidenceHCC_graph) + 
         labs( x = "Year", y = "Percent (%)")+
-        geom_line(mapping = aes(x = Times, y = Dif_incidenceHCC),size = 1.5)+
+        geom_line(mapping = aes(x = Times, y = Dif_incidenceHCC),size = 1)+
         theme(legend.title = element_blank())
     })
     output$dif_deathHCC <- renderPlotly({
@@ -1614,7 +1733,7 @@ shinyServer(function(input, output,session) {
       names(dif_deathHCC_graph)[2] <- "Dif_deathHCC"
       p <-ggplot(data = dif_deathHCC_graph) + 
         labs( x = "Year", y = "Percent (%)")+
-        geom_line(mapping = aes(x = Times, y = Dif_deathHCC),size = 1.5)+
+        geom_line(mapping = aes(x = Times, y = Dif_deathHCC),size = 1)+
         theme(legend.title = element_blank())
     })
     output$dif_totaldeath <- renderPlotly({
@@ -1626,7 +1745,7 @@ shinyServer(function(input, output,session) {
       names(dif_totaldeath_graph)[2] <- "Dif_totaldeath"
       p <-ggplot(data = dif_totaldeath_graph) + 
         labs( x = "Year", y = "Percent (%)")+
-        geom_line(mapping = aes(x = Times, y = Dif_totaldeath),size = 1.5)+
+        geom_line(mapping = aes(x = Times, y = Dif_totaldeath),size = 1)+
         theme(legend.title = element_blank())
     })
 
@@ -1640,13 +1759,96 @@ shinyServer(function(input, output,session) {
       daa_graph_melt <-melt(daa_graph, id="Times")
       p <-ggplot(data = daa_graph_melt) + 
         labs( x = "Year", y = "Cost (USD)")+
-        geom_line(mapping = aes(x = Times, y = value,linetype = variable),size = 1.5)+
+        geom_line(mapping = aes(x = Times, y = value,linetype = variable),size = 1)+
         scale_linetype_manual(values=c( "dotted","solid"))+
         theme(axis.title = element_text(size = 20))+
         theme(axis.text = element_text(size = 15, colour="black"))+ 
         theme(legend.title = element_blank())
       ggplotly(p)%>%
         layout(legend = list(x = 0.75, y = 0.9 ,font = list(size = 15) ))
+    })
+    
+    output$ICER <- renderPlot({
+      if (v$doPlot == FALSE) return()
+      df_base <- out_df_base()[1:61,]
+      df_new <- out_df()[1:61,]
+      
+      attach(df_base)
+      #cost of screening using GeneEXpert
+      screen_base <- screen*10*30.41
+      #cost of treatment using Sof-Vel
+      treat_base <- treat_new*800*30.41
+      #cost of extra lab per treatment
+      extra_base <- -c((diff(fibrosis )+diff(compensate)+diff(decompensate)+diff(total_HCC)))*4000
+      #cost per visit
+      indirect_base <- fibrosis*4470+compensate*4380 + decompensate*6060 + total_HCC*9900
+      #cost per visit
+      complicate_base <-  compensate*86236 + decompensate*157755 + total_HCC*197961
+      #total cost from 2019 onwards
+      total_base <- screen_base[20:61]+treat_base[20:61]+
+        extra_base[19:60] +indirect_base[20:61] + complicate_base[20:61]
+      #total cost with 3% discount
+      total_base_dis<-total_base*(1/(1+0.03)^(0:41))
+      #total utility from 2019 (quality of life loss due to infection and death)
+      utility_base <- fibrosis[20:61]*0.73+compensate[20:61]*0.7+
+        decompensate[20:61]*0.58+total_HCC[20:61]*0.58+
+        diff(dthC14)[19:60]*27+diff(dthHCC)[19:60]*17
+      #total untility with 3% discount
+      utility_base_dis <- utility_base*(1/(1+0.03)^(0:41))
+      
+      detach()
+      attach(df_new)
+
+      #cost of screening using GeneEXpert
+      screen_new <- c(rep(0,20),rep(2274933/1,1),rep(0,40)) *10*30.41
+      #cost of treatment using Sof-Vel
+      treat_new <- treat_new*800*30.41
+      #cost of extra lab per treatment
+      extra_new <- -c((diff(fibrosis)+diff(compensate)+diff(decompensate)+diff(total_HCC)))*4000
+      #cost per visit
+      indirect_new <- fibrosis*4470+compensate*4380 + decompensate*6060 + total_HCC*9900
+      #cost per visit
+      complicate_new <-  compensate*86236 + decompensate*157755 + total_HCC*197961
+      #total cost from 2019 onwards
+      total_new <- screen_new[20:61]+treat_new[20:61]+
+        extra_new[19:60] +indirect_new[20:61] + complicate_new[20:61]
+      #total cost with 3% discount
+      total_new_dis<-total_new*(1/(1+0.03)^(0:41))
+      #total utility from 2019 (quality of life loss due to infection and death)
+      utility_new <- fibrosis[20:61]*0.73+compensate[20:61]*0.7+
+        decompensate[20:61]*0.58+total_HCC[20:61]*0.58+
+        diff(dthC14)[19:60]*27+diff(dthHCC)[19:60]*17
+      #total untility with 3% discount
+      utility_new_dis <- utility_new*(1/(1+0.03)^(0:41))
+      
+      detach()
+      
+      ICER_r1_Inc_Cost <- (sum(total_new_dis)-sum(total_base_dis))/1000000
+      ICER_r1_Qal_gain <- (sum(utility_base_dis)-sum(utility_new_dis))
+      ICER_r1 <- data.frame(ICER_r1_Inc_Cost,ICER_r1_Qal_gain)
+
+      WTP.5GDP <- 160000 
+      colours =c("black") #,"blue","purple", "green", "pink","orange", "grey", "darkred","cyan2","blueviolet", "darkgoldenrod4","brown2","lawngreen")
+      #plot(summary_ICER_PSA_compareWORST_SIIL[1,2,],summary_ICER_PSA_compareWORST_SIIL[1,1,])
+      
+      plot(0, xlim=c(-1000000, 1500000), ylim=c(-100000, 100000), xlab="Incremental QALYs",ylab="Incremental Costs THB (million)", pch=18, col=colours, 
+           main="Incremental cost-effectiveness ratio (ICER) plane",yaxt="n",xaxt="n" )
+      
+      axis(side = 2,at=c(-100000,-50000,0,50000,100000),labels = c("-100,000","-50,000","0","50,000","100,000"))
+      axis(side = 1,at=c(-1000000,-500000,0,500000,1000000),labels = c("-1,000,000","-500,000","0","500,000","1,000,000"))
+      
+      qq<-c(-1000000,0,1000000)
+      ww<-qq*160000/(10^6)
+      lines(qq,ww,col='red',lty=2)
+      
+      abline(h=0,v=0)
+      points(ICER_r1[1,2],ICER_r1[1,1],pch=15,col="maroon", cex=3)
+      text(ICER_r1[1,2], ICER_r1[1,1]-15000,paste(round(ICER_r1[1,2]),",", round(ICER_r1[1,1])),col = 'red',cex = 1.5)
+
+      par(ps=16)
+      legend("topleft", inset=.01, title="Screening scheme",
+             c("By New Screening Scheme"), fill=c("maroon", "sea green","gold"))
+      
     })
     
     
@@ -1670,6 +1872,13 @@ shinyServer(function(input, output,session) {
       paste("positive people :" , round(p_t$Pos) )
     })
     
+    output$Info_Scr <- renderText({
+      paste("Screening :" , Info$screening )
+    })
+    output$Info_Tre <- renderText({
+      paste("Drugs :" , Info$treatment )
+    })
+    
 
     
     output$downloadData <- downloadHandler(
@@ -1677,7 +1886,7 @@ shinyServer(function(input, output,session) {
         paste("parms", ".csv", sep = "")
       },
       content = function(file) {
-        write.csv(parms(), file, row.names = FALSE)
+        write.csv(flie_download$parms, file, row.names = FALSE)
       },contentType = "text/csv"
     )
 
@@ -1687,10 +1896,12 @@ shinyServer(function(input, output,session) {
       filename = "result.csv",
       content = function(file) {
         
-        write.csv(out_df(), file, row.names = FALSE)
+        write.csv(flie_download$table, file, row.names = FALSE)
         
       }, contentType = "text/csv"
       
     )
+    
+    
 
 })

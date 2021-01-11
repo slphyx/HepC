@@ -4,12 +4,12 @@
 #include <math.h> 
 using namespace Rcpp;
 //logistic growth assumed
+// double popfn(double t, double K, double P0, double r){
+//   return(K*P0*exp(r*((t+1999)-1998))/(K+P0*(exp(r*((t+1999)-1998))-1)));
+// }
+
 double popfn(double time, double K, double P0, double r){
-  // pop<-K*P0*exp(r*((t+1999)-1998))/(K+P0*(exp(r*((t+1999)-1998))-1))
-  
-  //return(K*P0*exp(r*(time-1998))/(K+P0*(exp(r*(time-1998))-1)));
-  return(K*P0*exp(r*((time+1999)-1998))/(K+P0*(exp(r*((time+1999)-1998))-1)));
-  
+  return(K*P0*exp(r*(time-1998))/(K+P0*(exp(r*(time-1998))-1)));
 }
 
 // [[Rcpp::export]]
@@ -276,6 +276,10 @@ List PanHepC(double time, NumericVector state, List parms){
   double newC12 = f3c1*F3+c1c2*C1;
   double newC34 = c2c3*C2+c3c4*C3;
   
+  double fibrosis = F1+F2+F3;
+  double compensate = C1+C2;
+  double decompensate = C3+C4;
+  
   NumericVector compartments(21);
   compartments[0] = dS;
   compartments[1] = dF0;
@@ -312,9 +316,9 @@ List PanHepC(double time, NumericVector state, List parms){
   outlist["treat_standard"] = treat_std;
   outlist["treat_new"] = treat_new;
   outlist["screen"] = scr; 
-  outlist["fibrosis "] = newF03; 
-  outlist["compensate"] = newC12; 
-  outlist["decompensate"] = newC34; 
+  outlist["fibrosis"] = fibrosis; 
+  outlist["compensate"] = compensate; 
+  outlist["decompensate"] = decompensate; 
   
   return outlist;
   

@@ -27,7 +27,7 @@ shinyUI(fluidPage(
   tags$h1(class="text-center","Modelling optimal strategies to screen and treat chronic Hepatitis C Virus infections")
             ),
   tabsetPanel(
-      #tab1
+      #tab1 Introduction
     tabPanel("Introduction",
              tags$h2("Introduction"),
              
@@ -100,7 +100,7 @@ shinyUI(fluidPage(
                         PLoS One. 2016 Sep 15;11(9):e0163095. doi:doi: 10.1371/journal.pone.0163095. eCollection 2016" )
     ),
       
-      #tab2
+      #tab2 Natural
       tabPanel("Natural History Of Disease",
                tags$div(class = "sliderDisplay col-sm-12",
                         
@@ -125,7 +125,7 @@ shinyUI(fluidPage(
                                              min = 10000000,
                                              max = 100000000,
                                              step = 1000000,
-                                             value = 60000000
+                                             value = 61600000
                                  )
                         ),
                         tags$div(class = "col-sm-4",
@@ -134,7 +134,7 @@ shinyUI(fluidPage(
                                              min = 10000000,
                                              max = 200000000,
                                              step = 1000000,
-                                             value = 70000000
+                                             value = 68500000
                                  )
                         ),
                         tags$div(class = "col-sm-4",
@@ -150,7 +150,7 @@ shinyUI(fluidPage(
                                  sliderInput("beta",
                                              "Transmission coefficient",
                                              min = 0.01,
-                                             max = 0.2,
+                                             max = 0.1,
                                              step = 0.01,
                                              value = 0.02
                                  )
@@ -183,7 +183,7 @@ shinyUI(fluidPage(
                         tags$div(class = "col-sm-4",
                                  sliderInput("f0f1",
                                              "Fibrosis stage F0 to F1",
-                                             min = 0.05,
+                                             min = 0.001,
                                              max = 0.2,
                                              step = 0.001,
                                              value = 0.117
@@ -192,7 +192,7 @@ shinyUI(fluidPage(
                         tags$div(class = "col-sm-4",
                                  sliderInput("f1f2",
                                              "Fibrosis stage F1 to F2",
-                                             min = 0.05,
+                                             min = 0.001,
                                              max = 0.2,
                                              step = 0.001,
                                              value = 0.085
@@ -201,7 +201,7 @@ shinyUI(fluidPage(
                         tags$div(class = "col-sm-4",
                                  sliderInput("f2f3",
                                              "Fibrosis stage F2 to F3",
-                                             min = 0.05,
+                                             min = 0.001,
                                              max = 0.2,
                                              step = 0.001,
                                              value = 0.12
@@ -210,7 +210,7 @@ shinyUI(fluidPage(
                         tags$div(class = "col-sm-12",
                                  sliderInput("f3c1",
                                              "Fibrosis stage F3 to Cirrhosis Child-Pugh class A",
-                                             min = 0.05,
+                                             min = 0.001,
                                              max = 0.2,
                                              step = 0.001,
                                              value = 0.116
@@ -270,8 +270,8 @@ shinyUI(fluidPage(
                         tags$div(class = "col-sm-4",
                                  sliderInput("c1bA",
                                              "Cirrhosis stage C1 to HCC_BCLC_A",
-                                             min = 0.005,
-                                             max = 0.01,
+                                             min = 0.0001,
+                                             max = 0.1,
                                              step = 0.0001,
                                              value = 0.0068
                                  )
@@ -279,8 +279,8 @@ shinyUI(fluidPage(
                         tags$div(class = "col-sm-4",
                                  sliderInput("c2bA",
                                              "Cirrhosis stage C2 to HCC_BCLC_A",
-                                             min = 0.005,
-                                             max = 0.01,
+                                             min = 0.0001,
+                                             max = 0.1,
                                              step = 0.0001,
                                              value = 0.0068
                                  )
@@ -288,8 +288,8 @@ shinyUI(fluidPage(
                         tags$div(class = "col-sm-4",
                                  sliderInput("c1bB",
                                              "Cirrhosis stage C1 to HCC_BCLC_B",
-                                             min = 0.005,
-                                             max = 0.01,
+                                             min = 0.0001,
+                                             max = 0.1,
                                              step = 0.0001,
                                              value = 0.0099
                                  )
@@ -297,8 +297,8 @@ shinyUI(fluidPage(
                         tags$div(class = "col-sm-4",
                                  sliderInput("c2bB",
                                              "Cirrhosis stage C2 to HCC_BCLC_B",
-                                             min = 0.005,
-                                             max = 0.01,
+                                             min = 0.0001,
+                                             max = 0.1,
                                              step = 0.0001,
                                              value = 0.0099
                                  )
@@ -306,8 +306,8 @@ shinyUI(fluidPage(
                         tags$div(class = "col-sm-4",
                                  sliderInput("c1bC",
                                              "Cirrhosis stage C1 to HCC_BCLC_C",
-                                             min = 0.005,
-                                             max = 0.01,
+                                             min = 0.0001,
+                                             max = 0.1,
                                              step = 0.0001,
                                              value = 0.0029
                                  )
@@ -315,8 +315,8 @@ shinyUI(fluidPage(
                         tags$div(class = "col-sm-4",
                                  sliderInput("c2bC",
                                              "Cirrhosis stage C2 to HCC_BCLC_C",
-                                             min = 0.005,
-                                             max = 0.01,
+                                             min = 0.0001,
+                                             max = 0.1,
                                              step = 0.0001,
                                              value = 0.0029
                                  )
@@ -325,7 +325,7 @@ shinyUI(fluidPage(
                                  sliderInput("c1bD",
                                              "Cirrhosis stage C1 to HCC_BCLC_D",
                                              min = 0.005,
-                                             max = 0.01,
+                                             max = 0.1,
                                              step = 0.0001,
                                              value = 0.0068
                                  )
@@ -333,8 +333,8 @@ shinyUI(fluidPage(
                         tags$div(class = "col-sm-4",
                                  sliderInput("c2bD",
                                              "Cirrhosis stage C2 to HCC_BCLC_D",
-                                             min = 0.005,
-                                             max = 0.01,
+                                             min = 0.0001,
+                                             max = 0.1,
                                              step = 0.0001,
                                              value = 0.0068
                                  )
@@ -342,24 +342,24 @@ shinyUI(fluidPage(
                         tags$div(class = "col-sm-4",
                                  sliderInput("c3bD",
                                              "Cirrhosis stage C3 to HCC_BCLC_D",
-                                             min = 0.05,
+                                             min = 0.0001,
                                              max = 0.1,
                                              step = 0.001,
-                                             value = 0.066
+                                             value = 0.0664
                                  )
                         ),
                         tags$div(class = "col-sm-4",
                                  sliderInput("c4bD",
                                              "Cirrhosis stage C4 to HCC_BCLC_D",
-                                             min = 0.05,
+                                             min = 0.0001,
                                              max = 0.1,
                                              step = 0.001,
-                                             value = 0.066
+                                             value = 0.0664
                                  )
                         )
                )
                ), 
-      #tab3
+      #tab3 Screening Tab
       tabPanel("Screening",
                tags$div(class = "sliderDisplay col-sm-12",
                         shinyjs::useShinyjs(),
@@ -855,7 +855,7 @@ shinyUI(fluidPage(
                                               "Sofosbuvir with Velpatasvir (pan-genotypic treatments)" =1,
                                               "Sofosbuvir with Ledipasvir (National List of Essential Medicines)" = 2,
                                               "Sofosbuvir with Ravidasvir (pan-genotypic treatments, on-going clinical trial)" = 3,
-                                              "Another durg" = 4),),
+                                              "Another durg" = 4),selected = 1),
                                shinyjs::useShinyjs(),
                                hidden(
                                tags$div(id="Newdurg",
@@ -1138,306 +1138,67 @@ shinyUI(fluidPage(
                   )
                ),
     #tab8
-    tabPanel("Cost",
-             div(
+    tabPanel("Cost & Untility",
+             
+
+               tags$div(class = "boxOutput col-sm-12",
+                 textOutput("Info_Scr"),
+                 textOutput("Info_Tre"),
+               
+             ),
+              tags$div(
                tabsetPanel(
                tabPanel("Table",
-                        
-                        tags$h1("table cost"),
-                        DT::dataTableOutput("table_cost"),
-                        tags$h1("Direct Treatment cost"),
-                        DT::dataTableOutput("table_Treatment"),
+                        tags$div(
+                                  tags$h1("Cost"),
+                                  DT::dataTableOutput("table_cost"),
+                        ),
+                        tags$div(
+                                 tags$h1("Untility"),
+                                 DT::dataTableOutput("table_Untility")
+                        ),
                ),
                tabPanel("Plot",
-                 tags$div(
-                   tags$h1("Screening"),
-                   plotlyOutput("distPlot7")
-                   
-                   
-                 ),
+                        tags$div(class="col-sm-6",
+                                 tags$h1("Cost"),
+                           tags$div(
+                             tags$h1("Screening"),
+                             plotlyOutput("distPlot7")
+                             
+                            
+                           ),
                  tags$div(
                    tags$h1("Treatment"),
                    plotlyOutput("distPlot6")
-                            
+
                    
+                 ),
+                        ),
+                 tags$div(class="col-sm-6",
+                          tags$h1("Untility"),
+                          plotlyOutput("utility_plot")
                  ),
                )
                )
              )
              
     ),
-    #tab9
-    tabPanel("Untility",
-             div(
-               
-               tags$br(),
-               tags$p("Untility"),
-               tags$table(
-                 tags$tr(
-                   tags$th("Health states"),
-                   tags$th("Utility"),
-                 ),
-                 tags$tr(
-                   tags$td("Chronic HCV infection"),
-                   tags$td("0.73"),
-                 ),
-                 tags$tr(
-                   tags$td("Compensated cirrhosis"),
-                   tags$td("0.7"),
-                 ),
-                 tags$tr(
-                   tags$td("Decompensated cirrhosis"),
-                   tags$td("0.58"),
-                 ),
-                 tags$tr(
-                   tags$td("Hepatocellular carcinoma"),
-                   tags$td("0.58"),
-                 ),
-               ),
-               
-               tags$br(),
-               tags$table(
-                 tags$tr(
-                   tags$th(),
-                   tags$th(2019),
-                   tags$th(2020),
-                   tags$th(2021),
-                   tags$th(2022),
-                   tags$th(2023),
-                   tags$th(2024),
-                   tags$th(2025),
-                   tags$th(2026),
-                   tags$th(2027),
-                   tags$th(2028),
-                   tags$th(2029),
-                   tags$th(2030),
-                   tags$th(2031),
-                   tags$th(2032),
-                   tags$th(2033),
-                   tags$th(2034),
-                   tags$th(2035),
-                   tags$th(2036),
-                   tags$th(2037),
-                   tags$th(2038),
-                   tags$th(2039),
-                   tags$th(2040),
-                 ),
-                 tags$tr(
-                   tags$td("number of HCV"),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                 ),
-                 tags$tr(
-                   tags$td("Total utility of HCV"),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                 ),
-                 tags$tr(
-                   tags$td("number of C1-2"),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                 ),
-                 tags$tr(
-                   tags$td("total utility of compensated cirrhosis"),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                 ),
-                 tags$tr(
-                   tags$td("number of C3-4"),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                 ),
-                 tags$tr(
-                   tags$td("total utility ofdecompensated cirrhosis"),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                 ),
-                 tags$tr(
-                   tags$td("number of HCC"),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                 ),
-                 tags$tr(
-                   tags$td("total utility of HCC"),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                   tags$td(),
-                 ),
-               ),
-
-             ),
-             tags$br()
+    tabPanel("Economic Analysis",
+             plotOutput("ICER"),
     ),
+    #tab9
     tabPanel("Supplementary",
-            tags$a("the 1st stakeholders' meeting",target="_blank",href="the 1st stakeholders' meeting.docx"),
-            tags$br(),
-            tags$a("the 2nd stakeholders' meeting",target="_blank",href="the 2nd stakeholders' meeting.docx"),
-            tags$br(),
-            tags$a("Estimating the Impact of Expanding Treatment Coverageand Allocation Strategies for Chronic Hepatitis C in a Direct Antiviral Agent Era"
-                   ,target="_blank",href="pone.0163095.pdf"),
-            tags$br(),
-            tags$a("Revisiting policy on chronic HCV treatment under the Thai Universal Health Coverage: An economic evaluation and budget impact analysis"
-                   ,target="_blank",href="pone.0193112.pdf"),
-             )
+             tags$a("the 1st stakeholders' meeting",target="_blank",href="the 1st stakeholders' meeting.docx"),
+             tags$br(),
+             tags$a("the 2nd stakeholders' meeting",target="_blank",href="the 2nd stakeholders' meeting.docx"),
+             tags$br(),
+             tags$a("Estimating the Impact of Expanding Treatment Coverageand Allocation Strategies for Chronic Hepatitis C in a Direct Antiviral Agent Era"
+                    ,target="_blank",href="pone.0163095.pdf"),
+             tags$br(),
+             tags$a("Revisiting policy on chronic HCV treatment under the Thai Universal Health Coverage: An economic evaluation and budget impact analysis"
+                    ,target="_blank",href="pone.0193112.pdf"),
+    )
+    
     # tabPanel("Table",
     #          
     #          tags$h1("table cost"),

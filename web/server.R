@@ -1769,6 +1769,7 @@ shinyServer(function(input, output,session) {
     })
     
     output$ICER <- renderPlot({
+      withProgress(message = 'Calculation in progress', {  
       if (v$doPlot == FALSE) return()
       df_base <- out_df_base()[1:61,]
       df_new <- out_df()[1:61,]
@@ -1848,7 +1849,7 @@ shinyServer(function(input, output,session) {
       par(ps=16)
       legend("topleft", inset=.01, title="Screening scheme",
              c("By New Screening Scheme"), fill=c("maroon", "sea green","gold"))
-      
+      })
     })
     
     

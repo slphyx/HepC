@@ -18,8 +18,11 @@ library(DT)
 # Define UI for application that draws a histogram
 shinyUI(fluidPage(  
   tags$head(
-    tags$link(rel = "stylesheet", type = "text/css", href = "style.css")
+    tags$link(rel = "stylesheet", type = "text/css", href = "style.css"),
+
+
   ),
+
 
   
   # Application title
@@ -704,7 +707,7 @@ shinyUI(fluidPage(
                         ),
                         ),
                         
-                        tags$div(class = "col-sm-12 col-lg-6 Mbottom",
+                        tags$div(class = "col-sm-12 Mbottom",
 
                           tags$table(
                             tags$tr(
@@ -795,7 +798,7 @@ shinyUI(fluidPage(
                           ),
                         ),
                         
-                        tags$div(class="col-sm-12 col-lg-6",
+                        tags$div(class="col-sm-12",
                           
                           tags$img(src="image/hcv testing sequence identifying hcv infection.jpg" 
                                    ,alt="Study design of the transmission and disease progression model."),
@@ -1138,7 +1141,7 @@ shinyUI(fluidPage(
                   )
                ),
     #tab8
-    tabPanel("Cost & Untility",
+    tabPanel("Cost & Utility",
              
 
                tags$div(class = "boxOutput col-sm-12",
@@ -1154,8 +1157,8 @@ shinyUI(fluidPage(
                                   DT::dataTableOutput("table_cost"),
                         ),
                         tags$div(
-                                 tags$h1("Untility"),
-                                 DT::dataTableOutput("table_Untility")
+                                 tags$h1("Utility"),
+                                 DT::dataTableOutput("table_Utility")
                         ),
                ),
                tabPanel("Plot",
@@ -1175,7 +1178,7 @@ shinyUI(fluidPage(
                  ),
                         ),
                  tags$div(class="col-sm-6",
-                          tags$h1("Untility"),
+                          tags$h1("Utility"),
                           plotlyOutput("utility_plot")
                  ),
                )

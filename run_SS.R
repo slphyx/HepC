@@ -96,11 +96,11 @@ parms <-
     r = 0.16,        #Population growth rate (logistic growth curve)
     flowin = 1.15*(10^-8),
     caset0 =  0.03*61623143,      #0.03*P0,
-    standard_start = 5,
-    new_start = 20,
+    standard_start = 1999,
+    new_start = 2019,
     nscr = 0.05,
     scr_yr = 10,
-    scr_cov = (23590+143320)/scr_yr,      #0.9/scr.yr,
+    scr_cov = (23590+143320)/10,      #0.9/scr.yr,
     sens = 0.985,
     pF0scr = 0.1439,
     pF1scr = 0.2969,
@@ -389,6 +389,7 @@ inits_base <-
     C4new_cured=0)
 
 
+
 times_base <- seq(1999, 2060,by=1)
 
 out_base <- ode( y = inits_base,times =  times_base, func = PanHepC, parms = parms_base)
@@ -463,7 +464,7 @@ ggplotly(p)
 
 times <- seq(0, 60,by=1) 
 
-out <- ode( y = inits(),times =  times, func = PanHepC, parms = parms(), method = "rk4")
+out <- ode( y = inits,times =  times, func = PanHepC, parms = parms, method = "rk4")
 
 out_df <- as.data.frame(out)
 
@@ -518,3 +519,196 @@ df = data.frame(a= NA, b = NA)
 
 col1 <- c(1,2,3,4,5)
 df <- cbind(df, col1)
+
+d <- out_df[,33]
+d2 <- out_df[,33]*5
+d3 <- data.frame(d,d2)
+d3
+E <- out_df[c(22:62),15] - out_df[c(21:61),15]
+E
+E2 <- out_df_base[c(22:62),15] - out_df_base[c(21:61),15]
+E2
+
+(E2 - E)/out_df_base[c(20),15]*100
+
+################################################################# R1
+
+P0 <- 61623143 #1999
+caset0 <- 0.03*P0 #From BM code
+#set up initial S compartment
+initS<- 1*(P0-caset0) #0.001
+#set up ininitSitial I compartments (values from BM code)
+initF0 <- 0.2825*caset0
+initF1 <- 0.2825*caset0
+initF2 <- 0.184*caset0
+initF3 <- 0.124*caset0
+initC1 <- 0.03175*caset0
+initC2 <- 0.03175*caset0
+initC3 <- 0.03175*caset0
+initC4 <- 0.03174*caset0
+initHCCA <- 0
+initHCCB <- 0
+initHCCC <- 0
+initHCCD <- 0
+
+initC1std_cured<-0  
+initC1new_cured<-0
+initC2new_cured<-0
+initC3new_cured<-0
+initC4new_cured<-0
+#set up initial death
+initD <- 0
+initdthC14<-0
+initdthHCC<-0
+initDHCC <- 0
+initDC14 <- 0
+
+#set up initial  
+init <- c(S=initS,F0=initF0,F1=initF1,F2=initF2,F3=initF3,C1=initC1,C2=initC2,C3=initC3,C4=initC4,
+          HCCA=initHCCA,HCCB=initHCCB,HCCC=initHCCC,HCCD=initHCCD,D=initD,
+          dthC14=initdthC14,dthHCC=initdthHCC,C1std_cured=initC1std_cured,
+          C1new_cured=initC1new_cured,C2new_cured=initC2new_cured,
+          C3new_cured=initC3new_cured,C4new_cured=initC4new_cured)
+
+#set up time
+simu.time <- seq(0, 60,by=1) 
+#parameters
+K <- 68508515#66785001
+r <- 0.16 
+flowin<- 1.15*(10^-8)
+f0f1 <- 0.117
+f1f2 <- 0.085
+f2f3 <- 0.12
+f3c1 <- 0.116
+c1c2 <- 0.044
+c2c3 <- 0.044
+c3c4 <- 0.076
+c1bA <- 0.0068
+c1bB <- 0.0099
+c1bC <- 0.0029
+c1bD <- 0.0068
+c2bA <- 0.0068
+c2bB <- 0.0099
+c2bC <- 0.0029
+c2bD <- 0.0068
+c3bD <- 0.0664
+c4bD <- 0.0664
+dthc1 <- 0.01
+dthc2 <- 0.01
+dthc3 <- 0.2
+dthc4 <- 0.57
+dthbA <- 1/(36/12)
+dthbB <- 1/(16/12)
+dthbC <- 1/(6/12)
+dthbD <- 1/(3/12)
+dthtrn <- 1/(240/12)
+tranc4 <- 0.0015
+tranbA <- 0.0015
+tranbB <- 0.0015
+std_start <- 5 #2004
+new_start <- 20 #2019 put 20
+nscr  <- 0.05
+scr.yr <- 0
+scr.cov <- 0
+#(23590+143320)/scr.yr#age41to60_23590/scr.yr#risk_rapidscr143320/scr.yr#risk_stdscr127584/scr.yr #sum up the people who get screening
+
+pF0scr<-0.1439
+pF1scr<-0.2969
+pF2scr<-0.1098
+pF3scr<-0.1466
+pC1scr<-0.1998
+pC2scr<-0.0819
+pC3scr<-0.0096
+pC4scr<-0.0011
+natdeath <- 0.04
+beta <- 0.02
+#standard treatment allocation
+F0std <- 0.05
+F1std <- 0.05
+F2std <- 0.3
+F3std <- 0.3
+C1std <- 0.3
+
+std_cureF0<-0.7
+std_cureF1<-0.7
+std_cureF2<-0.7
+std_cureF3<-0.7
+std_cureC1<-0.7
+new_cureF0<-0.98
+new_cureF1<-0.98
+new_cureF2<-0.98
+new_cureF3<-0.98
+new_cureC1<-0.98
+new_cureC2<-0.98
+new_cureC3<-0.98
+new_cureC4<-0.98
+#set up parameters
+parameters<- c(
+  K,
+  r,  
+  flowin,
+  f0f1,
+  f1f2,
+  f2f3,
+  f3c1,
+  c1c2,
+  c2c3,
+  c3c4,
+  c1bA,
+  c1bB,
+  c1bC,
+  c1bD,
+  c2bA,
+  c2bB,
+  c2bC,
+  c2bD,
+  c3bD,
+  c4bD,
+  dthc1,
+  dthc2,
+  dthc3,
+  dthc4,
+  dthbA,
+  dthbB,
+  dthbC,
+  dthbD,
+  dthtrn,
+  tranc4,
+  tranbA,
+  tranbB,
+  std_start,
+  new_start,
+  nscr,
+  scr.yr,
+  scr.cov,
+  pF0scr,
+  pF1scr,
+  pF2scr,
+  pF3scr,
+  pC1scr,
+  pC2scr,
+  pC3scr,
+  pC4scr,
+  natdeath,
+  beta,
+  #treatment allocation
+  F0std,
+  F1std,
+  F2std,
+  F3std,
+  C1std,
+  std_cureF0,
+  std_cureF1,
+  std_cureF2,
+  std_cureF3,
+  std_cureC1,
+  new_cureF0,
+  new_cureF1,
+  new_cureF2,
+  new_cureF3,
+  new_cureC1,
+  new_cureC2,
+  new_cureC3,
+  new_cureC4)
+
+r1 <- ode(y = init, times = simu.time, func=PanHepC, parms = parameters)

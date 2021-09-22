@@ -1580,7 +1580,7 @@ shinyServer(function(input, output,session) {
     #decompensate[20:61]*0.58+totalHCC[20:61]*0.58+
     # diff(death_cir)[19:60]*27+diff(death_HCC)[19:60]*17
     
-    output$table_Untility <- DT::renderDataTable({
+    output$table_Utility <- DT::renderDataTable({
       if (v$doPlot == FALSE) return()
       df_base <- out_df_base()
       df_new <- out_df()
@@ -1605,7 +1605,7 @@ shinyServer(function(input, output,session) {
       utility_base <- fibrosis[20:61]*0.73+compensate[20:61]*0.7+
         decompensate[20:61]*0.58+total_HCC[20:61]*0.58+
         diff(dthC14)[19:60]*27+diff(dthHCC)[19:60]*17
-      #total untility with 3% discount
+      #total Utility with 3% discount
       utility_base_dis <- utility_base*(1/(1+0.03)^(0:41))
       
       detach()
@@ -1630,7 +1630,7 @@ shinyServer(function(input, output,session) {
       utility_new <- fibrosis[20:61]*0.73+compensate[20:61]*0.7+
         decompensate[20:61]*0.58+total_HCC[20:61]*0.58+
         diff(dthC14)[19:60]*27+diff(dthHCC)[19:60]*17
-      #total untility with 3% discount
+      #total Utility with 3% discount
       utility_new_dis <- utility_new*(1/(1+0.03)^(0:41))
       
       detach()
@@ -1639,7 +1639,7 @@ shinyServer(function(input, output,session) {
       df <- out_df()
       
         if (v$doPlot == FALSE) return()
-      Untility <- data.frame(df[c(21:62),1],round(df[c(21:62),34]*0.73),
+      Utility <- data.frame(df[c(21:62),1],round(df[c(21:62),34]*0.73),
                              round(df[c(21:62),35]*0.7),
                              round(df[c(21:62),36]*0.58),
                              round(df[c(21:62),c(26)]*0.58),
@@ -1649,18 +1649,18 @@ shinyServer(function(input, output,session) {
                              round(utility_new_dis)
                              )
       
-      names(Untility)[1] <- "Times"
-      names(Untility)[2] <- "Fibrosis"
-      names(Untility)[3] <- "Compensate"
-      names(Untility)[4] <- "Decompensate"
-      names(Untility)[5] <- "Total HCC"
-      names(Untility)[6] <- "Death"
-      names(Untility)[7] <- "Death HCC"
-      names(Untility)[8] <- "Untility"
-      names(Untility)[9] <- "Untility With discount"
+      names(Utility)[1] <- "Times"
+      names(Utility)[2] <- "Fibrosis"
+      names(Utility)[3] <- "Compensate"
+      names(Utility)[4] <- "Decompensate"
+      names(Utility)[5] <- "Total HCC"
+      names(Utility)[6] <- "Death"
+      names(Utility)[7] <- "Death HCC"
+      names(Utility)[8] <- "Utility"
+      names(Utility)[9] <- "Utility With discount"
       
       withProgress(message = 'Calculation in progress', {  
-        DT::datatable(Untility,
+        DT::datatable(Utility,
                       rownames = FALSE,
                       options = list( pageLength = length(out_df()[c(21:62),1]),paging = FALSE
                       ) 
@@ -1794,7 +1794,7 @@ shinyServer(function(input, output,session) {
       utility_base <- fibrosis[20:61]*0.73+compensate[20:61]*0.7+
         decompensate[20:61]*0.58+total_HCC[20:61]*0.58+
         diff(dthC14)[19:60]*27+diff(dthHCC)[19:60]*17
-      #total untility with 3% discount
+      #total Utility with 3% discount
       utility_base_dis <- utility_base*(1/(1+0.03)^(0:41))
       
       detach()
@@ -1819,7 +1819,7 @@ shinyServer(function(input, output,session) {
       utility_new <- fibrosis[20:61]*0.73+compensate[20:61]*0.7+
         decompensate[20:61]*0.58+total_HCC[20:61]*0.58+
         diff(dthC14)[19:60]*27+diff(dthHCC)[19:60]*17
-      #total untility with 3% discount
+      #total Utility with 3% discount
       utility_new_dis <- utility_new*(1/(1+0.03)^(0:41))
       
       detach()

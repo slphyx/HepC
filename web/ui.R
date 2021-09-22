@@ -1146,6 +1146,8 @@ shinyUI(fluidPage(
 
                tags$div(class = "boxOutput col-sm-12",
                  textOutput("Info_Scr"),
+                 textOutput("Info_ScrM"),
+                 textOutput("Info_Conf"),
                  textOutput("Info_Tre"),
                
              ),

@@ -962,22 +962,51 @@ shinyServer(function(input, output,session) {
       out_df
     })
     
+
+    
     #Screening cost
     cost_screening_plot <- reactive({
 
-      people <- p_t$S_screening
+      people_screening <- p_t$S_screening
       year <- p_t$scr_yr
       times <- seq(2019, 2019+year, by = 1)
-      cost <- dia$screening_cost
+      cost_screening <- dia$screening_cost
       cost_per_year <- 0
       cost_screening_func <- function(time,state,parms){
         list(parms)
       }
-      cost <- as.numeric((people/year)*cost)
-      out <- ode( y = cost_per_year,times =  times, func = cost_screening_func, parms = cost, method = "rk4")
+      parms <- as.numeric((people_screening/year)*cost_screening)
+      out <- ode( y = cost_per_year,times =  times, func = cost_screening_func, parms = parms, method = "rk4")
       cost_screening_plot <- as.data.frame(out)
       colnames(cost_screening_plot)[2] <- "Total_Cost"
       cost_screening_plot
+    })
+    
+    # dia <-  reactiveValues(screening_name = "",
+    #                        screening_sens = 0,
+    #                        screening_spec = 0,
+    #                        screening_cost = 0,
+    #                        confirming_name = "",
+    #                        confirming_sens = 0,
+    #                        confirming_spec = 0,
+    #                        confirming_cost = 0
+    # )
+    
+    cost_Confirming_plot <- reactive({
+      
+      people_Confirming <- p_t$S_screening*dia$screening_sens/100*dia$screening_spec/100
+      year <- p_t$scr_yr
+      times <- seq(2019, 2019+year, by = 1)
+      cost_Confirming <- dia$confirming_cost
+      cost_per_year <- 0
+      cost_screening_func <- function(time,state,parms){
+        list(parms)
+      }
+      parms <- as.numeric((people_Confirming/year)*cost_Confirming)
+      out <- ode( y = cost_per_year,times =  times, func = cost_screening_func, parms = parms, method = "rk4")
+      cost_Confirming_plot <- as.data.frame(out)
+      colnames(cost_Confirming_plot)[2] <- "Total_Cost"
+      cost_Confirming_plot
     })
     
     
@@ -1492,12 +1521,15 @@ shinyServer(function(input, output,session) {
       
       if (v$doPlot == FALSE) return()
       x <- cost_screening_plot()
+      y <- cost_Confirming_plot()
+      z <- data.frame(time=x[,1],Total_Cost=(x[,2]+y[,2]))
       isolate({
         withProgress(message = 'Calculation in progress', {  
           
-          ggplot(data = x) + 
+          ggplot(data = z) + 
             labs( x = "Year")+
             geom_line(mapping = aes(x = time, y =Total_Cost ),size = 1)+ 
+            scale_y_continuous(labels = label_number(suffix = " M", scale = 1e-6))+
             theme(axis.title = element_text(size = 20))+
             theme(axis.text = element_text(size = 15, colour="black"))+ 
             theme(legend.title = element_text(size = 20),
@@ -1521,9 +1553,14 @@ shinyServer(function(input, output,session) {
       })
     })
     
+
+    
     output$table_cost <- DT::renderDataTable({
       if (v$doPlot == FALSE) return()
-      screening_cost <- out_df()[c(21:62),33]*dia$screening_cost
+      screening_people <-out_df()[c(21:62), 33]
+      screening_people[1] <- p_t$S_screening
+      Confirming_cost <- round(screening_people*(dia$screening_sens/100)*(dia$screening_spec/100)*dia$confirming_cost)
+      screening_cost <- screening_people*dia$screening_cost + Confirming_cost
       Treatment_people <-data.frame(round(out_df()[c(21:62),32]))
       Treatment_cost <- Treatment_people*Treatment$cost
       Total_cost <- screening_cost + Treatment_cost
@@ -1545,16 +1582,16 @@ shinyServer(function(input, output,session) {
       })
     })
     
-    # dia <-  reactiveValues(screening_name = "",
-    #                        screening_sens = 0,
-    #                        screening_spec = 0,
-    #                        screening_cost = 0,
-    #                        confirming_name = "",
-    #                        confirming_sens = 0,
-    #                        confirming_spec = 0,
-    #                        confirming_cost = 0
-    # )
-    
+    dia <-  reactiveValues(screening_name = "",
+                           screening_sens = 0,
+                           screening_spec = 0,
+                           screening_cost = 0,
+                           confirming_name = "",
+                           confirming_sens = 0,
+                           confirming_spec = 0,
+                           confirming_cost = 0
+    )
+
     output$table_Treatment <- DT::renderDataTable({
       if (v$doPlot == FALSE) return()
       dia_mutiply <- dia$screening_sens/100*dia$screening_spec/100*dia$confirming_sens/100*dia$confirming_spec/100
@@ -1872,13 +1909,22 @@ shinyServer(function(input, output,session) {
     output$scr_pos_p <- renderText({
       paste("positive people :" , round(p_t$Pos) )
     })
+
     
     output$Info_Scr <- renderText({
-      paste("Screening :" , Info$screening )
+      paste("Screening group :" , Info$screening )
+    })
+    output$Info_ScrM <- renderText({
+      paste("Screening method :" , dia$screening_name )
+    })
+    output$Info_Conf <- renderText({
+      paste("Confirming method :" , dia$confirming_name )
     })
     output$Info_Tre <- renderText({
       paste("Drugs :" , Info$treatment )
     })
+
+
     
 
     

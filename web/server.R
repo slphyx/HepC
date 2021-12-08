@@ -713,6 +713,7 @@ shinyServer(function(input, output,session) {
   
   observe({
     x <- input$care
+
     if(!is.null(x)){
 
       
@@ -860,14 +861,14 @@ shinyServer(function(input, output,session) {
         std_cureF2=0.7,
         std_cureF3=0.7,
         std_cureC1=0.7,
-        new_cureF0=0.98,
-        new_cureF1=0.98,
-        new_cureF2=0.98,
-        new_cureF3=0.98,
-        new_cureC1=0.98,
-        new_cureC2=0.98,
-        new_cureC3=0.98,
-        new_cureC4=0.98,
+        new_cureF0=Treatment$new_cureF0,
+        new_cureF1=Treatment$new_cureF1,
+        new_cureF2=Treatment$new_cureF2,
+        new_cureF3=Treatment$new_cureF3,
+        new_cureC1=Treatment$new_cureC1,
+        new_cureC2=Treatment$new_cureC2,
+        new_cureC3=Treatment$new_cureC3,
+        new_cureC4=Treatment$new_cureC4,
         
         #Progression of fibrosis
         f0f1=input$f0f1,       #Fibrosis stage F0 to F1
@@ -970,7 +971,7 @@ shinyServer(function(input, output,session) {
       people_screening <- p_t$S_screening
       year <- p_t$scr_yr
       times <- seq(2019, 2019+year, by = 1)
-      cost_screening <- dia$screening_cost
+      cost_screening <- dia$screening_cost+extra$total_cost
       cost_per_year <- 0
       cost_screening_func <- function(time,state,parms){
         list(parms)
@@ -1066,14 +1067,14 @@ shinyServer(function(input, output,session) {
         std_cureF2=0.7,
         std_cureF3=0.7,
         std_cureC1=0.7,
-        new_cureF0=0.98,
-        new_cureF1=0.98,
-        new_cureF2=0.98,
-        new_cureF3=0.98,
-        new_cureC1=0.98,
-        new_cureC2=0.98,
-        new_cureC3=0.98,
-        new_cureC4=0.98,
+        new_cureF0=0,
+        new_cureF1=0,
+        new_cureF2=0,
+        new_cureF3=0,
+        new_cureC1=0,
+        new_cureC2=0,
+        new_cureC3=0,
+        new_cureC4=0,
         
         #Progression of fibrosis
         f0f1= 0.117,       #Fibrosis stage F0 to F1
@@ -1560,7 +1561,7 @@ shinyServer(function(input, output,session) {
       screening_people <-out_df()[c(21:62), 33]
       screening_people[1] <- p_t$S_screening
       Confirming_cost <- round(screening_people*(dia$screening_sens/100)*(dia$screening_spec/100)*dia$confirming_cost)
-      screening_cost <- screening_people*dia$screening_cost + Confirming_cost
+      screening_cost <- screening_people*(dia$screening_cost+extra$total_cost) + Confirming_cost
       Treatment_people <-data.frame(round(out_df()[c(21:62),32]))
       Treatment_cost <- Treatment_people*Treatment$cost
       Total_cost <- screening_cost + Treatment_cost
@@ -1621,7 +1622,6 @@ shinyServer(function(input, output,session) {
       if (v$doPlot == FALSE) return()
       df_base <- out_df_base()
       df_new <- out_df()
-      
       attach(df_base)
       #cost of screening using GeneEXpert
       screen_base <- screen*10*30.41
@@ -1649,7 +1649,7 @@ shinyServer(function(input, output,session) {
       attach(df_new)
       
       #cost of screening using GeneEXpert
-      screen_new <- c(rep(0,20),rep(2274933/1,1),rep(0,40)) *10*30.41
+      screen_new <- screen*10*30.41
       #cost of treatment using Sof-Vel
       treat_new <- treat_new*800*30.41
       #cost of extra lab per treatment
@@ -1810,7 +1810,7 @@ shinyServer(function(input, output,session) {
       if (v$doPlot == FALSE) return()
       df_base <- out_df_base()[1:61,]
       df_new <- out_df()[1:61,]
-      
+
       attach(df_base)
       #cost of screening using GeneEXpert
       screen_base <- screen*10*30.41
@@ -1836,9 +1836,8 @@ shinyServer(function(input, output,session) {
       
       detach()
       attach(df_new)
-
       #cost of screening using GeneEXpert
-      screen_new <- c(rep(0,20),rep(2274933/1,1),rep(0,40)) *10*30.41
+      screen_new <- screen*10*30.41
       #cost of treatment using Sof-Vel
       treat_new <- treat_new*800*30.41
       #cost of extra lab per treatment
@@ -1869,11 +1868,11 @@ shinyServer(function(input, output,session) {
       colours =c("black") #,"blue","purple", "green", "pink","orange", "grey", "darkred","cyan2","blueviolet", "darkgoldenrod4","brown2","lawngreen")
       #plot(summary_ICER_PSA_compareWORST_SIIL[1,2,],summary_ICER_PSA_compareWORST_SIIL[1,1,])
       
-      plot(0, xlim=c(-1000000, 1500000), ylim=c(-100000, 100000), xlab="Incremental QALYs",ylab="Incremental Costs THB (million)", pch=18, col=colours, 
+      plot(0, xlim=c(-1100000, 3700000), ylim=c(-150000, 100000), xlab="Incremental QALYs",ylab="Incremental Costs THB (million)", pch=18, col=colours, 
            main="Incremental cost-effectiveness ratio (ICER) plane",yaxt="n",xaxt="n" )
       
-      axis(side = 2,at=c(-100000,-50000,0,50000,100000),labels = c("-100,000","-50,000","0","50,000","100,000"))
-      axis(side = 1,at=c(-1000000,-500000,0,500000,1000000),labels = c("-1,000,000","-500,000","0","500,000","1,000,000"))
+      axis(side = 2,at=c(-150000,-75000,0,50000,100000),labels = c("-150,000","-75000","0","50,000","100,000"))
+      axis(side = 1,at=c(-1000000,-500000,0,1500000,3000000),labels = c("-1,000,000","-500,000","0","1,500,000","3,000,000"))
       
       qq<-c(-1000000,0,1000000)
       ww<-qq*160000/(10^6)

@@ -19,11 +19,7 @@ library(DT)
 shinyUI(fluidPage(  
   tags$head(
     tags$link(rel = "stylesheet", type = "text/css", href = "style.css"),
-
-
   ),
-
-
   
   # Application title
   tags$div(class="header bg-primary",

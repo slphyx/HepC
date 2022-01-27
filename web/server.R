@@ -22,6 +22,7 @@ library(plyr)
 library(shinyjs)
 library(DT)
 
+
 # Define server logic required to draw a histogram
 shinyServer(function(input, output,session) {
   
@@ -1254,7 +1255,8 @@ shinyServer(function(input, output,session) {
                 theme(legend.title = element_text(size = 20),
                       legend.text = element_text(size = 15))+
                 ggtitle("baseline") + 
-                theme(plot.title = element_text(size=30, face="bold"))
+                theme(plot.title = element_text(size=30, face="bold"))+
+                scale_y_continuous(labels = scales::comma)
               
             }
                 
@@ -1272,7 +1274,8 @@ shinyServer(function(input, output,session) {
                 scale_linetype_manual(values=c( "dotted","solid"))+
                 theme(axis.title = element_text(size = 20))+
                 theme(axis.text = element_text(size = 15, colour="black"))+ 
-                theme(legend.title = element_blank())
+                theme(legend.title = element_blank())+
+                scale_y_continuous(labels = scales::comma)
               ggplotly(p)%>%
                 layout(legend = list(font = list(size = 15) ))
             }
@@ -1301,7 +1304,8 @@ shinyServer(function(input, output,session) {
                 theme(legend.title = element_text(size = 20),
                       legend.text = element_text(size = 15))+
                 ggtitle("baseline") + 
-                theme(plot.title = element_text(size=30, face="bold"))
+                theme(plot.title = element_text(size=30, face="bold"))+
+                scale_y_continuous(labels = scales::comma)
               
             }
       
@@ -1371,7 +1375,8 @@ shinyServer(function(input, output,session) {
               theme(legend.title = element_text(size = 20),
                     legend.text = element_text(size = 15))+
               ggtitle("baseline") + 
-              theme(plot.title = element_text(size=30, face="bold"))
+              theme(plot.title = element_text(size=30, face="bold"))+
+              scale_y_continuous(labels = scales::comma)
             
           }
           
@@ -1393,7 +1398,8 @@ shinyServer(function(input, output,session) {
               scale_linetype_manual(values=c( "dotted","solid"))+
               theme(axis.title = element_text(size = 20))+
               theme(axis.text = element_text(size = 15, colour="black"))+ 
-              theme(legend.title = element_blank())
+              theme(legend.title = element_blank())+
+              scale_y_continuous(labels = scales::comma)
             ggplotly(p)%>%
               layout(legend = list(font = list(size = 15) ))
           }
@@ -1422,7 +1428,8 @@ shinyServer(function(input, output,session) {
                 theme(legend.title = element_text(size = 20),
                       legend.text = element_text(size = 15))+
                 ggtitle("baseline") + 
-                theme(plot.title = element_text(size=30, face="bold"))
+                theme(plot.title = element_text(size=30, face="bold"))+
+                scale_y_continuous(labels = scales::comma)
               
             }
             
@@ -1443,7 +1450,8 @@ shinyServer(function(input, output,session) {
                 scale_linetype_manual(values=c( "dotted","solid"))+
                 theme(axis.title = element_text(size = 20))+
                 theme(axis.text = element_text(size = 15, colour="black"))+ 
-                theme(legend.title = element_blank())
+                theme(legend.title = element_blank())+
+                scale_y_continuous(labels = scales::comma)
               ggplotly(p)%>%
                 layout(legend = list(font = list(size = 15) ))
             }
@@ -1471,7 +1479,8 @@ shinyServer(function(input, output,session) {
                 theme(legend.title = element_text(size = 20),
                       legend.text = element_text(size = 15))+
                 ggtitle("baseline") + 
-                theme(plot.title = element_text(size=30, face="bold"))
+                theme(plot.title = element_text(size=30, face="bold"))+
+                scale_y_continuous(labels = scales::comma)
               
             }
             
@@ -1490,7 +1499,8 @@ shinyServer(function(input, output,session) {
                 scale_linetype_manual(values=c( "dotted","solid"))+
                 theme(axis.title = element_text(size = 20))+
                 theme(axis.text = element_text(size = 15, colour="black"))+ 
-                theme(legend.title = element_blank())
+                theme(legend.title = element_blank())+
+                scale_y_continuous(labels = scales::comma)
               ggplotly(p)%>%
                 layout(legend = list(font = list(size = 15) ))
                 }
@@ -1512,7 +1522,8 @@ shinyServer(function(input, output,session) {
           theme(axis.title = element_text(size = 20))+
           theme(axis.text = element_text(size = 15, colour="black"))+ 
           theme(legend.title = element_text(size = 20),
-                legend.text = element_text(size = 15))
+                legend.text = element_text(size = 15))+
+            scale_y_continuous(labels = scales::comma)
         })
       })
     })
@@ -1558,20 +1569,32 @@ shinyServer(function(input, output,session) {
     
     output$table_cost <- DT::renderDataTable({
       if (v$doPlot == FALSE) return()
+      df_new <- out_df()[1:61,]
       screening_people <-out_df()[c(21:62), 33]
-      screening_people[1] <- p_t$S_screening
+      Confirming_people <-out_df()[c(21:62), 33]
+      for (i in 1:p_t$scr_yr) {
+        screening_people[i] <- p_t$S_screening/p_t$scr_yr
+      }
       Confirming_cost <- round(screening_people*(dia$screening_sens/100)*(dia$screening_spec/100)*dia$confirming_cost)
       screening_cost <- screening_people*(dia$screening_cost+extra$total_cost) + Confirming_cost
       Treatment_people <-data.frame(round(out_df()[c(21:62),32]))
       Treatment_cost <- Treatment_people*Treatment$cost
       Total_cost <- screening_cost + Treatment_cost
       Total_cost_dis <- Total_cost*0.97
+
+      screening_cost <- round(screening_cost / 1e6, 2)
+      Treatment_cost <- round(Treatment_cost[,1] / 1e6, 2)
+      Total_cost     <- round(Total_cost[,1] / 1e6, 2)
+      Total_cost_dis <- round(Total_cost_dis[,1] / 1e6, 2)
       Treatmen_Cost_table <- data.frame(out_df()[c(21:62),1],screening_cost,Treatment_cost,Total_cost,Total_cost_dis)
+      total_row <-  colSums(Treatmen_Cost_table)
+      total_row[1] <- "Total"
+      Treatmen_Cost_table <- rbind(Treatmen_Cost_table, total_row) 
       names(Treatmen_Cost_table)[1] <- "Times"
-      names(Treatmen_Cost_table)[2] <- "screening cost"
-      names(Treatmen_Cost_table)[3] <- "Treatment cost"
-      names(Treatmen_Cost_table)[4] <- "Total cost"
-      names(Treatmen_Cost_table)[5] <- "Total cost with discount(3%)"
+      names(Treatmen_Cost_table)[2] <- "screening cost (Million)"
+      names(Treatmen_Cost_table)[3] <- "Treatment cost (Million)"
+      names(Treatmen_Cost_table)[4] <- "Total cost (Million)"
+      names(Treatmen_Cost_table)[5] <- "Total cost with discount(3%)(Million)"
       
       withProgress(message = 'Calculation in progress', {  
         DT::datatable(Treatmen_Cost_table,
@@ -1592,6 +1615,7 @@ shinyServer(function(input, output,session) {
                            confirming_spec = 0,
                            confirming_cost = 0
     )
+      
 
     output$table_Treatment <- DT::renderDataTable({
       if (v$doPlot == FALSE) return()
@@ -1676,6 +1700,7 @@ shinyServer(function(input, output,session) {
       df <- out_df()
       
         if (v$doPlot == FALSE) return()
+      
       Utility <- data.frame(df[c(21:62),1],round(df[c(21:62),34]*0.73),
                              round(df[c(21:62),35]*0.7),
                              round(df[c(21:62),36]*0.58),
@@ -1685,6 +1710,9 @@ shinyServer(function(input, output,session) {
                              round(utility_new),
                              round(utility_new_dis)
                              )
+      total_row <-  colSums(Utility)
+      Utility <- rbind(Utility, total_row) 
+      Utility[43,1] <- "Total"
       
       names(Utility)[1] <- "Times"
       names(Utility)[2] <- "Fibrosis"
@@ -1696,8 +1724,20 @@ shinyServer(function(input, output,session) {
       names(Utility)[8] <- "Utility"
       names(Utility)[9] <- "Utility With discount"
       
+
+      
       withProgress(message = 'Calculation in progress', {  
-        DT::datatable(Utility,
+        Utility %>% 
+          mutate(Fibrosis = formatC(round(Fibrosis), format = "f", big.mark = ",", drop0trailing = TRUE),
+                 Compensate = formatC(round(Compensate), format = "f", big.mark = ",", drop0trailing = TRUE),
+                 Decompensate = formatC(round(Decompensate), format = "f", big.mark = ",", drop0trailing = TRUE),
+                 `Total HCC` = formatC(round(`Total HCC`), format = "f", big.mark = ",", drop0trailing = TRUE),
+                 Death = formatC(round(Death), format = "f", big.mark = ",", drop0trailing = TRUE),
+                 `Death HCC` = formatC(round(`Death HCC`), format = "f", big.mark = ",", drop0trailing = TRUE),
+                 Utility = formatC(round(Utility), format = "f", big.mark = ",", drop0trailing = TRUE),
+                 `Utility With discount` = formatC(round(`Utility With discount`), format = "f", big.mark = ",", drop0trailing = TRUE)
+                 ) %>%
+        DT::datatable(
                       rownames = FALSE,
                       options = list( pageLength = length(out_df()[c(21:62),1]),paging = FALSE
                       ) 
@@ -1726,7 +1766,8 @@ shinyServer(function(input, output,session) {
         theme(axis.title = element_text(size = 20))+
         theme(axis.text = element_text(size = 15, colour="black"))+ 
         theme(legend.title = element_text(size = 20),
-              legend.text = element_text(size = 15))
+              legend.text = element_text(size = 15))+
+        scale_y_continuous(labels = scales::comma)
     })
     
     output$dif_TotalHCC <- renderPlotly({
